@@ -2,6 +2,429 @@
 
 @section('content')
 
+<script>
+
+// Carga de datos al inicializar la página
+async function fetchAccessToken() {
+    try {
+        const tokenResponse = await fetch("https://app.turitop.com/v1/authorization/grant", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                short_id: "F83",
+                secret_key: "1jLrCT9A1ebKMZHcnGqaOZTYQsiZtMwb"
+            }),
+        });
+
+        const tokenData = await tokenResponse.json();
+        if (tokenData.status !== "SUCCESS") {
+            throw new Error("Failed to fetch access token: " + tokenData.message);
+        }
+        return tokenData.data.access_token;
+    } catch (error) {
+        console.error("Error fetching access token:", error);
+        throw error;
+    }
+}
+
+
+
+async function fetchBookingsWeekly(accessToken) {
+    try {
+        let allBookings = [];
+        const oneDayInSeconds = 86400;
+        const oneWeekInSeconds = oneDayInSeconds * 1;
+        let endDate = Math.floor(Date.now() / 1000); // Fecha actual en timestamp
+        let noDataWeeks = 0; // Contador para semanas consecutivas sin datos
+
+        while (noDataWeeks < 3) {
+            const startDate = endDate - oneWeekInSeconds; // Fecha de inicio de la semana
+
+            console.log(`Fetching data from ${new Date(startDate * 1000).toISOString()} to ${new Date(endDate * 1000).toISOString()}`);
+
+            const response = await fetch("https://app.turitop.com/v1/booking/getbookings", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    access_token: accessToken,
+                    data: { 
+                        filter: {
+                            bookings_date_from: startDate,
+                            bookings_date_to: endDate,
+                            show_deleted: 1
+                        }
+                    }
+                }),
+            });
+
+            const data = await response.json();
+
+            if (data.status === "SUCCESS" && data.data.bookings.length > 0) {
+                console.log(data.data.bookings.length);
+                console.log(data.data.bookings);
+                if (data.data.bookings.length === 100) {
+                    console.error("La consulta actual tiene exactamente 100 registros");
+                }
+
+                data.data.bookings.forEach(booking => {
+                    // Evitar duplicados basados en short_id
+                    if (!allBookings.some(existing => existing.short_id === booking.short_id)) {
+                        allBookings.push(booking);
+                    }
+                });
+
+                console.log(`Current page: ${Math.floor((Date.now() - endDate * 1000) / oneWeekInSeconds)}`);
+                console.log(`Total bookings so far: ${allBookings.length}`);
+
+                noDataWeeks = 0; // Reiniciar el contador de semanas sin datos
+            } else {
+                console.log(`No data found for week starting ${new Date(startDate * 1000).toISOString()}`);
+                noDataWeeks++; // Incrementar contador de semanas sin datos
+            }
+
+            endDate = startDate - 1; // Ajustar el rango para la siguiente iteración
+        }
+
+        console.log(`Fetched ${allBookings.length} bookings in total.`);
+        return allBookings;
+    } catch (error) {
+        console.error("Error fetching weekly bookings:", error);
+        return [];
+    }
+}
+
+async function fetchBookingsWeekly2(accessToken) {
+    try {
+        let allBookings = [];
+        const oneDayInSeconds = 86400;
+        const oneWeekInSeconds = oneDayInSeconds * 1;
+        let endDate = Math.floor(Date.now() / 1000); // Fecha actual en timestamp
+        let noDataWeeks = 0; // Contador para semanas consecutivas sin datos
+
+        while (noDataWeeks < 3) {
+            const startDate = endDate - oneWeekInSeconds; // Fecha de inicio de la semana
+
+            console.log(`Fetching data from ${new Date(startDate * 1000).toISOString()} to ${new Date(endDate * 1000).toISOString()}`);
+
+            const response = await fetch("https://app.turitop.com/v1/booking/getbookings", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    access_token: accessToken,
+                    data: { 
+                        filter: {
+                            bookings_date_from: startDate,
+                            bookings_date_to: endDate,
+                            show_deleted: 1
+                        }
+                    }
+                }),
+            });
+
+            const data = await response.json();
+
+            if (data.status === "SUCCESS" && data.data.bookings.length > 0) {
+                cantidadEnEstaPetición = data.data.bookings.length
+
+                // Manejar días con exactamente 100 registros
+                if (data.data.bookings.length === 100) {
+                    cantidadEnEstaPetición = 0
+                    console.error("La consulta actual tiene exactamente 100 registros. Dividiendo en consultas de medio día...");
+                    
+                    // Dividir el día en dos mitades
+                    const halfDayInSeconds = oneDayInSeconds / 2;
+
+                    // Primera mitad del día
+                    const firstHalfResponse = await fetch("https://app.turitop.com/v1/booking/getbookings", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            access_token: accessToken,
+                            data: {
+                                filter: {
+                                    bookings_date_from: startDate,
+                                    bookings_date_to: startDate + halfDayInSeconds,
+                                    show_deleted: 1
+                                }
+                            }
+                        }),
+                    });
+
+                    const firstHalfData = await firstHalfResponse.json();
+                    console.log("firstHalfData: " + firstHalfData.data.bookings.length)
+                    if (firstHalfData.status === "SUCCESS" && firstHalfData.data.bookings.length > 0) {
+                        firstHalfData.data.bookings.forEach(booking => {
+                            if (!allBookings.some(existing => existing.short_id === booking.short_id)) {
+                                allBookings.push(booking);
+                            }
+                        });
+                    }
+
+                    // Segunda mitad del día
+                    const secondHalfResponse = await fetch("https://app.turitop.com/v1/booking/getbookings", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            access_token: accessToken,
+                            data: {
+                                filter: {
+                                    bookings_date_from: startDate + halfDayInSeconds + 1,
+                                    bookings_date_to: endDate,
+                                    show_deleted: 1
+                                }
+                            }
+                        }),
+                    });
+
+                    const secondHalfData = await secondHalfResponse.json();
+                    console.log("secondHalfData: " + secondHalfData.data.bookings.length)
+                    if (secondHalfData.status === "SUCCESS" && secondHalfData.data.bookings.length > 0) {
+                        secondHalfData.data.bookings.forEach(booking => {
+                            if (!allBookings.some(existing => existing.short_id === booking.short_id)) {
+                                allBookings.push(booking);
+                            }
+                        });
+                    }
+
+                    cantidadEnEstaPetición = firstHalfData.data.bookings.length + firstHalfData.data.bookings.length
+                } else {
+                    data.data.bookings.forEach(booking => {
+                        if (!allBookings.some(existing => existing.short_id === booking.short_id)) {
+                            allBookings.push(booking);
+                        }
+                    });
+                }
+                console.log();
+                console.log(`Current page: ${Math.floor((Date.now() - endDate * 1000) / oneWeekInSeconds)}`);
+                console.log(`Total bookings so far: ${allBookings.length}`);
+
+                noDataWeeks = 0; // Reiniciar el contador de semanas sin datos
+            } else {
+                console.log(`No data found for week starting ${new Date(startDate * 1000).toISOString()}`);
+                noDataWeeks++; // Incrementar contador de semanas sin datos
+            }
+
+            endDate = startDate - 1; // Ajustar el rango para la siguiente iteración
+        }
+
+        console.log(`Fetched ${allBookings.length} bookings in total.`);
+        return allBookings;
+    } catch (error) {
+        console.error("Error fetching weekly bookings:", error);
+        return [];
+    }
+}
+
+async function fetchBookingsWeekly3(accessToken) {
+    try {
+        let allBookings = [];
+        const oneDayInSeconds = 86400;
+
+        // Función recursiva para manejar divisiones
+        async function fetchWithDynamicRange(startDate, endDate, rangeDescription = "rango original") {
+            const formattedStart = new Date(startDate * 1000).toISOString();
+            const formattedEnd = new Date(endDate * 1000).toISOString();
+
+            console.log(`🔍 [Consulta] Rango: ${formattedStart} a ${formattedEnd} (${rangeDescription})`);
+
+            const response = await fetch("https://app.turitop.com/v1/booking/getbookings", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    access_token: accessToken,
+                    data: {
+                        filter: {
+                            bookings_date_from: startDate,
+                            bookings_date_to: endDate,
+                            show_deleted: 1
+                        }
+                    }
+                }),
+            });
+
+            const data = await response.json();
+
+            if (data.status === "SUCCESS" && data.data.bookings.length > 0) {
+                console.log(`✅ [Resultados] ${data.data.bookings.length} reservas encontradas en el rango: ${formattedStart} a ${formattedEnd} (${rangeDescription})`);
+
+                if (data.data.bookings.length === 100) {
+                    console.error(
+                        `⚠️ [Alerta] Más de 100 datos en el rango ${formattedStart} a ${formattedEnd}. Dividiendo rango...`
+                    );
+
+                    const midDate = Math.floor((startDate + endDate) / 2);
+
+                    // Llamada recursiva para la primera mitad
+                    await fetchWithDynamicRange(
+                        startDate,
+                        midDate,
+                        `${formattedStart} a ${new Date(midDate * 1000).toISOString()}`
+                    );
+
+                    // Llamada recursiva para la segunda mitad
+                    await fetchWithDynamicRange(
+                        midDate + 1,
+                        endDate,
+                        `${new Date(midDate * 1000).toISOString()} a ${formattedEnd}`
+                    );
+                } else {
+                    // Agregar los datos únicos a `allBookings`
+                    data.data.bookings.forEach(booking => {
+                        if (!allBookings.some(existing => existing.short_id === booking.short_id)) {
+                            allBookings.push(booking);
+                        }
+                    });
+                }
+            } else {
+                console.log(`❌ [Sin datos] Ninguna reserva encontrada en el rango: ${formattedStart} a ${formattedEnd} (${rangeDescription})`);
+            }
+        }
+
+        // Configuración inicial: Rango de 30 días
+        let endDate = Math.floor(Date.now() / 1000); // Fecha actual en timestamp
+        let noDataWeeks = 0;
+
+        while (noDataWeeks < 3) {
+            const startDate = endDate - oneDayInSeconds * 30; // Rango inicial de 30 días
+
+            console.log(`📅 [Inicio de Ciclo] Procesando rango: ${new Date(startDate * 1000).toISOString()} a ${new Date(endDate * 1000).toISOString()}`);
+            await fetchWithDynamicRange(startDate, endDate, "30 días");
+
+            // Validar si se obtuvieron datos en este rango
+            if (allBookings.length === 0) {
+                noDataWeeks++;
+                console.log(`🔴 [Aviso] Sin datos para este rango de 30 días (${noDataWeeks}/3 semanas sin datos).`);
+            } else {
+                noDataWeeks = 0;
+            }
+
+            endDate = startDate - 1; // Retroceder para el siguiente ciclo
+        }
+
+        console.log(`📊 [Resumen] Total de datos acumulados: ${allBookings.length}`);
+        return allBookings;
+    } catch (error) {
+        console.error("❌ [Error] Error fetching bookings:", error);
+        return [];
+    }
+}
+
+async function fetchBookingsWeekly4(accessToken) {
+    try {
+        let allBookings = [];
+        const oneDayInSeconds = 86400;
+
+        // Función recursiva para manejar divisiones
+        async function fetchWithDynamicRange(startDate, endDate, rangeDescription = "rango original") {
+            const formattedStart = new Date(startDate * 1000).toISOString();
+            const formattedEnd = new Date(endDate * 1000).toISOString();
+
+            console.log(`🔍 [Consulta] Rango: ${formattedStart} a ${formattedEnd} (${rangeDescription})`);
+
+            const response = await fetch("https://app.turitop.com/v1/booking/getbookings", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    access_token: accessToken,
+                    data: {
+                        filter: {
+                            bookings_date_from: startDate,
+                            bookings_date_to: endDate,
+                            show_deleted: 1
+                        }
+                    }
+                }),
+            });
+
+            const data = await response.json();
+
+            if (data.status === "SUCCESS" && data.data.bookings.length > 0) {
+                console.log(`✅ [Resultados] ${data.data.bookings.length} reservas encontradas en el rango: ${formattedStart} a ${formattedEnd} (${rangeDescription})`);
+
+                if (data.data.bookings.length === 100) {
+                    console.error(
+                        `⚠️ [Alerta] Más de 100 datos en el rango ${formattedStart} a ${formattedEnd}. Dividiendo rango...`
+                    );
+
+                    const midDate = Math.floor((startDate + endDate) / 2);
+
+                    // Llamada recursiva para la primera mitad
+                    await fetchWithDynamicRange(
+                        startDate,
+                        midDate,
+                        `${formattedStart} a ${new Date(midDate * 1000).toISOString()}`
+                    );
+
+                    // Llamada recursiva para la segunda mitad
+                    await fetchWithDynamicRange(
+                        midDate + 1,
+                        endDate,
+                        `${new Date(midDate * 1000).toISOString()} a ${formattedEnd}`
+                    );
+                } else {
+                    // Agregar los datos únicos a `allBookings`
+                    data.data.bookings.forEach(booking => {
+                        if (!allBookings.some(existing => existing.short_id === booking.short_id)) {
+                            allBookings.push(booking);
+                        }
+                    });
+                }
+            } else {
+                console.log(`❌ [Sin datos] Ninguna reserva encontrada en el rango: ${formattedStart} a ${formattedEnd} (${rangeDescription})`);
+            }
+        }
+
+        // Configuración inicial: Rango de 30 días
+        let endDate = Math.floor(Date.now() / 1000); // Fecha actual en timestamp
+        let noDataWeeks = 0;
+
+        while (noDataWeeks < 3) {
+            const startDate = endDate - oneDayInSeconds * 30; // Rango inicial de 30 días
+
+            console.log(`📅 [Inicio de Ciclo] Procesando rango: ${new Date(startDate * 1000).toISOString()} a ${new Date(endDate * 1000).toISOString()}`);
+            const previousTotal = allBookings.length; // Guardar el total previo para este ciclo
+
+            await fetchWithDynamicRange(startDate, endDate, "30 días");
+
+            // Validar si se obtuvieron datos en este rango
+            const newTotal = allBookings.length;
+            const collectedThisCycle = newTotal - previousTotal;
+
+            if (collectedThisCycle > 0) {
+                console.log(`📈 [Resumen del Ciclo] Datos recolectados en este ciclo de 30 días: ${collectedThisCycle}`);
+                console.log(`📊 [Acumulado Total] Total de datos acumulados hasta ahora: ${newTotal}`);
+                noDataWeeks = 0;
+            } else {
+                noDataWeeks++;
+                console.log(`🔴 [Aviso] Sin datos para este rango de 30 días (${noDataWeeks}/3 semanas sin datos).`);
+            }
+
+            endDate = startDate - 1; // Retroceder para el siguiente ciclo
+        }
+
+        console.log(`📊 [Resumen Final] Total de datos acumulados: ${allBookings.length}`);
+        return allBookings;
+    } catch (error) {
+        console.error("❌ [Error] Error fetching bookings:", error);
+        return [];
+    }
+}
+
+
+async function init() {
+    try {
+        const accessToken = await fetchAccessToken5();
+        await fetchBookingsWeekly(accessToken);
+    } catch (error) {
+        console.error("Initialization error:", error);
+    }
+}
+
+// Llamar a la función init al cargar la página
+document.addEventListener("DOMContentLoaded", init);
+
+
+</script>
 
 <main class="container col-12 position-relative panel">
 
@@ -29,7 +452,7 @@
         <h1 class="text-center text-light my-5 fs-9 fuente-libre ">EduPress 9<i class="text-danger">.</i>7</h1>
     </section>
     
-    <h1 class="fs-3 py-3 text-center">Guia de uso</h1>
+    <h1 class="fs-3 py-3 text-center">Panel de datos</h1>
     <nav>
         <div class="nav nav-tabs justify-content-center" id="nav-tab" role="tablist">
             <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home"
@@ -325,5 +748,14 @@
 
 
 </main>
+
+
+
+
+
+
+
+
+
 
 @endsection

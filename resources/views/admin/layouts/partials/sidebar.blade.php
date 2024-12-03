@@ -2,7 +2,7 @@
 
 
     <h1 class="text-light fs-1 fuente-dancing">
-        Asador la Morenica
+        Navegatel
     </h1>
 
     <button class="navbar-toggler mb-3 me-5" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
