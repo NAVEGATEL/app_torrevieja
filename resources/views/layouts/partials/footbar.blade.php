@@ -14,7 +14,7 @@
     <div class="row">
       <div class="col-lg-4 col-12 my-5 my-lg-0">
         <div class="d-flex align-items-center justify-content-center">
-          <img src="{{ asset('img/corporativa/logo-blanco.png') }}" alt="Logo Asador la morenica" width="130" class="">
+          <img src="{{ asset('img/corporativa/favicon.svg') }}" alt="Logo Asador la morenica" width="130" class="">
         </div>
         <div class="m-2">
           <div class="d-flex flex-row justify-content-evenly align-items-center">

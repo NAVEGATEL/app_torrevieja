@@ -32,15 +32,15 @@
 
     <a class="navbar-brand" href="/">
       <div class="d-flex align-items-center flex-column flex-md-row">
-        <img src="{{ asset('img/corporativa/logo-negro-web.png') }}" alt="Asador la Morenica" width="130" class="">
+        <img src="{{ asset('img/corporativa/favicon.svg') }}" alt="Asador la Morenica" width="130" class="">
       </div>
     </a>
 
 
     <a class="navbar-brand" href="/">
       <div class="d-flex flex-column">
-        <span class="fuente-libre fs-1">Asador la Morenica</span>
-        <span class="fuente-dancing text-center fs-2">En horno de leña</span>
+        <span class="fuente-libre fs-1">Actividades Nauticas Torrevieja</span>
+        <span class="fuente-dancing text-center fs-2">Navega-tel con nosotros</span>
       </div>
     </a>
 
