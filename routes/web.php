@@ -13,6 +13,9 @@ use App\Http\Controllers\FiestasController;
 use App\Http\Controllers\NewsletterController;
 
 use App\Http\Middleware\Authenticate;
+
+
+use App\Http\Controllers\BookingController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -116,6 +119,11 @@ Route::middleware(["auth"])->group(function () {
         Route::get('/days/{id}/edit', [DaysController::class, 'edit'])->name('days.edit');
         Route::put('/panel/days/{id}', [DaysController::class, 'update'])->name('days.update');
         Route::post('/panel/update_horarios', [DaysController::class, 'update_horarios'])->name('days.update_horarios');
+
+
+        
+
+        Route::post('/bookings', [BookingController::class, 'store']);
 
 
         //Newsletter
