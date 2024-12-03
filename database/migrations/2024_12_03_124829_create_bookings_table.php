@@ -9,6 +9,8 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
+
+
     public function up()
     {
         Schema::create('bookings', function (Blueprint $table) {
@@ -18,7 +20,7 @@ return new class extends Migration
             $table->string('supplier_company_name');
             $table->string('seller_company_name');
             $table->string('language_code');
-            $table->string('location');
+            $table->string('location')->nullable();
             $table->string('service_flow');
             $table->timestamp('date_event')->nullable();
             $table->timestamp('date_prebooking')->nullable();

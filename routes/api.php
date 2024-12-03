@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 
+use App\Http\Controllers\BookingController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -22,6 +23,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('/encargos/storeAlexa', [EncargoController::class, 'storeAlexa'])->name('encargos.storeAlexa');
  
+Route::post('/bookings/batch', [BookingController::class, 'storeBatch']);
 
 // Route::resource('products', ProductController::class);
 // Route::resource('categories', CategoryController::class);

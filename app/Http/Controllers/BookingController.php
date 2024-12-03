@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Models\Booking; // Importa el modelo correctamente
+use Illuminate\Support\Facades\Log;
 class BookingController extends Controller
 {
     //
@@ -38,5 +39,45 @@ class BookingController extends Controller
 
         return response()->json(['success' => true, 'data' => $booking]);
     }
+
+    public function storeBatch(Request $request)
+    {
+        // Log::info($request->all()); // Inspecciona los datos recibidos
+        // dd($request->all());        // Detén la ejecución para revisar los datos
+        try {
+            $bookings = $request->input('bookings', []);
+    
+            foreach ($bookings as &$booking) {
+                // Validar y asignar valores predeterminados
+                $booking['location'] = isset($booking['location']) && !empty($booking['location']) ? trim($booking['location']) : 'N/A';
+
+            }
+    
+            // Inserción en la base de datos
+            $saved = 0;
+            foreach ($bookings as $booking) {
+                $exists = Booking::where('short_id', $booking['short_id'])->exists();
+                if (!$exists) {
+                    Booking::create($booking);
+                    $saved++;
+                }
+            }
+    
+            return response()->json([
+                'success' => true,
+                'message' => "{$saved} reservas guardadas con éxito.",
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error guardando reservas: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al guardar reservas.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+    
+    
+
 
 }
