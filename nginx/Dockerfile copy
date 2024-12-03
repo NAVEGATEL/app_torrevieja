@@ -1,0 +1,11 @@
+# Imagen base de Nginx con versión específica
+FROM nginx:1.19.0
+
+# Copiar la configuración de Nginx
+COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
+
+# Copiar los certificados
+COPY ./docker/certbot/conf /etc/letsencrypt
+
+# Exponer puertos
+EXPOSE 80 443

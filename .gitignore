@@ -1,0 +1,95 @@
+# These are some examples of commonly ignored file patterns.
+# You should customize this list as applicable to your project.
+# Learn more about .gitignore: ATBBPLtSJP9GzUzMXffrvQweXPsZFF2FCE87 y2glAVI2PAsD4EZ6
+#     https://www.atlassian.com/git/tutorials/saving-changes/gitignore
+# Node and Laravel Dependencies
+/node_modules/
+/vendor/
+
+# Environment Files
+.env
+.env.*
+.env.*.backup
+/.env.production
+/.env.testing
+
+# Laravel Specific
+/public/build/
+/public/hot
+/storage/framework/cache/data
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/*.key
+/bootstrap/cache/*
+.phpunit.result.cache
+
+# Vite Build Files
+/vite
+vite.config.js
+vite.config.prod.js
+
+# Logs and Debugging Files
+*.log
+/storage/logs/*.log
+/horizon.log
+
+# Docker Specific
+.dockerignore
+docker-compose*.yml
+docker-compose.override.yml
+docker/
+/certbot/
+nginx/*.conf
+
+# IDE Specific
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# System Specific
+*.DS_Store
+Thumbs.db
+
+# Deployment
+/public/storage
+/storage/*.key
+
+# User-Generated Files
+/public/img
+/public/hot
+/public/storage
+
+# Composer and NPM Files
+composer.json
+composer.lock
+package.json
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Custom Scripts and Configs
+artisan
+meta.json
+sitemap.xml
+robots.json
+init-letsencrypt.sh
+entrypoint.sh
+*.sh
+*.pem
+*.xml
+Dockerfile
+
+# Large Media Files
+*.mp4
+*.tiff
+*.avi
+*.flv
+*.mov
+*.MOV
+*.wmv
+
+# Additional Exclusions
+.DS_Store
+Thumbs.db
+
