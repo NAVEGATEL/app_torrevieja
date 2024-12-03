@@ -4,7 +4,7 @@
 <div class="container pb-5 mb-5">
     <div class="row justify-content-center p-5 m-5">
         <div class="col-md-8 ">
-            <div class="card">
+            <div class="card  border border-1">
                 <div class="card-header">{{ __('Login') }}</div>
 
                 <div class="card-body">
