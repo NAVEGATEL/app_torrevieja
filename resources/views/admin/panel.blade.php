@@ -690,7 +690,7 @@ async function fetchBookingsWeekly6(accessToken) {
 
                 console.groupEnd(`📊 [Acumulado Total] Total de datos acumulados hasta ahora: ${newTotal}`);
                 noDataWeeks = 0;
-                break
+                
             } else {
                 noDataWeeks++;
                 console.groupEnd(`🔴 [Aviso] Sin datos para este rango de 30 días (${noDataWeeks}/3 semanas sin datos).`);
