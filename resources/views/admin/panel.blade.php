@@ -791,7 +791,7 @@ async function fetchBookingsWeekly7(accessToken) {
         }
 
         // Configuración inicial: Rango de 30 días
-        // let endDate = Math.floor(new Date("2016-02-19T13:49:21.000Z").getTime() / 1000); // Timestamp desde la fecha
+        // let endDate = Math.floor(new Date("2021-06-23T07:47:25.000Z").getTime() / 1000); // Timestamp desde la fecha
         let endDate = Math.floor(Date.now() / 1000); 
         let noDataWeeks = 0;
 
@@ -954,6 +954,9 @@ async function fetchBookingsWeekly8(accessToken) {
 
         // Configuración inicial: Rango de 30 días
         let endDate = Math.floor(Date.now() / 1000); 
+        // let endDate = Math.floor(new Date("2021-06-23T07:47:25.000Z").getTime() / 1000); // Timestamp desde la fecha
+        // let endDate = Math.floor(new Date("2015-01-26T07:46:07.000Z").getTime() / 1000); // Timestamp desde la fecha
+
         let noDataWeeks = 0;
 
         while (noDataWeeks < 3) {
@@ -1037,14 +1040,11 @@ async function fetchBookingsWeekly8(accessToken) {
     }
 }
 
-
-
-
 async function init() {
     // Asi es la fecha actual para buscar por date: let endDate = Math.floor(Date.now() / 1000); // Fecha actual en timestamp
     try {
         const accessToken = await fetchAccessToken();
-        await fetchBookingsWeekly8(accessToken);
+        await fetchBookingsWeekly_(accessToken);
     } catch (error) {
         console.error("Initialization error:", error);
     }
