@@ -2,142 +2,44 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DaysController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\EmailController;
 use App\Http\Controllers\PublicController;
 
-use App\Http\Controllers\EncargoController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\FiestasController;
-use App\Http\Controllers\NewsletterController;
-
-use App\Http\Middleware\Authenticate;
-
-
-use App\Http\Controllers\BookingController;
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
+// Ruta de fallback para redirigir a la página principal
 Route::fallback(function () {
     return redirect('/');
 });
 
-Route::get('/', [PublicController::class, "home"])->name("home");
+// Autenticación
+Auth::routes(["register" => false]); // Registro desactivado
 
-Route::get('/home', function () {
-    return redirect()->route('home');
-});
+// Ruta para redirigir al panel o al login según el estado de autenticación
+Route::get('/', function () {
+    return Auth::check() ? redirect()->route('panel') : redirect('/login');
+})->name('home');
 
-Route::get('/encargar', [PublicController::class, "makeOrder"])->name("makeOrder");
+// Grupo de rutas protegidas por autenticación
+Route::middleware(['auth'])->group(function () {
+    // Ruta para el panel principal (dashboard)
+    Route::get('/panel', [HomeController::class, 'index'])->name('panel');
 
-Route::get('/nosotros', [PublicController::class, "whoWeAre"])->name("whoWeAre");
-
-Route::get('/contacto', [PublicController::class, "contact"])->name("contact");
-
-// En está ruta llamamos directamente a la lógica del programa de ProductController y devuelve la vista y le pasa sus datos
-Route::get('/productos',  [CategoryController::class, "index"])->name("categories");
-
-// En está ruta llamamos directamente a la lógia ProductController pero le pasamos el parametro de que categoria
-// Route::get('/products/category',  [ProductController::class, "getOneCategoryProducts"])->name("products");
-
-Route::get('/Faqs', [PublicController::class, "faqs"])->name("faqs");
-
-Route::get('/politicas-privacidad', [PublicController::class, "privacyPolices"])->name("privacyPolices");
-
-Route::get('/politicas-cookies', [PublicController::class, "privacyCookies"])->name("privacyCookies");
-
-Route::get('/aviso-legal', [PublicController::class, "legalWarning"])->name("legalWarning");
-
-Route::get('/unsubscribe', [PublicController::class, "unsubscribe"])->name("unsubscribe");
-
-Route::get("/sitemap", [PublicController::class, "sitemap"])->name("sitemap");
-
-
-Route::post('/newsletter', [NewsletterController::class, 'store'])->name('newsletter.store');
-Route::get('/unsubscribe/{email}', [PublicController::class, 'unsubscribe'])->name('unsubscribe');
-
-Route::post('/enviar-correo', [PublicController::class, 'enviarCorreo'])->name('enviarCorreo');
-
-Route::get("/mapa-web", [PublicController::class, "sitemap"])->name("sitemap");
-
-Auth::routes(["register" => false]);
-
-# StoreAlexa
-Route::post('/encargosAlexa', [EncargoController::class, 'storeAlexa'])->name('encargos.storeAlexa');
-
-Route::post('/encargos', [EncargoController::class, 'store'])->name('encargos.store');
-Route::put('/encargos/{encargo}/entregado', [EncargoController::class, 'entregado'])->name('encargos.entregado');
-Route::get('/get-opening-hours/{date}', [DaysController::class, 'getOpeningHours']);
-
-Route::middleware(["auth"])->group(function () {
-
-    //Newsletter
-    Route::get('/fiestas', [FiestasController::class, 'index'])->name('fiestas.index');
-
+    // Grupo de rutas protegidas con middleware adicional (opcional)
     Route::group(['middleware' => 'adminOrBasic'], function () {
-        Route::get('/panel', [HomeController::class, 'index'])->name('panel');
- 
-        //Crud Productos
-        Route::resource('/panel/products', ProductController::class);
-        Route::put('/panel/products/{id}/restore', [ProductController::class, 'restore'])->name('products.restore');
-        Route::delete('/panel/productos/{id}', [ProductController::class, 'borrado'])->name('products.borrado');
-        
-        //Crud Categorias
-        Route::resource('/panel/categories', CategoryController::class);
-        Route::get('/panel/categories', [CategoryController::class, 'indexCrud'])->name('categories.indexCrud');
-        Route::put('/panel/categories/{id}/restore', [CategoryController::class, 'restore'])->name('categories.restore');
-        Route::delete('/panel/categories/{id}/borrado', [CategoryController::class, 'borrado'])->name('categories.borrado');
-        
-        //Settings
-        Route::get('/panel/home-settings', [PublicController::class, "showSettings"])->name('settings.index');
-        Route::post('/panel/home-settings', [PublicController::class, "saveSettings"])->name('settings.index');
-        
-        //Encargos
-        Route::resource('/panel/encargos', EncargoController::class)->except('store');
-        Route::delete('/encargos/{encargo}/borrar', [EncargoController::class, 'destroy'])->name('encargos.borrar');
-        Route::post('/actualizar-encargo', [EncargoController::class, 'actualizarEncargo'])->name('encargo.actualizar');
+        // Ruta para gestionar usuarios
+        Route::get('/panel/users', [UserController::class, 'index'])->name('users.index');
 
+        // Ruta para consultar correos enviados
+        Route::get('/panel/emails', [EmailController::class, 'index'])->name('newsletters.index');
 
-        // Route::post('/encargos', [EncargoController::class, 'store'])->name('encargos.store');
-        Route::post('/encargos/storePanel', [EncargoController::class, 'storePanel'])->name('encargos.storePanel');
-        Route::get('/encargos/refresh', [EncargoController::class, 'refresh'])->name('encargos.refresh');
-        Route::put('/panel/encargos/{encargo}/entregado', [EncargoController::class, 'entregado'])->name('encargos.entregado');
-
-        //Calendario
-        Route::get('/panel/days', [DaysController::class, 'index'])->name('days.index');
-        Route::post('/panel/days', [DaysController::class, 'store'])->name('days.store');
-        Route::get('/panel/days/list', [DaysController::class, 'list'])->name('days.list');
-        Route::delete('/panel/days/{day}', [DaysController::class, 'destroy'])->name('days.destroy');
-        Route::get('/days/{id}/edit', [DaysController::class, 'edit'])->name('days.edit');
-        Route::put('/panel/days/{id}', [DaysController::class, 'update'])->name('days.update');
-        Route::post('/panel/update_horarios', [DaysController::class, 'update_horarios'])->name('days.update_horarios');
-
-
-        
-
-        Route::post('/bookings', [BookingController::class, 'store']);
-
-
-        //Newsletter
-        Route::get('/panel/newsletters', [NewsletterController::class, 'index'])->name('newsletters.index');
-        Route::post('/panel/newsletters/send', [NewsletterController::class, 'send'])->name('newsletters.send');
-
+        // Ruta para ajustes
+        Route::get('/panel/settings', [PublicController::class, 'showSettings'])->name('settings.index');
+        Route::post('/panel/settings', [PublicController::class, 'saveSettings'])->name('settings.save');
     });
-    
 });
 
-Auth::routes();
-
-// Route::get('/panel', [App\Http\Controllers\HomeController::class, 'index'])->name('panel');
-
+// Logout personalizado
 Route::post('/logout', function () {
     Auth::logout();
     return redirect('/login');
