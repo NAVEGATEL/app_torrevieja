@@ -86,3 +86,5 @@ Para desplegar en local:
   Ejecutar contenedores (Docker).
   Entrar en el de laravel, ejecutar las migraciones.
   Salir de laravel y ejecutar Vite en modo desarrollo.
+
+Test: Production work correctly with git
