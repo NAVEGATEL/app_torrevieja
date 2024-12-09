@@ -23,7 +23,7 @@
 
 <body class="bg-light">
     <div id="app" class="">
-            <div class="container-fluid" style="background-color: #00104b;">
+            <div class="container-fluid bg-nav">
                 @include('admin.layouts.partials.sidebar')
             </div>
 
