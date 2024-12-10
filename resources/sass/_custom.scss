@@ -37,8 +37,14 @@
 }
 
 // Animación de la barra del NAV
+.navbar-toggler:hover, .nav-hover:hover {
+    #navsvgforfill {
+        fill: #1f1f1f !important; /* Cambia el color al pasar el mouse */
+        transition: fill 0.99999s ease; /* Transición suave opcional */
+    }
+}
 
-.animated-link {
+.animated-link, .nav-hover {
     position: relative;
     display: inline-block;
     color: inherit;
@@ -46,26 +52,27 @@
     overflow: hidden;
 }
 
-.animated-link::after {
+.animated-link::after, .nav-hover::after {
     content: "";
     position: absolute;
     bottom: 0;
     left: 0;
     width: 0;
-    height: 2px;
-    background-color: var(--color-1); /* Color de la línea */
+    height: 1px;
+    background-color: var(--color-2); /* Color de la línea */
     transition: none;
     transform-origin: left;
     opacity: 0;
     transition: opacity 0.3s ease, width 0.3s ease;
 }
 
-.animated-link:hover::after {
+.animated-link:hover::after,.nav-hover:hover::after {
     width: 100%;
     opacity: 1; /* Aparece al hacer hover */
 }
 
-.animated-link:not(:hover)::after {
+.animated-link:not(:hover)::after,.nav-hover:not(:hover)::after {
     opacity: 0; /* Desaparece cuando se deja de hacer hover */
     width: 0; /* Se contrae al no estar en hover */
 }
+

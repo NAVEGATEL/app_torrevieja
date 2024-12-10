@@ -1,8 +1,4 @@
-<a id="gotop" class="d-none"  javascript:void(0)>
-  <img src="{{ asset('img/corporativa/svg/black-arrow.svg') }}" id="blackarrow" width="50" alt="Logo email for send email">
-  <img src="{{ asset('img/corporativa/svg/red-arrow.svg') }}" id="redarrow" width="50" alt="Logo email for send email">   
-
-</a>
+ 
 
 <div class="bg-dark">
 
@@ -14,7 +10,7 @@
     <div class="row">
       <div class="col-lg-4 col-12 my-5 my-lg-0">
         <div class="d-flex align-items-center justify-content-center">
-          <img src="{{ asset('img/corporativa/favicon.svg') }}" alt="Logo Asador la morenica" width="130" class="">
+          <img src="{{ asset('img/corporativa/logo-blanco.png') }}" alt="Logo Asador la morenica" width="130" class="">
         </div>
         <div class="m-2">
           <div class="d-flex flex-row justify-content-evenly align-items-center">
@@ -51,7 +47,7 @@
           </div>
           <div class="d-flex align-items-center">
             <img src="{{ asset('img/corporativa/svg/map.svg') }}" width="20" alt="Logo localization for see the ubication">
-            <a href="{{route('sitemap')}}" class="text-light ms-2 footEl">Mapa Web</a>
+            <a href="#" class="text-light ms-2 footEl">Mapa Web</a>
           </div>
       </div>
 
@@ -59,7 +55,7 @@
 
       <div class="col-lg-4 col-12  my-5 my-lg-0">
         <span class="text-start text-light">Suscribete a nuestra NewsLetter</span>
-          <form id="formNewsLetter"  action="{{ route('newsletter.store') }}" method="POST">
+          <form id="formNewsLetter"  action="#" method="POST">
             @csrf
             <div class="input-group flex-nowrap my-2"> 
               <input type="email" class="form-control text-light bg-dark" placeholder="E-mail" aria-label="E-mail" aria-describedby="addon-wrapping" name="email" required>
@@ -68,7 +64,7 @@
             <div class="d-flex">
               <div class="input-group my-3 text-light">
                   <input class="form-check-input mx-2 mt-0 p-2 rounded-circle" type="checkbox" value="" aria-label="Checkbox for following text input" required>
-               <small> Acepto las <a href="{{ route('privacyPolices') }}">política de privacidad</a></small>
+               <small> Acepto las <a href="#">política de privacidad</a></small>
               </div>
               <button type="submit" class="btn btn-light my-2">Suscribirse</button>
           </form>
@@ -86,16 +82,16 @@
         <div class="collapse navbar-collapse d-flex justify-content-center align-items-center" id="navbarNav">
           <ul class="navbar-nav">
               <li class="nav-item mx-3">
-                  <a class="nav-link" href="{{ route('privacyPolices') }}"><small>Políticas de Privacidad</small></a>
+                  <a class="nav-link" href="#"><small>Políticas de Privacidad</small></a>
                 </li>
                 <li class="nav-item mx-3">
-                  <a class="nav-link" href="{{ route('privacyCookies') }}"><small>Políticas de Cookies</small></a> 
+                  <a class="nav-link" href="#"><small>Políticas de Cookies</small></a> 
                 </li>  
                 <li class="nav-item mx-3">
-                  <a class="nav-link" href="{{ route('legalWarning') }}"><small>Aviso Legal</small></a>
+                  <a class="nav-link" href="#"><small>Aviso Legal</small></a>
                 </li>
                 <li class="nav-item mx-3">
-                  <a class="nav-link" href="{{ route('faqs') }}"><small>Faq's</small></a>
+                  <a class="nav-link" href="#"><small>Faq's</small></a>
                 </li>
           </ul>
         </div>

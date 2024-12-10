@@ -28,14 +28,14 @@ Route::middleware(['auth'])->group(function () {
     // Grupo de rutas protegidas con middleware adicional (opcional)
     Route::group(['middleware' => 'adminOrBasic'], function () {
         // Ruta para gestionar usuarios
-        Route::get('/panel/users', [UserController::class, 'index'])->name('users.index');
+        Route::get('/panel/users', [HomeController::class, 'users'])->name('users.index'); 
 
         // Ruta para consultar correos enviados
-        Route::get('/panel/emails', [EmailController::class, 'index'])->name('newsletters.index');
+        Route::get('/panel/emails', [HomeController::class, 'emails'])->name('newsletters.index');
 
         // Ruta para ajustes
-        Route::get('/panel/settings', [PublicController::class, 'showSettings'])->name('settings.index');
-        Route::post('/panel/settings', [PublicController::class, 'saveSettings'])->name('settings.save');
+        Route::get('/panel/settings', [HomeController::class, 'settings'])->name('settings.index');
+        Route::post('/panel/settings', [BookingController::class, 'saveSettings'])->name('settings.save');
     });
 });
 
