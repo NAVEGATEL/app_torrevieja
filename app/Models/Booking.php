@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Booking extends Model
 {
     use HasFactory;
+    protected $table = 'bookings'; // Nombre de la tabla en la base de datos
 
     /**
      * Los atributos que se pueden asignar en masa.
@@ -27,10 +28,13 @@ class Booking extends Model
         'date_booking',
         'date_modified',
         'date_enjoyed',
+
         'client_name',
         'client_phone',
         'client_email',
         'client_id',
+        'client_status',
+        
         'currency',
         'total_price',
         'payment_partial',

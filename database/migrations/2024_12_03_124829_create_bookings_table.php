@@ -35,6 +35,7 @@ return new class extends Migration
             $table->string('client_phone')->nullable();
             $table->string('client_email')->nullable();
             $table->string('client_id')->nullable(); 
+            $table->string('client_status')->nullable(); 
 
             $table->string('currency')->nullable();
             $table->decimal('total_price', 10, 2)->nullable();
