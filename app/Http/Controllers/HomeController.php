@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\BookingController;
 use App\Models\Booking; // Importa el modelo correctamente
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Mail; // Asegúrate de importar esta clase
 
 
 class HomeController extends Controller
@@ -126,22 +127,21 @@ class HomeController extends Controller
     
     public function send(Request $request)
     {
-        dd([
-            'to' => $request->input('to'),
-            'subject' => $request->input('subject'),
-            'body' => $request->input('body'),
-            'attachments' => $request->file('attachments'), // Mostrar archivos adjuntos
-        ]);
+        // dd([
+        //     'to' => $request->input('to'),
+        //     'subject' => $request->input('subject'),
+        //     'body' => $request->input('body'),
+        //     'attachments' => $request->file('attachments'), // Mostrar archivos adjuntos
+        // ]);
         $recipients = array_filter(array_map('trim', explode(',', $request->input('to'))));
         $subject = $request->input('subject');
         $body = $request->input('body');
-    
-        // Asegúrate de tener Mail configurado en .env (host SMTP, usuario, password, etc.)
+
         foreach ($recipients as $email) {
             Mail::html($body, function ($message) use ($email, $subject, $request) {
                 $message->to($email)
                         ->subject($subject);
-    
+
                 if ($request->hasFile('attachments')) {
                     foreach ($request->file('attachments') as $file) {
                         $message->attach($file->getRealPath(), [
@@ -152,31 +152,31 @@ class HomeController extends Controller
                 }
             });
         }
-    
+
         return redirect()->route('emails.index')->with('success', 'Correos enviados exitosamente.');
     }
     
     
 
     
-    public function upload(Request $request)
-    {
-        // Valida que se haya enviado un archivo
-        $request->validate([
-            'upload' => 'required|image|mimes:jpg,jpeg,png,gif|max:2048'
-        ]);
+    // public function upload(Request $request)
+    // {
+    //     // Valida que se haya enviado un archivo
+    //     $request->validate([
+    //         'upload' => 'required|image|mimes:jpg,jpeg,png,gif|max:2048'
+    //     ]);
 
-        // Guarda la imagen en la carpeta public con un nombre único
-        $path = $request->file('upload')->store('images', 'public');
+    //     // Guarda la imagen en la carpeta public con un nombre único
+    //     $path = $request->file('upload')->store('images', 'public');
         
-        // Construye la URL completa al archivo
-        $url = asset('storage/' . $path);
+    //     // Construye la URL completa al archivo
+    //     $url = asset('storage/' . $path);
 
-        // Retorna la respuesta en el formato que CKEditor espera
-        return response()->json([
-            'url' => $url
-        ]);
-    }
+    //     // Retorna la respuesta en el formato que CKEditor espera
+    //     return response()->json([
+    //         'url' => $url
+    //     ]);
+    // }
 
 
 
