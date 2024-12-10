@@ -263,7 +263,7 @@
     <h2>Composición de Correo</h2>
     <form id="emailForm" method="POST" action="{{ route('send') }}" enctype="multipart/form-data">
         @csrf
-        <div class="form-group mb-3">
+        <div class="form-group mb-3 d- none">
             <label for="to">Para:</label>
             <input 
                 type="text" 
@@ -280,7 +280,7 @@
         </div>
         <div class="form-group mb-3">
             <label for="editor">Mensaje:</label>
-            <textarea id="editor" name="body" class="form-control"></textarea>
+            <textarea id="editor" name="body" class="form-control"  rows="17" cols="80"></textarea>
         </div>
         <div class="form-group mb-3">
             <label for="attachments">Adjuntar Archivos:</label>
@@ -290,16 +290,27 @@
     </form>
     </div>
 
+
+    <script src="https://cdn.tiny.cloud/1/a9t2hiq0if3a81dy68yynw9tzrryktp1bs9atbu27tm5ciem/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
     <script>
-        // Inicializar TinyMCE
         tinymce.init({
-            selector: '#editor',
-            plugins: 'image link table media lists code fullscreen',
-            toolbar: 'undo redo | styles | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | fullscreen code',
-            menubar: false,
-            height: 300,
+            selector: 'textarea',
+            height: 500, // Altura del editor
+            plugins: [
+                'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'image', 'link', 'lists',
+                'media', 'searchreplace', 'table', 'visualblocks', 'wordcount', 'align'
+            ],
+            toolbar: 'undo redo | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media | removeformat',
+            menubar: 'file edit view insert format tools table',
+            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px; line-height:1.6 }'
         });
+
+
     </script>
+
+
+
+
 
 
 

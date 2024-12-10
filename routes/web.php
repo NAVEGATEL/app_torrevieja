@@ -33,6 +33,7 @@ Route::middleware(['auth'])->group(function () {
         // Ruta para enviar correos 
         Route::get('/panel/emails', [HomeController::class, 'emails'])->name('emails.index');
         Route::post('/panel/send', [HomeController::class, 'send'])->name('send');
+        // Route::post('/panel/upload', [HomeController::class, 'upload'])->name('upload');
 
         // Ruta para ajustes
         Route::get('/panel/settings', [HomeController::class, 'settings'])->name('settings.index');
