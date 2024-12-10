@@ -76,3 +76,20 @@
     width: 0; /* Se contrae al no estar en hover */
 }
 
+
+
+
+
+/* color de hover */
+.bg-danger{
+    background-color: var(--color-1) !important;
+}
+.btn-outline-danger{
+    --bs-btn-hover-bg: var(--color-1) !important;
+    --bs-btn-border-color: var(--color-1) !important;
+    --bs-btn-color: var(--color-1) !important;
+    --bs-btn-hover-border-color: var(--color-1) !important;
+    --bs-btn-active-bg: var(--color-1) !important;
+    --bs-btn-disabled-color: var(--color-1) !important;
+    --bs-btn-disabled-border-color:  var(--color-1) !important;
+}

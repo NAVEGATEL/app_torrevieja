@@ -30,8 +30,9 @@ Route::middleware(['auth'])->group(function () {
         // Ruta para gestionar usuarios
         Route::get('/panel/users', [HomeController::class, 'users'])->name('users.index'); 
 
-        // Ruta para consultar correos enviados
-        Route::get('/panel/emails', [HomeController::class, 'emails'])->name('newsletters.index');
+        // Ruta para enviar correos 
+        Route::get('/panel/emails', [HomeController::class, 'emails'])->name('emails.index');
+        Route::post('/panel/send', [HomeController::class, 'send'])->name('send');
 
         // Ruta para ajustes
         Route::get('/panel/settings', [HomeController::class, 'settings'])->name('settings.index');

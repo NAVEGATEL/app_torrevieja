@@ -38,7 +38,7 @@
 
             <!-- Correos Enviados -->
             <li class="nav-item mx-0 mx-md-1">
-                <a href="{{ route('newsletters.index') }}" class="animated-link list-group-item list-group-item-action rounded m-2 color-light text-center">
+                <a href="{{ route('emails.index') }}" class="animated-link list-group-item list-group-item-action rounded m-2 color-light text-center">
                     <i class="bi bi-envelope-fill"></i> Correos Enviados
                 </a>
             </li>
