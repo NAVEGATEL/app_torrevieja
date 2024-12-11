@@ -133,26 +133,38 @@ class HomeController extends Controller
         //     'body' => $request->input('body'),
         //     'attachments' => $request->file('attachments'), // Mostrar archivos adjuntos
         // ]);
-        $recipients = array_filter(array_map('trim', explode(',', $request->input('to'))));
-        $subject = $request->input('subject');
-        $body = $request->input('body');
-
         foreach ($recipients as $email) {
-            Mail::html($body, function ($message) use ($email, $subject, $request) {
-                $message->to($email)
-                        ->subject($subject);
-
-                if ($request->hasFile('attachments')) {
-                    foreach ($request->file('attachments') as $file) {
-                        $message->attach($file->getRealPath(), [
-                            'as' => $file->getClientOriginalName(),
-                            'mime' => $file->getMimeType(),
-                        ]);
+            try {
+                // Enviar correo
+                Mail::html($body, function ($message) use ($email, $subject, $request) {
+                    $message->to($email)
+                            ->subject($subject);
+    
+                    // Adjuntar archivos
+                    if ($request->hasFile('attachments')) {
+                        foreach ($request->file('attachments') as $file) {
+                            $message->attach($file->getRealPath(), [
+                                'as' => $file->getClientOriginalName(),
+                                'mime' => $file->getMimeType(),
+                            ]);
+                        }
                     }
+                });
+                
+                \Log::info("Correo enviado a {$email} exitosamente.");
+                $varControl++;
+    
+                // Pausar cada 5 correos
+                if ($varControl % 5 == 0) {
+                    sleep(30); 
                 }
-            });
+            } catch (\Exception $e) {
+                // Registrar errores
+                \Log::error("Error enviando correo a {$email}: " . $e->getMessage());
+                continue;
+            }
         }
-
+    
         return redirect()->route('emails.index')->with('success', 'Correos enviados exitosamente.');
     }
     
