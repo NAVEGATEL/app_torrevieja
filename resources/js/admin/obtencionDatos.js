@@ -1189,4 +1189,4 @@ async function init() {
 }
 
 // Llamar a la función init al cargar la página
-document.addEventListener("DOMContentLoaded", init);
+// document.addEventListener("DOMContentLoaded", init);

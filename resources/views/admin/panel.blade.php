@@ -96,7 +96,11 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="{{ mix('resources\js\admin\obtencionDatos.js') }}"></script>
+
 <script>
+    init();
     // Total de Ventas
     const totalSalesCtx = document.getElementById('totalSalesChart').getContext('2d');
     new Chart(totalSalesCtx, {
