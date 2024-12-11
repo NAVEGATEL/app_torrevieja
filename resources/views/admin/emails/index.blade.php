@@ -15,12 +15,6 @@
         </div>
     </div>
 
-
-
-
-
-
-
     <div class="row">
     <!-- Formulario de búsqueda -->
     <div class="col-md-12 mb-4">
@@ -187,35 +181,8 @@
 </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     <!-- Tabla de correos electrónicos -->
-    <div class="accordion">
+    <div class="accordion d-none">
         <div class="accordion-item">
             <h2 class="accordion-header">
             <button 
@@ -250,54 +217,60 @@
     <!-- Selector de plantillas -->
     <div class="container mt-4">
         <label for="templateSelector" class="form-label">Selecciona una plantilla</label>
-        <select id="templateSelector" class="form-select">
-            <!-- Aquí iria el nombre de la bariable de las plantillas de correos que tenemos en la base de datos y recuperamos desde el controlador -->
-            @foreach ($clientEmails as $plantilla)
-                <option value="{{ $plantilla }}">{{ $plantilla }}</option>
-            @endforeach
-        </select>
+        <select id="templateSelect" class="form-control">
+                <option value="" selected>Seleccione una plantilla...</option>
+                @foreach ($emailTemplates as $template)
+                    <option value="{{ $template->id }}" 
+                            data-subject="{{ $template->subject }}" 
+                            data-body="{{ $template->body }}">
+                        {{ $template->subject }} ({{ $template->created_at->format('d/m/Y') }})
+                    </option>
+                @endforeach
+            </select>
     </div>
 
 
-
-
-
-
     <!-- Formulario de composición de correo -->
+    <h2 class="text-center mt-5">Composición de Correo</h2>
+    <div class="email-form mt-4 card">
 
-    <div class="container email-form mt-4">
-    <h2>Composición de Correo</h2>
-    <form id="emailForm" method="POST" action="{{ route('send') }}" enctype="multipart/form-data">
-        @csrf
-        <div class="form-group mb-3 d- none">
-            <label for="to">Para:</label>
-            <input 
-                type="text" 
-                id="to" 
-                name="to" 
-                class="form-control" 
-                placeholder="Introduce el destinatario" 
-                value="{{ implode(', ', $clientEmails) }}" 
-                required>
+        <div class="card-header bg-dark text-white">
+        Correos Electrónicos Encontrados (<b class="text-danger"> {{ count($clientEmails) }} </b>)
         </div>
-        <div class="form-group mb-3">
-            <label for="subject">Asunto:</label>
-            <input type="text" id="subject" name="subject" class="form-control" placeholder="Introduce el asunto" required>
-        </div>
-        <div class="form-group mb-3">
-            <label for="editor">Mensaje:</label>
-            <textarea id="editor" name="body" class="form-control"  rows="17" cols="80"></textarea>
-        </div>
-        <div class="form-group mb-3">
-            <label for="attachments">Adjuntar Archivos:</label>
-            <input type="file" id="attachments" name="attachments[]" class="form-control" multiple>
-        </div>
-        <button type="submit" class="btn btn-primary">Enviar</button>
-    </form>
+    
+        <form id="emailForm" method="POST" action="{{ route('send') }}" enctype="multipart/form-data" class="pb-5">
+            @csrf
+            <div class="form-group mb-3 d-none">
+                <label for="to">Para:</label>
+                <input 
+                    type="text" 
+                    id="to" 
+                    name="to" 
+                    class="form-control" 
+                    placeholder="Introduce el destinatario" 
+                    value="{{ implode(', ', $clientEmails) }}" 
+                    required>
+            </div>
+            <div class="form-group mb-3">
+                <label for="subject">Asunto:</label>
+                <input type="text" id="subject" name="subject" class="form-control" placeholder="Introduce el asunto" required>
+            </div>
+            <div class="form-group mb-3">
+                <label for="editor">Mensaje:</label>
+                <textarea id="editor" name="body" class="form-control"  rows="17" cols="80"></textarea>
+            </div>
+            <div class="form-group mb-3">
+                <label for="attachments">Adjuntar Archivos:</label>
+                <input type="file" id="attachments" name="attachments[]" class="form-control" multiple>
+            </div>
+            <button type="submit" class="btn btn-primary m-2  float-end">Enviar</button>
+            <a id="saveTemplateButton" class="btn btn-outline-success m-2 float-end">Guardar</a>
+        </form>
     </div>
 
 
     <script src="https://cdn.tiny.cloud/1/a9t2hiq0if3a81dy68yynw9tzrryktp1bs9atbu27tm5ciem/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+
     <script>
         tinymce.init({
             selector: 'textarea',
@@ -311,9 +284,52 @@
             content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px; line-height:1.6 }'
         });
 
+        document.getElementById('saveTemplateButton').addEventListener('click', async () => {
+        const formData = new FormData();
+        const subject = document.getElementById('subject').value;
+        const body = tinymce.get('editor').getContent();
+        const attachment = document.getElementById('attachments').files[0];
 
+        formData.append('subject', subject);
+        formData.append('body', body);
+        if (attachment) {
+            formData.append('attachments', attachment);
+        }
+
+        try {
+            const response = await fetch('/panel/email-templates', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                },
+                body: formData,
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                alert('Plantilla guardada con éxito.');
+            } else {
+                alert('Error al guardar la plantilla.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Ocurrió un error al guardar la plantilla.');
+        }
+        });
     </script>
 
+    <script>
+        // Manejar cambios en el select de plantillas
+        document.getElementById('templateSelect').addEventListener('change', (event) => {
+            const selectedOption = event.target.options[event.target.selectedIndex];
+            const subject = selectedOption.getAttribute('data-subject') || '';
+            const body = selectedOption.getAttribute('data-body') || '';
+
+            // Actualizar los campos del formulario
+            document.getElementById('subject').value = subject;
+            tinymce.get('editor').setContent(body);
+        });
+    </script>
 
 
 

@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\EmailController;
+use App\Http\Controllers\EmailTemplateController; // Nuevo controlador
 use App\Http\Controllers\PublicController;
 
 // Ruta de fallback para redirigir a la página principal
@@ -32,12 +33,15 @@ Route::middleware(['auth'])->group(function () {
 
         // Ruta para enviar correos 
         Route::get('/panel/emails', [HomeController::class, 'emails'])->name('emails.index');
-        Route::post('/panel/send', [HomeController::class, 'send'])->name('send');
-        // Route::post('/panel/upload', [HomeController::class, 'upload'])->name('upload');
+        Route::post('/panel/send', [HomeController::class, 'send'])->name('send'); 
 
-        // Ruta para ajustes
-        Route::get('/panel/settings', [HomeController::class, 'settings'])->name('settings.index');
-        Route::post('/panel/settings', [BookingController::class, 'saveSettings'])->name('settings.save');
+        // Nuevas rutas para gestionar plantillas de correos
+        Route::prefix('panel/email-templates')->name('emailTemplates.')->group(function () {
+            Route::get('/', [EmailTemplateController::class, 'index'])->name('index'); // Listar plantillas
+            Route::post('/', [EmailTemplateController::class, 'store'])->name('store'); // Crear plantilla
+            Route::delete('/{id}/logic-delete', [EmailTemplateController::class, 'logicDelete'])->name('emailTemplates.logicDelete'); // Eliminar lógica
+            
+        });
     });
 });
 

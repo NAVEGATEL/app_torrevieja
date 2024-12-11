@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\BookingController;
-use App\Models\Booking; // Importa el modelo correctamente
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Mail; // Asegúrate de importar esta clase
+use Illuminate\Support\Facades\Mail;  
 
+use App\Models\Booking;  
+use App\Models\EmailTemplate;
+
+use App\Http\Controllers\BookingController;
 
 class HomeController extends Controller
 {
@@ -95,6 +97,8 @@ class HomeController extends Controller
         $selectedProducts = $request->input('activities', []);
         // Obtener ubicaciones seleccionadas
         $selectedLocations = $request->input('locations', []);
+
+        $emailTemplates = EmailTemplate::where('deleted', false)->get();
     
         // Obtener todas las actividades únicas
         $productNames = Booking::pluck('product_name')->unique()->toArray();
@@ -122,7 +126,7 @@ class HomeController extends Controller
         ->toArray();
     
         // Pasar los datos a la vista
-        return view('admin.emails.index', compact('clientEmails', 'productNames', 'locations'));
+        return view('admin.emails.index', compact('clientEmails', 'productNames', 'locations', 'emailTemplates'));
     }
     
     public function send(Request $request)
