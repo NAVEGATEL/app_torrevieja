@@ -44,11 +44,11 @@
             </li>
 
             <!-- Ajustes -->
-            <li class="nav-item mx-0 mx-md-1">
+            <!-- <li class="nav-item mx-0 mx-md-1">
                 <a href="{{ route('settings.index') }}" class="animated-link list-group-item list-group-item-action rounded m-2 color-light text-center">
                     <i class="bi bi-gear-fill"></i> Ajustes
                 </a>
-            </li>
+            </li> -->
 
             <!-- Botón para cerrar sesión -->
             <li class="nav-item mx-0">
