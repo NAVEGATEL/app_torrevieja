@@ -6,11 +6,11 @@
   </div>
 
 
- <div class="container mb-3">
+ <div class="container mb-3 vh-100 py-2">
     <div class="row">
-      <div class="col-lg-4 col-12 my-5 my-lg-0">
+      <div class="col-lg-6 col-12 my-5 my-lg-0">
         <div class="d-flex align-items-center justify-content-center">
-          <img src="{{ asset('img/corporativa/logo-blanco.png') }}" alt="Logo Asador la morenica" width="130" class="">
+          <img src="https://navegatel.org/wp-content/uploads/2022/06/navegatel.png" alt="Logo Asador la morenica" width="130" class="">
         </div>
         <div class="m-2">
           <div class="d-flex flex-row justify-content-evenly align-items-center">
@@ -28,47 +28,40 @@
         </div> 
       </div>
 
-      <div class="col-lg-4 col-12 text-light ">
-        <span class="text-start">Encuéntranos en...</span> 
-          <div class="d-flex align-items-start">
-            <img src="{{ asset('img/corporativa/svg/email.svg') }}" width="20" alt="Logo email for send email">
-            <a href="mailto:asadorlamorenica@gmail.com" class="footEl ms-2 text-light">asadorlamorenica@gmail.com</a>
-          </div>
-          <div class="d-flex align-items-center">
-            <img src="{{ asset('img/corporativa/svg/telephone.svg') }}" width="20" alt="Logo telephone for call">
-            <a href="tel:+34965813907" class="ms-2 text-light footEl">965813907</a>
-            <a href="tel:+34654027015" class="ms-2 text-light footEl">654027015</a>
-            {{-- <a href="https://wa.me/34657396036?text=Hola! Me gustaría encargar..." class="ms-2 text-light">Escribenos por whatsapp</a> --}}
-          </div>
-          <div class="d-flex align-items-center">
-            <img src="{{ asset('img/corporativa/svg/localization.svg') }}" width="20" alt="Logo localization for see the ubication">
-            <a href="https://www.google.com/maps/place/Asador+La+Morenica/@38.6418875,-0.8675394,15z/data=!4m6!3m5!1s0xd63df787f80d8db:0xed55f40214e65573!8m2!3d38.6418875!4d-0.8675394!16s%2Fg%2F11b7cjsx_8" Class="mx-2 footEl text-light">C/ Celada 72</a>
-            <small >Villena (03400) Alicante</small>
-          </div>
-          <div class="d-flex align-items-center">
-            <img src="{{ asset('img/corporativa/svg/map.svg') }}" width="20" alt="Logo localization for see the ubication">
-            <a href="#" class="text-light ms-2 footEl">Mapa Web</a>
-          </div>
-      </div>
 
+      <div class="col-lg-6 col-12 text-light">
+        <h5 class="text-start mb-3">Contáctanos</h5>
 
-
-      <div class="col-lg-4 col-12  my-5 my-lg-0">
-        <span class="text-start text-light">Suscribete a nuestra NewsLetter</span>
-          <form id="formNewsLetter"  action="#" method="POST">
-            @csrf
-            <div class="input-group flex-nowrap my-2"> 
-              <input type="email" class="form-control text-light bg-dark" placeholder="E-mail" aria-label="E-mail" aria-describedby="addon-wrapping" name="email" required>
-              <span class="input-group-text" id="addon-wrapping"><img src="{{ asset('img/corporativa/svg/mail.svg') }}"  width="30" alt="Logo email"></span>
-            </div>
-            <div class="d-flex">
-              <div class="input-group my-3 text-light">
-                  <input class="form-check-input mx-2 mt-0 p-2 rounded-circle" type="checkbox" value="" aria-label="Checkbox for following text input" required>
-               <small> Acepto las <a href="#">política de privacidad</a></small>
+        <!-- Dirección -->
+         <div class="d-flex">
+          <div class="d-flex align-items-start mx-3">
+              <img src="{{ asset('img/corporativa/svg/localization.svg') }}" width="20" alt="Logo de localización">
+              <div class="ms-2">
+                  <p class="mb-0 footEl">C/ Cardenal Cisneros, 5</p>
+                  <p class="mb-0 footEl">03201 Elche (Alicante)</p>
               </div>
-              <button type="submit" class="btn btn-light my-2">Suscribirse</button>
-          </form>
-        </div> 
+          </div>
+
+          <!-- Teléfonos -->
+          <div class="d-flex align-items-start mx-3">
+              <img src="{{ asset('img/corporativa/svg/telephone.svg') }}" width="20" alt="Logo de teléfono">
+              <div class="ms-2">
+                  <a href="tel:+34673660910" class="text-light footEl d-block">673 66 09 10</a>
+                  <a href="tel:+34865784466" class="text-light footEl d-block">865 78 44 66</a>
+              </div>
+          </div>
+
+          <!-- Correo electrónico -->
+          <div class="d-flex align-items-start">
+              <img src="{{ asset('img/corporativa/svg/email.svg') }}" width="20" alt="Logo de email">
+              <a href="mailto:info@navegatel.org" class="footEl ms-2 text-light">info@navegatel.org</a>
+          </div>
+         </div>
+
+    </div>
+
+
+    
         
         
       </div>
@@ -77,25 +70,6 @@
 
 
 
-  <nav class="navbar navbar-expand-lg bg-dark footer" aria-label="Legal texts nav">
-      <div class="container-fluid ">
-        <div class="collapse navbar-collapse d-flex justify-content-center align-items-center" id="navbarNav">
-          <ul class="navbar-nav">
-              <li class="nav-item mx-3">
-                  <a class="nav-link" href="#"><small>Políticas de Privacidad</small></a>
-                </li>
-                <li class="nav-item mx-3">
-                  <a class="nav-link" href="#"><small>Políticas de Cookies</small></a> 
-                </li>  
-                <li class="nav-item mx-3">
-                  <a class="nav-link" href="#"><small>Aviso Legal</small></a>
-                </li>
-                <li class="nav-item mx-3">
-                  <a class="nav-link" href="#"><small>Faq's</small></a>
-                </li>
-          </ul>
-        </div>
-      </div>
-  </nav>
+ 
 
 </div>
