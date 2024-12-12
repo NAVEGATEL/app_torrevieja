@@ -100,7 +100,7 @@
 <!-- <script src="resources\js\admin\obtencionDatos.js"></script> -->
 
 <script>
-    init();
+    // init();
     // Total de Ventas
     const totalSalesCtx = document.getElementById('totalSalesChart').getContext('2d');
     new Chart(totalSalesCtx, {
