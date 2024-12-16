@@ -71,7 +71,8 @@ class HomeController extends Controller
                 $query->whereDate('date_event', '>=', $request->startDate);
             }
         }
-    
+        // Excluir clientes con nombre "N/A"
+        $query->where('client_name', '!=', 'N/A');
         // Paginación de resultados
         $bookings = $query->paginate(74);
     

@@ -27,10 +27,6 @@
                     }
                 @endphp
 
-
-
-
-
                 <form id="searchForm" class="row g-4" method="GET" action="{{ route('users.index') }}">
                     <div class="col-md-3">
                         <label for="searchQuery" class="form-label fw-bold">Buscar usuarios</label>
@@ -91,50 +87,6 @@
                         </button>
                     </div>
                 </form>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                    <script>
-                        function toggleEndDate(checkbox) {
-                            const endDate = document.getElementById('endDate');
-                            if (checkbox.checked) {
-                                endDate.disabled = true;
-                                endDate.classList.add('d-none');
-                            } else {
-                                endDate.disabled = false;
-                                endDate.classList.remove('d-none');
-                            }
-                        }
-                    </script>
-
-                
                 <!-- Renderiza los enlaces de paginación -->
                 {{ $bookings->links() }}
                 </div>
@@ -151,17 +103,18 @@
                     <table id="clientTable" class="table table-striped">
                         <thead>
                             <tr>
-                                <th>Nombre</th>
-                                <th>Email</th>
-                                <th>Edad</th>
-                                <th>Tipo</th>
-                                <th>Notas</th>
-                                <th>Última Visita</th>
-                                <th>Última Actividad</th>
-                                <th>Acciones</th>
+                                <th class="text-center">Nombre</th>
+                                <th class="text-center">Email</th>
+                                <th class="text-center">Teléfono</th>
+                                <th class="text-center">Tipo</th>
+                                <th class="text-center">Reserva</th>
+                                <th class="text-center">Fecha</th>
+                                <th class="text-center">Actividad</th>
+                                <th class="text-center">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
+                            <!-- Este Script partido de Hola es para mostrar por consola un resultado o los que se quieran para ver que obtenemos -->
                             <script>
                                     let hola = 0
                             </script>
@@ -169,26 +122,41 @@
                             <script> 
                                     if(hola == 0){
                                         let bookings = @json($bookings);
-                                        console.log(bookings)
+                                        console.log(bookings);
+                                        hola++;
                                     }
                             </script>
                                 <tr>
                                     <td>{{ $client['client_name'] }}</td>
-                                    <td>{{ $client['client_email'] }}</td>
-                                    <td>{{ $client['date_booking'] }}</td>
+                                    <td class="text-truncate" style="max-width: 150px;" data-bs-toggle="tooltip" title="{{ $client['client_email'] }}">
+                                        {{ $client['client_email'] }}
+                                    </td>
+                                    <td>{{ $client['client_phone'] }}</td>
                                     <td>
-                                        <i class="bi bi-balloon-fill text-center" style="color: {{ $client['client_status'] === 'red' ? 'red' : 'green' }};"></i>
+                                    @if (!isset($client['client_status']) || !$client['client_status'])
+                                        @php $client['client_status'] = 'blue'; @endphp
+                                    @endif 
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" fill="currentColor" class="bi bi-balloon-fill" viewBox="0 0 16 16">
+                                            <path style="color: {{ $client['client_status'] }} !important;" fill-rule="evenodd" d="M8.48 10.901C11.211 10.227 13 7.837 13 5A5 5 0 0 0 3 5c0 2.837 1.789 5.227 4.52 5.901l-.244.487a.25.25 0 1 0 .448.224l.04-.08c.009.17.024.315.051.45.068.344.208.622.448 1.102l.013.028c.212.422.182.85.05 1.246-.135.402-.366.751-.534 1.003a.25.25 0 0 0 .416.278l.004-.007c.166-.248.431-.646.588-1.115.16-.479.212-1.051-.076-1.629-.258-.515-.365-.732-.419-1.004a2 2 0 0 1-.037-.289l.008.017a.25.25 0 1 0 .448-.224zM4.352 3.356a4 4 0 0 1 3.15-2.325C7.774.997 8 1.224 8 1.5s-.226.496-.498.542c-.95.162-1.749.78-2.173 1.617a.6.6 0 0 1-.52.341c-.346 0-.599-.329-.457-.644"/>
+                                        </svg>
                                     </td>
                                     <td>{{ $client['short_id'] }}</td>
-                                    <td>{{ $client['location'] }}</td>
-                                    <td>{{ $client['service_flow'] }}</td>
+                                    <td>{{ $client['date_booking'] }}</td>
+                                    <td>{{ $client['product_name'] }}</td>
                                     <td>
-                                        <button class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#clientModal" data-client="{{ json_encode($client) }}">
-                                            <i class="bi bi-clipboard2-data"></i>
+                                        <button class="btn btn-outline-dark border-0 text-center" data-bs-toggle="modal" data-bs-target="#clientModal" data-client="{{ json_encode($client) }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" fill="currentColor" class="bi bi-segmented-nav text-dar btn-hover-action" viewBox="0 0 16 16">
+                                                <path d="M0 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm6 3h4V5H6zm9-1V6a1 1 0 0 0-1-1h-3v4h3a1 1 0 0 0 1-1"/>
+                                            </svg>
                                         </button>
                                     </td>
                                 </tr>
                             @endforeach
+                            <style>
+                                btn-hover-action:hover{
+                                    color:white !important;
+                                }
+                            </style>
                         </tbody>
                     </table>
                 </div>
@@ -232,5 +200,16 @@
             <p><strong>Actividades:</strong> ${client.actividades.join(', ')}</p>
         `;
     });
+
+    function toggleEndDate(checkbox) {
+                            const endDate = document.getElementById('endDate');
+                            if (checkbox.checked) {
+                                endDate.disabled = true;
+                                endDate.classList.add('d-none');
+                            } else {
+                                endDate.disabled = false;
+                                endDate.classList.remove('d-none');
+                            }
+                        }
 </script>
 @endsection

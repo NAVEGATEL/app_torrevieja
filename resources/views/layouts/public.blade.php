@@ -35,14 +35,7 @@
 
             gtag("config", "G-DJEK07JMK4");
         </script>
-        <style>
-    html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        overflow: hidden; /* Bloquea el scroll */
-    }
-    </style>
+
     </head>
     <body>
         <div id="app" class="bg-light">

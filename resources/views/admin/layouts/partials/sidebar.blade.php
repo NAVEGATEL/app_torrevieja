@@ -32,7 +32,7 @@
             <!-- Usuarios -->
             <li class="nav-item mx-0 mx-md-1">
                 <a href="{{ route('users.index') }}" class="animated-link list-group-item list-group-item-action rounded m-2 color-light text-center">
-                    <i class="bi bi-people-fill"></i> Usuarios
+                    <i class="bi bi-people-fill"></i> Reservas
                 </a>
             </li>
 

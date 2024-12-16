@@ -21,6 +21,12 @@ Route::get('/', function () {
     return Auth::check() ? redirect()->route('panel') : redirect('/login');
 })->name('home');
 
+
+Route::get('/consentA', function () {
+    return view('consents.consentA');
+})->name('consentA');
+
+
 // Grupo de rutas protegidas por autenticación
 Route::middleware(['auth'])->group(function () {
     // Ruta para el panel principal (dashboard)
