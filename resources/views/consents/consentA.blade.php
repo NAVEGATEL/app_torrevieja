@@ -76,7 +76,7 @@
                     <p>¿Qué deseas hacer ahora?</p>
                     <button id="botonImprimir" class="btn btn-primary m-2">Imprimir</button>
                     <button id="botonGuardar" class="btn btn-success m-2">Guardar</button>
-                    <button id="botonReescribir" class="btn btn-warning m-2">Reescribir Documento</button>
+                    <button id="botonReescribir" class="btn btn-warning m-2">Cancelar</button>
                 </div>
             </div>
         </div>
@@ -89,7 +89,6 @@
         <button id="btnEN" class="btn btn-outline-primary">EN</button>
     </div>
 
-
     <h1 class="text-center">Consentimiento de Uso</h1>
     <p class="text-justify">
         Este es el contenido de consentimiento de acceso público. Puedes agregar aquí toda la información necesaria.
@@ -97,10 +96,8 @@
 
     <div id="form-inicial" class="text-center row">
         <input type="text" id="inputText" placeholder="Ticket Nº" class="form-control col-2 mb-3" />
-        <button type="submit" id="obtenerticketbtn" class="btn btn-outline-primary mt-2">Enviar</button>
+        <button id="obtenerticketbtn" class="btn btn-outline-primary mt-2">Enviar</button>
     </div>
-
-    <div id="formularioClientes"></div>
 
     <!-- Aquí es donde se obtiene el número de ticket, se hace un fetch para buscar en turitop y luego se crea el form -->
     <script>
@@ -130,13 +127,9 @@
             });
     </script>
 
-
-
 </div>
 
-<!-- Modulo cambiar idioma SCRIPT 
-asdf@asd.es 
--->
+<!-- Modulo cambiar idioma SCRIPT -->
 <script> 
     // Obtener los botones
     const btnES = document.getElementById('btnES');
@@ -384,7 +377,7 @@ asdf@asd.es
         // Crear nuevo formulario
         const nuevoFormulario = document.createElement('form');
         nuevoFormulario.innerHTML = `
-            <form id="formularioClientes" class="text-center row" onsubmit="${navidad()}">
+            <form id="formularioClientes" class="text-center row" >
  
                 <h3 class="mt-4">${textos.es.ticketPlaceholder}: ${ticketNumber}</h3>
                 <input type="text" class="form-control mb-3" value="${ticketNumber}" disabled />
@@ -416,13 +409,12 @@ asdf@asd.es
                     <input type="number" id="flyboardNum" class="form-control mt-2" placeholder="${textos.es.numPersonas}" disabled />
                 </div>
     
-
                 <!-- Fecha -->
                 <label for="fecha">${textos.es.fecha}:</label>
                 <input type="date" id="fecha" class="form-control mb-3" value="${new Date().toISOString().split('T')[0]}" />
 
                 <!-- Botón de enviar -->
-                <button type="submit" id="fetchBtn" class="btn btn-outline-primary mt-2">Enviar</button>
+                <button type="submit" id="fetchBtn" onclick="navidad()" class="btn btn-outline-primary mt-2">Enviar</button>
            </form>`;
 
         container.appendChild(nuevoFormulario);
@@ -505,10 +497,8 @@ asdf@asd.es
 
 <script>
     // Validar formulario y canvas
-    function navidad () {
-        const fetchBtn = document.querySelector("#fetchBtn");
+    function navidad() {
         
-        // Abre el modal si existe
         const modalElement = document.querySelector("#modalTodoListo");
         if (modalElement) {
             const modal = new bootstrap.Modal(modalElement);
