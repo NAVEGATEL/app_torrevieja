@@ -3,68 +3,84 @@
 
     // JSON con textos en ES y EN
     const textos = {
-    es: {
-        titulo: "Consentimiento de Uso",
-        granText: "Por el presente documento reconozco que la empresa ACTIVIDADES NÁUTICAS TORREVIEJA, S.L operadora de la actividad de iniciación a la moto náutica me ha explicado en qué consiste la actividad, me ha explicado las instrucciones de uso, las medidas de seguridad y todo el procedimiento a seguir durante el desarrollo de la excursión para su correcto desarrollo. Así mismo, he sido informado de las limitaciones y los supuestos en los que no se puede usar la moto acuática, tales como el estar bajo los efectos del alcohol, drogas, tener mermadas las capacidades físicas o mentales, etc... Me hago responsable de cualquier daño ocasionado al material que aquí se me presta y me comprometo a abonar la rotura del mismo, si éste se rompiera por no seguir las indicaciones de los monitores de la empresa. Igualmente reconozco que me ha sido traducido este texto, el cual firmo dándome por enterado de todo su contenido y otorgando mi plena conformidad y consentimiento. Eximo a la empresa de cualquier responsabilidad de la perdida de objetos realizando la actividad.",
-        ticketPlaceholder: "Ticket Nº",
-        enviar: "Enviar",
-        numClientes: "Número de Clientes",
-        actividades: "Actividades",
-        parasailing: "PARASAILING",
-        hinchable: "HINCHABLE",
-        flyboard: "FLYBOARD",
-        numPersonas: "Número de personas",
-        tipoHinchable: "Tipo de Hinchable",
-        tiempoFlyboard: "Tiempo en minutos",
-        menores: "Consentimiento para Menores",
-        menorEdad: "Menor de Edad",
-        padreTutor: "Padre/Tutor Legal",
-        firma: "Firma",
-        fecha: "Fecha",
-        enviarFormulario: "Enviar",
-        nombreApellido: "Nombre y Apellido",
-        dni: "DNI",
-        telefono: "Teléfono",
-        email: "Email",
-        limpiarFirma: "Limpiar",
-        cliente: "Cliente",
-        fechaNacimiento: "Fecha de Nacimiento",
+        es: {
+            titulo: "Consentimiento de Uso",
+            granText: "Por el presente documento reconozco que la empresa ACTIVIDADES NÁUTICAS TORREVIEJA, S.L operadora de la actividad de iniciación a la moto náutica me ha explicado en qué consiste la actividad, me ha explicado las instrucciones de uso, las medidas de seguridad y todo el procedimiento a seguir durante el desarrollo de la excursión para su correcto desarrollo. Así mismo, he sido informado de las limitaciones y los supuestos en los que no se puede usar la moto acuática, tales como el estar bajo los efectos del alcohol, drogas, tener mermadas las capacidades físicas o mentales, etc... Me hago responsable de cualquier daño ocasionado al material que aquí se me presta y me comprometo a abonar la rotura del mismo, si éste se rompiera por no seguir las indicaciones de los monitores de la empresa. Igualmente reconozco que me ha sido traducido este texto, el cual firmo dándome por enterado de todo su contenido y otorgando mi plena conformidad y consentimiento. Eximo a la empresa de cualquier responsabilidad de la perdida de objetos realizando la actividad.",
+            ticketPlaceholder: "Ticket Nº",
+            enviar: "Enviar",
+            numClientes: "Número de Clientes",
+            actividades: "Actividades",
+            parasailing: "PARASAILING",
+            hinchable: "HINCHABLE",
+            flyboard: "FLYBOARD",
+            numPersonas: "Número de personas",
+            tipoHinchable: "Tipo de Hinchable",
+            tiempoFlyboard: "Tiempo en minutos",
+            menores: "Consentimiento para Menores",
+            menorEdad: "Menor de Edad",
+            padreTutor: "Padre/Tutor Legal",
+            firma: "Firma",
+            fecha: "Fecha",
+            enviarFormulario: "Enviar",
+            nombreApellido: "Nombre y Apellido",
+            dni: "DNI",
+            telefono: "Teléfono",
+            email: "Email",
+            limpiarFirma: "Limpiar",
+            cliente: "Cliente",
+            fechaNacimiento: "Fecha de Nacimiento",
 
-    },
-    en: {
-        titulo: "Usage Consent",
-        granText: "By this document I acknowledge that the company ACTIVIDADES NÁUTICAS TORREVIEJA, S.L., operator of the jet ski initiation activity, has explained to me what the activity consists of, the instructions for use, safety measures, and the procedure to follow during the excursion for its proper development. I have also been informed about the limitations and cases where the jet ski cannot be used, such as being under the influence of alcohol, drugs, or having impaired physical or mental abilities, etc... I take responsibility for any damage caused to the material provided here and agree to pay for any breakages caused by not following the instructions given by the company's monitors. I also acknowledge that this text has been translated for me, which I sign to confirm my full understanding and consent. I release the company from any responsibility for the loss of objects during the activity.",
-        ticketPlaceholder: "Ticket No.",
-        enviar: "Send",
-        numClientes: "Number of Clients",
-        actividades: "Activities",
-        parasailing: "PARASAILING",
-        hinchable: "INFLATABLE",
-        flyboard: "FLYBOARD",
-        numPersonas: "Number of people",
-        tipoHinchable: "Type of Inflatable",
-        tiempoFlyboard: "Flyboard time (minutes)",
-        menores: "Consent for Minors",
-        menorEdad: "Minor",
-        padreTutor: "Parent/Legal Guardian",
-        firma: "Signature",
-        fecha: "Date",
-        enviarFormulario: "Submit",
-        nombreApellido: "Name and Surname",
-        dni: "ID Number",
-        telefono: "Phone",
-        email: "Email",
-        limpiarFirma: "Clear",
-        cliente: "Client",
-        fechaNacimiento: "Bith date",
+        },
+        en: {
+            titulo: "Usage Consent",
+            granText: "By this document I acknowledge that the company ACTIVIDADES NÁUTICAS TORREVIEJA, S.L., operator of the jet ski initiation activity, has explained to me what the activity consists of, the instructions for use, safety measures, and the procedure to follow during the excursion for its proper development. I have also been informed about the limitations and cases where the jet ski cannot be used, such as being under the influence of alcohol, drugs, or having impaired physical or mental abilities, etc... I take responsibility for any damage caused to the material provided here and agree to pay for any breakages caused by not following the instructions given by the company's monitors. I also acknowledge that this text has been translated for me, which I sign to confirm my full understanding and consent. I release the company from any responsibility for the loss of objects during the activity.",
+            ticketPlaceholder: "Ticket No.",
+            enviar: "Send",
+            numClientes: "Number of Clients",
+            actividades: "Activities",
+            parasailing: "PARASAILING",
+            hinchable: "INFLATABLE",
+            flyboard: "FLYBOARD",
+            numPersonas: "Number of people",
+            tipoHinchable: "Type of Inflatable",
+            tiempoFlyboard: "Flyboard time (minutes)",
+            menores: "Consent for Minors",
+            menorEdad: "Minor",
+            padreTutor: "Parent/Legal Guardian",
+            firma: "Signature",
+            fecha: "Date",
+            enviarFormulario: "Submit",
+            nombreApellido: "Name and Surname",
+            dni: "ID Number",
+            telefono: "Phone",
+            email: "Email",
+            limpiarFirma: "Clear",
+            cliente: "Client",
+            fechaNacimiento: "Bith date",
 
-    }
-};
+        }
+    };
 </script>
 @section('content')
 <div class="container mb-5 pb-5 ">
 
-
+    <!-- Modulo modal e impresion --> 
+    <div class="modal fade" id="modalTodoListo" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Todo listo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p>¿Qué deseas hacer ahora?</p>
+                    <button id="botonImprimir" class="btn btn-primary m-2">Imprimir</button>
+                    <button id="botonGuardar" class="btn btn-success m-2">Guardar</button>
+                    <button id="botonReescribir" class="btn btn-warning m-2">Reescribir Documento</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <!-- Botones de Idioma -->
@@ -79,15 +95,12 @@
         Este es el contenido de consentimiento de acceso público. Puedes agregar aquí toda la información necesaria.
     </p>
 
-
     <div id="form-inicial" class="text-center row">
         <input type="text" id="inputText" placeholder="Ticket Nº" class="form-control col-2 mb-3" />
         <button type="submit" id="obtenerticketbtn" class="btn btn-outline-primary mt-2">Enviar</button>
     </div>
 
-    <form id="formularioClientes" class="text-center row d-none">
-        <button type="submit" id="fetchBtn" class="btn btn-outline-primary mt-2">Enviar</button>
-    </form>
+    <div id="formularioClientes"></div>
 
     <!-- Aquí es donde se obtiene el número de ticket, se hace un fetch para buscar en turitop y luego se crea el form -->
     <script>
@@ -107,9 +120,7 @@
                         if (!response.ok) throw new Error('Error en la solicitud');
                         return response.json();
                     })
-                    .then(data => {
-                        document.querySelector("#form-inicial").display = "none"
-                        document.querySelector("#formularioClientes").display = "block"
+                    .then(data => { 
                         crearFormularioNuevo(text); 
                     })
                     .catch(error => {
@@ -138,7 +149,7 @@ asdf@asd.es
             granText: document.querySelector('#granText'),
             ticketPlaceholder: document.getElementById('inputText'),
             actividades: document.querySelector('h5'),
-            enviarFormulario: document.querySelector('button[type="submit"]'),
+            enviarFormulario: document.querySelector('#obtenerticketbtn'),
             numClientesLabel: document.querySelector('label[for="numClientes"]'),
             parasailingLabel: document.querySelector('label[for="parasailing"]'),
             hinchableLabel: document.querySelector('label[for="hinchable"]'),
@@ -223,7 +234,7 @@ asdf@asd.es
         return clientesContainer;
     }
 
-    function generarHTMLCliente(idioma, index) {
+    function _generarHTMLCliente(idioma, index) {
         return `
             <div class="container border rounded p-3 mb-3" id="clienteContainer${index}">
                 <h5>${textos[idioma].cliente} ${index}</h5>
@@ -233,6 +244,54 @@ asdf@asd.es
                         <input required type="text" class="form-control my-1" placeholder="${textos[idioma].dni}" />
                         <input required type="tel" class="form-control my-1" placeholder="${textos[idioma].telefono}" />
                         <input required type="email" class="form-control my-1" placeholder="${textos[idioma].email}" />
+                        <label class="form-label mt-2">${textos[idioma].fechaNacimiento}:</label>
+                        <input required type="date" id="fechaNacCliente${index}"  class="form-control mb-2 fechaNacimiento" />
+                    </div>
+                    <div class="col-12 col-md-6  d-flex align-items-start justify-content-around ">
+                        <label>${textos[idioma].firma}:</label>
+                        <canvas required id="firmaCliente${index}" class="border mb-2 firmaCanvas" width="300" height="150"></canvas>
+                        <button type="button" id="limpiarFirmaCliente${index}" class="btn btn-secondary limpiarFirma">
+                            ${textos[idioma].limpiarFirma}
+                        </button>
+                    </div>
+                </div>
+                <div id="consentimientoMenor${index}" style="display:none;">
+                    <hr>
+                    <h6 class="h6baby">${textos[idioma].menores}</h6>
+                    <div class="row">
+
+                        <div class="col-1 d-flex align-items-start justify-content-center "> 
+                            <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" fill="orange" class="bi bi-exclamation-diamond-fill" viewBox="0 0 16 16">
+                                <path d="M9.05.435c-.58-.58-1.52-.58-2.1 0L.436 6.95c-.58.58-.58 1.519 0 2.098l6.516 6.516c.58.58 1.519.58 2.098 0l6.516-6.516c.58-.58.58-1.519 0-2.098zM8 4c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995A.905.905 0 0 1 8 4m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                            </svg>
+                        </div>
+                        <div class="col-5">
+                            <label>${textos[idioma].padreTutor}:</label>
+                            <input type="text" class="form-control mb-2" placeholder="${textos[idioma].padreTutor}" />
+                        </div>
+                        <div class="col-6 d-flex align-items-start justify-content-around ">
+                            <label>${textos[idioma].firma}:</label>
+                            <canvas id="firmaPadreCliente${index}" class="border mb-2 firmaCanvas" width="300" height="150"></canvas>
+                            <button type="button" id="limpiarFirmaPadreCliente${index}" class="btn btn-secondary limpiarFirma">
+                                ${textos[idioma].limpiarFirma}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    function generarHTMLCliente(idioma, index) {
+        return `
+            <div class="container border rounded p-3 mb-3" id="clienteContainer${index}">
+                <h5>${textos[idioma].cliente} ${index}</h5>
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <input required type="text"  value="hola"          class="form-control my-1" placeholder="${textos[idioma].nombreApellido}" />
+                        <input required type="text"  value="hola"          class="form-control my-1" placeholder="${textos[idioma].dni}" />
+                        <input required type="tel"   value="654654654"     class="form-control my-1" placeholder="${textos[idioma].telefono}" />
+                        <input required type="email" value="hola@hola.es"  class="form-control my-1" placeholder="${textos[idioma].email}" />
                         <label class="form-label mt-2">${textos[idioma].fechaNacimiento}:</label>
                         <input required type="date" id="fechaNacCliente${index}"  class="form-control mb-2 fechaNacimiento" />
                     </div>
@@ -316,53 +375,55 @@ asdf@asd.es
 <script>
 
     const container = document.querySelector('.container');
-
+    
     function crearFormularioNuevo(ticketNumber) {
         // Eliminar el formulario inicial
-        const formularioInicial = document.getElementById('formularioClientes');
+        const formularioInicial = document.getElementById('form-inicial');
         formularioInicial.remove();
 
         // Crear nuevo formulario
         const nuevoFormulario = document.createElement('form');
         nuevoFormulario.innerHTML = `
-            <h3 class="mt-4">${textos.es.ticketPlaceholder}: ${ticketNumber}</h3>
-            <input type="text" class="form-control mb-3" value="${ticketNumber}" disabled />
-
-            <p id="granText">${textos.es.granText}</p>
-
-            <!-- Campo para elegir el número de clientes -->
-            <label for="numClientes">${textos.es.numClientes}:</label>
-            <input type="number" id="numClientes" class="form-control mb-3" min="1" value="1" placeholder="${textos.es.numClientes}" />
-            <div id="clientesContainer"></div>
-
-            <!-- Checkbox Actividades -->
-            <h5 class="mt-4">${textos.es.actividades}</h5>
-            <div class="form-check">
-                <input type="checkbox" id="parasailing" class="form-check-input">
-                <label for="parasailing">${textos.es.parasailing}</label>
-                <input type="number" id="parasailingNum" class="form-control mt-2" placeholder="${textos.es.numPersonas}" disabled />
-            </div>
-            <div class="form-check">
-                <input type="checkbox" id="hinchable" class="form-check-input">
-                <label for="hinchable">${textos.es.hinchable}</label>
-                <input type="text" id="hinchableString" class="form-control mt-2" placeholder="${textos.es.tipoHinchable}" disabled />
-                <input type="number" id="hinchableNum" class="form-control mt-2" placeholder="${textos.es.numPersonas}" disabled />
-            </div>
-            <div class="form-check">
-                <input type="checkbox" id="flyboard" class="form-check-input">
-                <label for="flyboard">${textos.es.flyboard}</label>
-                <input type="number" id="flyboardTime" class="form-control mt-2" placeholder="${textos.es.tiempoFlyboard}" disabled />
-                <input type="number" id="flyboardNum" class="form-control mt-2" placeholder="${textos.es.numPersonas}" disabled />
-            </div>
+            <form id="formularioClientes" class="text-center row" onsubmit="${navidad()}">
  
+                <h3 class="mt-4">${textos.es.ticketPlaceholder}: ${ticketNumber}</h3>
+                <input type="text" class="form-control mb-3" value="${ticketNumber}" disabled />
 
-            <!-- Fecha -->
-            <label for="fecha">${textos.es.fecha}:</label>
-            <input type="date" id="fecha" class="form-control mb-3" value="${new Date().toISOString().split('T')[0]}" />
+                <p id="granText">${textos.es.granText}</p>
 
-            <!-- Botón de enviar -->
-            <button type="submit" class="btn btn-success">${textos.es.enviarFormulario}</button>
-        `;
+                <!-- Campo para elegir el número de clientes -->
+                <label for="numClientes">${textos.es.numClientes}:</label>
+                <input type="number" id="numClientes" class="form-control mb-3" min="1" value="1" placeholder="${textos.es.numClientes}" />
+                <div id="clientesContainer"></div>
+
+                <!-- Checkbox Actividades -->
+                <h5 class="mt-4">${textos.es.actividades}</h5>
+                <div class="form-check">
+                    <input type="checkbox" id="parasailing" class="form-check-input">
+                    <label for="parasailing">${textos.es.parasailing}</label>
+                    <input type="number" id="parasailingNum" class="form-control mt-2" placeholder="${textos.es.numPersonas}" disabled />
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" id="hinchable" class="form-check-input">
+                    <label for="hinchable">${textos.es.hinchable}</label>
+                    <input type="text" id="hinchableString" class="form-control mt-2" placeholder="${textos.es.tipoHinchable}" disabled />
+                    <input type="number" id="hinchableNum" class="form-control mt-2" placeholder="${textos.es.numPersonas}" disabled />
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" id="flyboard" class="form-check-input">
+                    <label for="flyboard">${textos.es.flyboard}</label>
+                    <input type="number" id="flyboardTime" class="form-control mt-2" placeholder="${textos.es.tiempoFlyboard}" disabled />
+                    <input type="number" id="flyboardNum" class="form-control mt-2" placeholder="${textos.es.numPersonas}" disabled />
+                </div>
+    
+
+                <!-- Fecha -->
+                <label for="fecha">${textos.es.fecha}:</label>
+                <input type="date" id="fecha" class="form-control mb-3" value="${new Date().toISOString().split('T')[0]}" />
+
+                <!-- Botón de enviar -->
+                <button type="submit" id="fetchBtn" class="btn btn-outline-primary mt-2">Enviar</button>
+           </form>`;
 
         container.appendChild(nuevoFormulario);
         document.getElementById('numClientes').addEventListener('change', generarCamposClientes);
@@ -435,58 +496,29 @@ asdf@asd.es
     
     }
 
-    crearFormularioNuevo("as")
+    // crearFormularioNuevo("as")
 
 </script>
 
 
-<!-- Modulo modal e impresion --> 
-<div class="modal fade" id="modalTodoListo" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalLabel">Todo listo</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body text-center">
-                <p>¿Qué deseas hacer ahora?</p>
-                <button id="botonImprimir" class="btn btn-primary m-2">Imprimir</button>
-                <button id="botonGuardar" class="btn btn-success m-2">Guardar</button>
-                <button id="botonReescribir" class="btn btn-warning m-2">Reescribir Documento</button>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 <script>
     // Validar formulario y canvas
-    document.getElementById('fetchBtn').addEventListener('click', function (event) {
-        alert("stop")
-        event.preventDefault(); 
-
-        let formularioValido = true;
+    function navidad () {
+        const fetchBtn = document.querySelector("#fetchBtn");
         
-        const firmas = document.querySelectorAll('.firmaCanvas');
-
-        firmas.forEach((canvas) => {
-            const ctx = canvas.getContext('2d');
-            if (esCanvasVacio(ctx, canvas)) {
-                formularioValido = false;
-                canvas.classList.add('border-danger'); 
-            } else {
-                canvas.classList.remove('border-danger');
-            }
-        });
-
-        if (!formularioValido) {
-            alert('Por favor, asegúrate de firmar todos los campos obligatorios antes de continuar.');
-            return;
+        // Abre el modal si existe
+        const modalElement = document.querySelector("#modalTodoListo");
+        if (modalElement) {
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+        } else {
+            console.error("El modal 'modalTodoListo' no existe en el DOM.");
         }
 
-        // Mostrar modal si todo está correcto
-        const modal = new bootstrap.Modal(document.getElementById('modalTodoListo'));
-        modal.show();
-    });
+    };
+
 
     // Función para validar si el canvas está vacío
     function esCanvasVacio(ctx, canvas) {
