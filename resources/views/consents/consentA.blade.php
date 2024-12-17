@@ -62,21 +62,24 @@
     };
 </script>
 @section('content')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 <div class="container mb-5 pb-5 ">
 
     <!-- Modulo modal e impresion --> 
     <div class="modal fade" id="modalTodoListo" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalLabel">Todo listo</h5>
+                    <h5 class="modal-titles" id="modalLabels">Todo listo</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body text-center">
-                    <p>¿Qué deseas hacer ahora?</p>
-                    <button id="botonImprimir" class="btn btn-primary m-2">Imprimir</button>
-                    <button id="botonGuardar" class="btn btn-success m-2">Guardar</button>
-                    <button id="botonReescribir" class="btn btn-warning m-2">Cancelar</button>
+                <div id="modal-content" class="modal-body text-center">
+
+                </div>
+                <div class="modal-footer text-center">
+                    <button id="botonImprimir" class="btn btn-primary m-2">Enviar</button>
+                    <button id="botonReescribir" class="btn btn-outline-danger m-2">Cancelar</button>
                 </div>
             </div>
         </div>
@@ -286,7 +289,7 @@
                         <input required type="tel"   value="654654654"     class="form-control my-1" placeholder="${textos[idioma].telefono}" />
                         <input required type="email" value="hola@hola.es"  class="form-control my-1" placeholder="${textos[idioma].email}" />
                         <label class="form-label mt-2">${textos[idioma].fechaNacimiento}:</label>
-                        <input required type="date" id="fechaNacCliente${index}"  class="form-control mb-2 fechaNacimiento" />
+                        <input required type="text" value="daf" id="fechaNacCliente${index}"  class="form-control mb-2 fechaNacimiento" />
                     </div>
                     <div class="col-12 col-md-6  d-flex align-items-start justify-content-around ">
                         <label>${textos[idioma].firma}:</label>
@@ -414,7 +417,7 @@
                 <input type="date" id="fecha" class="form-control mb-3" value="${new Date().toISOString().split('T')[0]}" />
 
                 <!-- Botón de enviar -->
-                <button type="submit" id="fetchBtn" onclick="navidad()" class="btn btn-outline-primary mt-2">Enviar</button>
+                <button type="submit" id="fetchBtn" onclick="navidad(event)" class="btn btn-outline-primary mt-2">Enviar</button>
            </form>`;
 
         container.appendChild(nuevoFormulario);
@@ -492,13 +495,13 @@
 
 </script>
 
-
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 
 <script>
     // Validar formulario y canvas
-    function navidad() {
-        
+    function navidad(event) {
+        event.preventDefault(); // Evita que se envíe el formulario
+
         const modalElement = document.querySelector("#modalTodoListo");
         if (modalElement) {
             const modal = new bootstrap.Modal(modalElement);
@@ -518,15 +521,42 @@
 
     // Funcionalidad de los botones del modal
     document.getElementById('botonImprimir').addEventListener('click', () => {
-        window.print();
-    });
-
-    document.getElementById('botonGuardar').addEventListener('click', () => {
-        alert('Funcionalidad de guardar aún no implementada.');
+        imprimirPDF()
     });
 
     document.getElementById('botonReescribir').addEventListener('click', () => {
-        alert('Funcionalidad de reescribir documento aún no implementada.');
+        window.location.reload();
     });
+
+    
+
+    function imprimirPDF() {
+        console.log("Iniciando impresión...");
+
+        const element = document.getElementById('modal-content');
+
+        if (!element) {
+            console.error("El elemento con ID 'modal-content' no existe en el DOM.");
+            return;
+        }
+
+        console.log("Elemento encontrado, iniciando html2pdf...");
+
+        const options = {
+            margin: 10,
+            filename: 'consentimiento.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().from(element).set(options).save()
+            .then(() => console.log("PDF generado exitosamente."))
+            .catch(error => console.error("Error al generar el PDF:", error));
+    }
+
 </script>
+
+
+
 @endsection
