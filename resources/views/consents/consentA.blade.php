@@ -228,15 +228,15 @@ asdf@asd.es
             <div class="container border rounded p-3 mb-3" id="clienteContainer${index}">
                 <h5>${textos[idioma].cliente} ${index}</h5>
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-12 col-md-6">
                         <input required type="text" class="form-control my-1" placeholder="${textos[idioma].nombreApellido}" />
                         <input required type="text" class="form-control my-1" placeholder="${textos[idioma].dni}" />
                         <input required type="tel" class="form-control my-1" placeholder="${textos[idioma].telefono}" />
                         <input required type="email" class="form-control my-1" placeholder="${textos[idioma].email}" />
                         <label class="form-label mt-2">${textos[idioma].fechaNacimiento}:</label>
-                        <input required type="date" id="fechaNacCliente${index}" class="form-control mb-2 fechaNacimiento" />
+                        <input required type="date" id="fechaNacCliente${index}"  class="form-control mb-2 fechaNacimiento" />
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-12 col-md-6  d-flex align-items-start justify-content-around ">
                         <label>${textos[idioma].firma}:</label>
                         <canvas required id="firmaCliente${index}" class="border mb-2 firmaCanvas" width="300" height="150"></canvas>
                         <button type="button" id="limpiarFirmaCliente${index}" class="btn btn-secondary limpiarFirma">
@@ -247,13 +247,25 @@ asdf@asd.es
                 <div id="consentimientoMenor${index}" style="display:none;">
                     <hr>
                     <h6 class="h6baby">${textos[idioma].menores}</h6>
-                    <label>${textos[idioma].padreTutor}:</label>
-                    <input type="text" class="form-control mb-2" placeholder="${textos[idioma].padreTutor}" />
-                    <label>${textos[idioma].firma}:</label>
-                    <canvas id="firmaPadreCliente${index}" class="border mb-2 firmaCanvas" width="300" height="150"></canvas>
-                    <button type="button" id="limpiarFirmaPadreCliente${index}" class="btn btn-secondary limpiarFirma">
-                        ${textos[idioma].limpiarFirma}
-                    </button>
+                    <div class="row">
+
+                        <div class="col-1 d-flex align-items-start justify-content-center "> 
+                            <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" fill="orange" class="bi bi-exclamation-diamond-fill" viewBox="0 0 16 16">
+                                <path d="M9.05.435c-.58-.58-1.52-.58-2.1 0L.436 6.95c-.58.58-.58 1.519 0 2.098l6.516 6.516c.58.58 1.519.58 2.098 0l6.516-6.516c.58-.58.58-1.519 0-2.098zM8 4c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995A.905.905 0 0 1 8 4m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                            </svg>
+                        </div>
+                        <div class="col-5">
+                            <label>${textos[idioma].padreTutor}:</label>
+                            <input type="text" class="form-control mb-2" placeholder="${textos[idioma].padreTutor}" />
+                        </div>
+                        <div class="col-6 d-flex align-items-start justify-content-around ">
+                            <label>${textos[idioma].firma}:</label>
+                            <canvas id="firmaPadreCliente${index}" class="border mb-2 firmaCanvas" width="300" height="150"></canvas>
+                            <button type="button" id="limpiarFirmaPadreCliente${index}" class="btn btn-secondary limpiarFirma">
+                                ${textos[idioma].limpiarFirma}
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
@@ -423,7 +435,7 @@ asdf@asd.es
     
     }
 
-    // crearFormularioNuevo("as")
+    crearFormularioNuevo("as")
 
 </script>
 
