@@ -581,8 +581,6 @@
         }
     }
 
-
-
     // Funcionalidad de los botones del modal
     document.getElementById('botonImprimir').addEventListener('click', () => {
 
@@ -598,52 +596,38 @@
         const formularioClientes = document.getElementById("formularioClientes");
 
         if (formularioClientes) {
-            // Clonar el formulario
+            // Clonar el formulario y eliminar el ID para evitar duplicados
             const formularioClonado = formularioClientes.cloneNode(true);
-            formularioClonado.removeAttribute("id"); // Elimina el ID para evitar duplicados
+            formularioClonado.removeAttribute("id");
 
-            // Eliminar todos los botones dentro del formulario clonado
-            const botones = formularioClonado.querySelectorAll("button");
-            botones.forEach(boton => boton.remove());
+            // Eliminar todos los botones y checkboxes del formulario clonado
+            formularioClonado.querySelectorAll("button, input[type=checkbox]").forEach(elemento => elemento.remove());
 
-            // Eliminar todos los checkboxes
-            const checkboxes = formularioClonado.querySelectorAll("input[type=checkbox]");
-            checkboxes.forEach(checkbox => checkbox.remove());
-
-            // Convertir todos los input en texto
+            // Obtener todos los inputs, textareas y selects del formulario clonado
             const inputs = formularioClonado.querySelectorAll("input, textarea, select");
 
-            let n = 0;
-            let todosCompletos = true;
+            // Validar los campos usando el método nativo checkValidity()
+            if (!formularioClonado.checkValidity()) {
+                formularioClonado.reportValidity(); // Muestra los mensajes de validación nativos
+                return; // Detener la ejecución si algún campo requerido no es válido
+            }
 
-            inputs.forEach(input => { 
-                if(input['required']){
-                    console.log(input);
-                    
-                }else{
-                    return false
-                }
-                
+            // Convertir todos los inputs en texto
+            inputs.forEach((input, index) => {
                 const texto = document.createElement("p");
                 texto.textContent = input.value || "N/A"; // Obtener el valor del input
-                texto.style.marginRight = "5px";
-                if (n!=0){
-                    texto.classList.add("text-start"); 
-                    texto.classList.add("mt-3");
+                texto.style.marginRight = "15px";
+                texto.id = input.id+"copy"
+
+                if (index !== 0) {
+                    texto.classList.add("text-start", "mt-3");
                 }
-                    
-                    // Reemplazar el input con el texto
-                    input.parentNode.replaceChild(texto, input);
-                n++
+
+                // Reemplazar el input con el texto
+                input.parentNode.replaceChild(texto, input);
             });
 
- 
 
-            // Si algún campo requerido está vacío, mostrar un alert y evitar abrir el modal
-            if (!todosCompletos) {
-                alert("Por favor, completa todos los campos requeridos.");
-                return; // Detener la ejecución de la función
-            }
 
             // Clonar canvas de firma si existe
             const canvasOriginales = formularioClientes.querySelectorAll("canvas");
@@ -682,7 +666,7 @@
             modalContent.appendChild(contenedorA4);
 
 
-            localStorage.setItem('namePrint', document.getElementById('telCliente1').value);
+            localStorage.setItem('telPrint', document.getElementById('telCliente1').value);
             localStorage.setItem('dniPrint', document.getElementById('dniCliente1').value);
 
             const currentDate = new Date();
@@ -706,17 +690,7 @@
 
         console.log("Elemento encontrado, iniciando html2pdf...");
 
-        // Obtener los datos del primer cliente
-        const nombreCliente = localStorage.getItem('namePrint') || 'defaultName';
-        const dniCliente = localStorage.getItem('dniPrint') || 'defaultDNI';
-        const fechaActual = localStorage.getItem('printDate') || new Date().toLocaleString('es-ES', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit'
-        }); 
-        const filenameEd = `${nombreCliente}_${dniCliente}_${fechaActual}.pdf`.replace(/\s+/g, '_');
+        const filenameEd = `${localStorage.getItem('telPrint')}_${localStorage.getItem('dniPrint')}_${localStorage.getItem('printDate')}.pdf`.replace(/\s+/g, '_');
 
         const options = {
             margin: 10,
@@ -744,41 +718,52 @@
 
     // Función para guardar el archivo en el backend
     async function guardarPDFEnBackend(pdfBlob) {
-        // Obtener los datos del primer cliente
-        const nombreCliente = localStorage.getItem('namePrint') || 'defaultName';
-        const dniCliente = localStorage.getItem('dniPrint') || 'defaultDNI';
-        const fechaActual = localStorage.getItem('printDate') || new Date().toLocaleString('es-ES', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit'
-        }); 
 
-        const filenameEd = `${nombreCliente}_${dniCliente}_${fechaActual}.pdf`.replace(/\s+/g, '_');
+        const cantidadDeClientes = document.querySelector("#numClientescopy").innerHTML
+        const filenameEd = `${localStorage.getItem('telPrint')}_${localStorage.getItem('dniPrint')}_${localStorage.getItem('printDate')}.pdf`.replace(/\s+/g, '_');
+        const fechaFirma = localStorage.getItem('printDate');
+        console.log(cantidadDeClientes);
+        
 
-        try {
-            const formData = new FormData();
-            formData.append('file', pdfBlob);
 
-            // Enviar el nombre del archivo en la URL
-            const response = await fetch(`/upload-pdf?filename=${encodeURIComponent(filenameEd)}`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: formData,
-            });
-
-            if (response.ok) {
-                console.log('Archivo guardado exitosamente en el backend.');
-            } else {
-                console.error('Error al guardar el archivo en el backend:', await response.text());
+        for (let i = 1; i <= cantidadDeClientes; i++) {
+            let nombreCliente = document.getElementById(`nombreCliente${i}copy`).innerHTML;
+            let telCliente = document.getElementById(`telCliente${i}copy`).innerHTML;
+            let dniCliente = document.getElementById(`dniCliente${i}copy`).innerHTML;
+            let mailCliente = document.getElementById(`mailCliente${i}copy`).innerHTML;
+            let fechaNacCliente = document.getElementById(`fechaNacCliente${i}copy`).innerHTML;
+            console.log("Cliente "+i+ ": " +nombreCliente+telCliente+dniCliente+mailCliente+fechaNacCliente);
+            
+            try {
+                const formData = new FormData();
+                formData.append('file', pdfBlob);
+                formData.append('filename', filenameEd);
+                formData.append('nombre_cliente', nombreCliente);
+                formData.append('dni', dniCliente);
+                formData.append('email', mailCliente);
+                formData.append('telefono', telCliente);
+                formData.append('fechaFirma', fechaFirma);
+                formData.append('anyoNacimiento', fechaNacCliente);
+    
+                const response = await fetch(`/upload-pdf?filename=${encodeURIComponent(filenameEd)}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: formData,
+                });
+    
+                if (response.ok) {
+                    console.log('Archivo guardado exitosamente en el backend.');
+                } else {
+                    console.error('Error al guardar el archivo en el backend:', await response.text());
+                }
+            } catch (error) {
+                console.error('Error en la solicitud al backend:', error);
             }
-        } catch (error) {
-            console.error('Error en la solicitud al backend:', error);
         }
     }
+
 
 
 
