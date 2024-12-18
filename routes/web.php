@@ -7,7 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\EmailTemplateController; // Nuevo controlador
 use App\Http\Controllers\PublicController;
-
+use App\Http\Controllers\FileUploadController;
 // Ruta de fallback para redirigir a la página principal
 Route::fallback(function () {
     return redirect('/');
@@ -26,6 +26,7 @@ Route::get('/consentA', function () {
     return view('consents.consentA');
 })->name('consentA');
 
+Route::post('/upload-pdf', [FileUploadController::class, 'store']);
 
 // Grupo de rutas protegidas por autenticación
 Route::middleware(['auth'])->group(function () {

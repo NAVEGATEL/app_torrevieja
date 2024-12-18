@@ -585,6 +585,7 @@
 
     // Funcionalidad de los botones del modal
     document.getElementById('botonImprimir').addEventListener('click', () => {
+
         imprimirPDF()
     });
 
@@ -592,7 +593,6 @@
         window.location.reload();
     });
 
- 
 
     function copiarForm(modalContent) {
         const formularioClientes = document.getElementById("formularioClientes");
@@ -682,7 +682,7 @@
             modalContent.appendChild(contenedorA4);
 
 
-            localStorage.setItem('namePrint', document.getElementById('nombreCliente1').value);
+            localStorage.setItem('namePrint', document.getElementById('telCliente1').value);
             localStorage.setItem('dniPrint', document.getElementById('dniCliente1').value);
 
             const currentDate = new Date();
@@ -694,9 +694,6 @@
             console.error("El formulario 'formularioClientes' no existe en el DOM.");
         }
     }
-
-
-
 
     function imprimirPDF() {
         console.log("Iniciando impresión...");
@@ -729,8 +726,60 @@
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        html2pdf().set(options).from(imprimirAqui).save();
+        // Generar el PDF y guardarlo en el backend
+        html2pdf()
+            .set(options)
+            .from(imprimirAqui)
+            .outputPdf('blob') // Obtener el PDF como un blob
+            .then(async (pdfBlob) => {
+                console.log("PDF generado correctamente. Guardando en backend...");
+                await guardarPDFEnBackend(pdfBlob, filenameEd); // Guardar en el backend
+                console.log("PDF guardado en backend. Iniciando descarga local...");
+                html2pdf().set(options).from(imprimirAqui).save(); // Descargar el PDF localmente
+            })
+            .catch((error) => {
+                console.error("Error al generar el PDF:", error);
+            });
     }
+
+    // Función para guardar el archivo en el backend
+    async function guardarPDFEnBackend(pdfBlob) {
+        // Obtener los datos del primer cliente
+        const nombreCliente = localStorage.getItem('namePrint') || 'defaultName';
+        const dniCliente = localStorage.getItem('dniPrint') || 'defaultDNI';
+        const fechaActual = localStorage.getItem('printDate') || new Date().toLocaleString('es-ES', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+        }); 
+
+        const filenameEd = `${nombreCliente}_${dniCliente}_${fechaActual}.pdf`.replace(/\s+/g, '_');
+
+        try {
+            const formData = new FormData();
+            formData.append('file', pdfBlob);
+
+            // Enviar el nombre del archivo en la URL
+            const response = await fetch(`/upload-pdf?filename=${encodeURIComponent(filenameEd)}`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: formData,
+            });
+
+            if (response.ok) {
+                console.log('Archivo guardado exitosamente en el backend.');
+            } else {
+                console.error('Error al guardar el archivo en el backend:', await response.text());
+            }
+        } catch (error) {
+            console.error('Error en la solicitud al backend:', error);
+        }
+    }
+
 
 
 </script>
