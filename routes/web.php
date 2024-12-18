@@ -26,6 +26,10 @@ Route::get('/consentA', function () {
     return view('consents.consentA');
 })->name('consentA');
 
+Route::get('/consentT', function () {
+    return view('consents.consentT');
+})->name('consentT');
+
 Route::post('/upload-pdf', [FileUploadController::class, 'store']);
 
 // Grupo de rutas protegidas por autenticación

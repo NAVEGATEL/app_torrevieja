@@ -1,4 +1,65 @@
-@push("scripts")
+
+<style>
+    /* Asegura que los contenedores no se corten en el PDF */
+    .clienteContainer {
+        min-height: 80mm; /* Ajusta el valor según el tamaño necesario */
+        page-break-inside: avoid; /* Evita el corte dentro del div */ 
+     
+    }
+    .text-dangerr{
+        color: #fe0104 !important;
+    }
+</style>
+<!-- ###################################################################################################### -->
+<!-- ###################################################################################################### -->
+<!-- ###################################################################################################### -->
+
+<!-- ###################################################################################################### -->
+<!-- ###################################################################################################### -->
+<!-- ###################################################################################################### -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<!-- ###################################################################################################### -->
+<!-- ###################################################################################################### -->
+<!-- ###################################################################################################### -->
+<div class="container mb-5 pb-5 ">
+
+    <!-- Modulo modal e impresion --> 
+    <div class="modal fade" id="modalTodoListo"  tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true" >
+
+        <div class="modal-dialog" style="">
+            <div class="modal-content" style="width: 900px !important; margin-left: -200px !important;">
+                <div class="modal-header">
+                    <h5 class="modal-titles" id="modalLabels">Todo listo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div id="imprimirAqui" class="">
+                    asdf
+                </div>
+                <div class="modal-footer text-center">
+                    <button id="botonImprimir" class="btn btn-primary m-2">Enviar</button>
+                    <button id="botonReescribir" class="btn btn-outline-danger m-2">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botones de Idioma Consultor e Ingeniero de arquitecturas de datos e IA-->
+    <div class="text-end mb-3">
+        <button id="btnES" class="btn btn-outline-danger">ES</button>
+        <button id="btnEN" class="btn btn-outline-primary">EN</button>
+    </div>
+
+    <h1 class="text-center">Consentimiento de Uso</h1>
+ 
+    <div id="form-inicial" class="text-center row">
+        <input type="text" id="inputText" placeholder="Ticket Nº" class="form-control col-2 mb-3" />
+        <button id="obtenerticketbtn" class="btn btn-outline-primary mt-2">Enviar</button>
+    </div>
+
+</div>
+
+
 
 <!-- ###################################################################################################### -->
 <!-- ###################################################################################################### -->
@@ -152,19 +213,19 @@
                     <div class="col-12 col-md-6">
                         <div class="d-flex w-100">
                             <label class="form-label mt-2 text-start w-25">${textos[idioma].nombreApellido}:</label>
-                            <input required type="text" class="form-control my-1" placeholder="${textos[idioma].nombreApellido}" />
+                            <input required type="text" id="nombreCliente${index}" class="form-control my-1" placeholder="${textos[idioma].nombreApellido}" />
                         </div>
                         <div class="d-flex w-100">
                             <label class="form-label mt-2 text-start w-25">${textos[idioma].dni}:</label>
-                            <input required type="text" class="form-control my-1" placeholder="${textos[idioma].dni}" />
+                            <input required type="text" id="dniCliente${index}" class="form-control my-1" placeholder="${textos[idioma].dni}" />
                         </div>
                         <div class="d-flex w-100">
                             <label class="form-label mt-2 text-start w-25">${textos[idioma].telefono}:</label>
-                            <input required type="tel" class="form-control my-1" placeholder="${textos[idioma].telefono}" />
+                            <input required type="tel" id="telCliente${index}" class="form-control my-1" placeholder="${textos[idioma].telefono}" />
                         </div>
                         <div class="d-flex w-100">
                             <label class="form-label mt-2 text-start w-25">${textos[idioma].email}:</label>
-                            <input required type="email" class="form-control my-1" placeholder="${textos[idioma].email}" />
+                            <input required type="email" id="mailCliente${index}" class="form-control my-1" placeholder="${textos[idioma].email}" />
                         </div>
                         <div class="d-flex w-100">
                             <label class="form-label mt-2 text-start w-25">${textos[idioma].fechaNacimiento}:</label>
@@ -418,7 +479,7 @@
     
     }
 
-    crearFormularioNuevo("as")
+    // crearFormularioNuevo("as")
 
 </script>
 
@@ -427,40 +488,20 @@
 <!-- ###################################################################################################### -->
 <!-- ###################################################################################################### -->
 <!-- ###################################################################################################### -->
+ <!-- CREAR, Guardar e Imprimir el PDF -->
 <script>
     // Validar formulario y canvas
     function navidad(event) {
         event.preventDefault(); // Evita que se envíe el formulario
 
-        // Verificar si todos los campos requeridos están completos
-        const formulario = document.getElementById("formularioClientes");  
-        const camposRequeridos = formulario.querySelectorAll("[required]");  
-        let todosCompletos = true;
-
-        // Iterar sobre los campos requeridos para comprobar si están vacíos
-        camposRequeridos.forEach(campo => {
-            if (campo.value != undefined){  
-                console.log(campo.value);
-                if (campo.value.trim()){  
-                    todosCompletos = false;
-                }
-            }
-        });
-
-        // Si algún campo requerido está vacío, mostrar un alert y evitar abrir el modal
-        if (!todosCompletos) {
-            alert("Por favor, completa todos los campos requeridos.");
-            return; // Detener la ejecución de la función
-        }
-
-        // Si todos los campos están completos, abrir el modal
         const modalElement = document.querySelector("#modalTodoListo");
         if (modalElement) {
             const modal = new bootstrap.Modal(modalElement);
-            modal.show(); 
             const modalContent = document.getElementById("imprimirAqui");
             if (modalContent) {
-                copiarForm(modalContent);
+                if(copiarForm(modalContent)){
+                    modal.show(); 
+                }
             } else {
                 console.error("El contenedor 'imprimirAqui' no existe en el DOM.");
             }
@@ -469,10 +510,9 @@
         }
     }
 
-
-
     // Funcionalidad de los botones del modal
     document.getElementById('botonImprimir').addEventListener('click', () => {
+
         imprimirPDF()
     });
 
@@ -480,40 +520,43 @@
         window.location.reload();
     });
 
- 
 
     function copiarForm(modalContent) {
         const formularioClientes = document.getElementById("formularioClientes");
 
         if (formularioClientes) {
-            // Clonar el formulario
+            // Clonar el formulario y eliminar el ID para evitar duplicados
             const formularioClonado = formularioClientes.cloneNode(true);
-            formularioClonado.removeAttribute("id"); // Elimina el ID para evitar duplicados
+            formularioClonado.removeAttribute("id");
 
-            // Eliminar todos los botones dentro del formulario clonado
-            const botones = formularioClonado.querySelectorAll("button");
-            botones.forEach(boton => boton.remove());
+            // Eliminar todos los botones y checkboxes del formulario clonado
+            formularioClonado.querySelectorAll("button, input[type=checkbox]").forEach(elemento => elemento.remove());
 
-            // Eliminar todos los checkboxes
-            const checkboxes = formularioClonado.querySelectorAll("input[type=checkbox]");
-            checkboxes.forEach(checkbox => checkbox.remove());
-
-            // Convertir todos los input en texto
+            // Obtener todos los inputs, textareas y selects del formulario clonado
             const inputs = formularioClonado.querySelectorAll("input, textarea, select");
-            let n = 0;
-            inputs.forEach(input => {
+
+            // Validar los campos usando el método nativo checkValidity()
+            if (!formularioClonado.checkValidity()) {
+                formularioClonado.reportValidity(); // Muestra los mensajes de validación nativos
+                return; // Detener la ejecución si algún campo requerido no es válido
+            }
+
+            // Convertir todos los inputs en texto
+            inputs.forEach((input, index) => {
                 const texto = document.createElement("p");
                 texto.textContent = input.value || "N/A"; // Obtener el valor del input
-                texto.style.marginRight = "5px";
-                if (n!=0){
-                    texto.classList.add("text-start"); 
-                    texto.classList.add("mt-3");
+                texto.style.marginRight = "15px";
+                texto.id = input.id+"copy"
+
+                if (index !== 0) {
+                    texto.classList.add("text-start", "mt-3");
                 }
-                    
-                    // Reemplazar el input con el texto
-                    input.parentNode.replaceChild(texto, input);
-                n++
+
+                // Reemplazar el input con el texto
+                input.parentNode.replaceChild(texto, input);
             });
+
+
 
             // Clonar canvas de firma si existe
             const canvasOriginales = formularioClientes.querySelectorAll("canvas");
@@ -550,13 +593,20 @@
             // Limpiar el contenido previo y agregar el contenedor con formato A4
             modalContent.innerHTML = "";
             modalContent.appendChild(contenedorA4);
+
+
+            localStorage.setItem('telPrint', document.getElementById('telCliente1').value);
+            localStorage.setItem('dniPrint', document.getElementById('dniCliente1').value);
+
+            const currentDate = new Date();
+            const formattedDate = `${currentDate.getDate()}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
+            localStorage.setItem('printDate', formattedDate);
+
+            return true;
         } else {
             console.error("El formulario 'formularioClientes' no existe en el DOM.");
         }
     }
-
-
-
 
     function imprimirPDF() {
         console.log("Iniciando impresión...");
@@ -569,28 +619,146 @@
 
         console.log("Elemento encontrado, iniciando html2pdf...");
 
-        // Obtener los datos del primer cliente
-        const nombreCliente = "NombreEjemplo"; // Reemplazar con la lógica para obtener el nombre
-        const telefonoCliente = "123456789"; // Reemplazar con la lógica para obtener el teléfono
+        const filenameEd = `${localStorage.getItem('telPrint')}_${localStorage.getItem('dniPrint')}_${localStorage.getItem('printDate')}.pdf`.replace(/\s+/g, '_');
 
         const options = {
             margin: 10,
-            filename: `${nombreCliente}_${telefonoCliente}_${new Date().toLocaleString('es-ES', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit'
-            }).replace(/[:/]/g, '-')}.pdf`,
+            filename: filenameEd,
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2 },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        html2pdf().set(options).from(imprimirAqui).save();
+        // Generar el PDF y guardarlo en el backend
+        html2pdf()
+            .set(options)
+            .from(imprimirAqui)
+            .outputPdf('blob') // Obtener el PDF como un blob
+            .then(async (pdfBlob) => {
+                console.log("PDF generado correctamente. Guardando en backend...");
+                await guardarPDFEnBackend(pdfBlob, filenameEd); // Guardar en el backend
+                console.log("PDF guardado en backend. Iniciando descarga local...");
+                html2pdf().set(options).from(imprimirAqui).save(); // Descargar el PDF localmente
+            })
+            .catch((error) => {
+                console.error("Error al generar el PDF:", error);
+            });
+    }
+
+    // Función para guardar el archivo en el backend
+    async function guardarPDFEnBackend(pdfBlob) {
+        // Mostrar el spinner
+        startSpinner();
+
+        const cantidadDeClientes = document.querySelector("#numClientescopy").innerHTML
+        const filenameEd = `${localStorage.getItem('telPrint')}_${localStorage.getItem('dniPrint')}_${localStorage.getItem('printDate')}.pdf`.replace(/\s+/g, '_');
+        const fechaFirma = localStorage.getItem('printDate');
+        console.log(cantidadDeClientes);
+        
+
+
+        for (let i = 1; i <= cantidadDeClientes; i++) {
+            let nombreCliente = document.getElementById(`nombreCliente${i}copy`).innerHTML;
+            let telCliente = document.getElementById(`telCliente${i}copy`).innerHTML;
+            let dniCliente = document.getElementById(`dniCliente${i}copy`).innerHTML;
+            let mailCliente = document.getElementById(`mailCliente${i}copy`).innerHTML;
+            let fechaNacCliente = document.getElementById(`fechaNacCliente${i}copy`).innerHTML;
+            console.log("Cliente "+i+ ": " +nombreCliente+telCliente+dniCliente+mailCliente+fechaNacCliente);
+            
+            try {
+                const formData = new FormData();
+                formData.append('file', pdfBlob);
+                formData.append('filename', filenameEd);
+                formData.append('nombre_cliente', nombreCliente);
+                formData.append('dni', dniCliente);
+                formData.append('email', mailCliente);
+                formData.append('telefono', telCliente);
+                formData.append('fechaFirma', fechaFirma);
+                formData.append('anyoNacimiento', fechaNacCliente);
+    
+                const response = await fetch(`/upload-pdf?filename=${encodeURIComponent(filenameEd)}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: formData,
+                });
+    
+                if (response.ok) {
+                    console.log('Archivo guardado exitosamente en el backend.');
+                } else {
+                    console.error('Error al guardar el archivo en el backend:', await response.text());
+                }
+            } catch (error) {
+                console.error('Error en la solicitud al backend:', error);
+                        // Finalizar el spinner
+                endSpinner();
+            }
+        }
+
+        // Finalizar el spinner
+        endSpinner();
     }
 
 
 </script>
 
-@endpush
+
+
+<!-- ###################################################################################################### -->
+<!-- ###################################################################################################### -->
+<!-- ###################################################################################################### -->
+<!-- SPINERS -->
+<script>
+    function endSpinner() {
+            const overlay = document.getElementById('spinner-overlay');
+            if (overlay) {
+                document.body.removeChild(overlay);
+            }
+        }
+
+
+
+    function startSpinner() {
+        // Crear el fondo gris opaco
+        const overlay = document.createElement('div');
+        overlay.id = 'spinner-overlay';
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+        overlay.style.zIndex = '9999';
+        overlay.style.display = 'flex';
+        overlay.style.alignItems = 'center';
+        overlay.style.justifyContent = 'center';
+
+        // Crear el spinner
+        const spinner = document.createElement('div');
+        spinner.id = 'spinner';
+        spinner.style.width = '50px';
+        spinner.style.height = '50px';
+        spinner.style.border = '6px solid #f3f3f3';
+        spinner.style.borderTop = '6px solid #3498db';
+        spinner.style.borderRadius = '50%';
+        spinner.style.animation = 'spin 1s linear infinite';
+
+        // Añadir animación al spinner
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Agregar el spinner al overlay
+        overlay.appendChild(spinner);
+
+        // Agregar el overlay al cuerpo del documento
+        document.body.appendChild(overlay);
+    }
+</script>
+    
