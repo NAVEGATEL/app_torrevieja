@@ -104,18 +104,10 @@
                         </thead>
                         <tbody>
                             <!-- Este Script partido de Hola es para mostrar por consola un resultado o los que se quieran para ver que obtenemos -->
-                            <script>
-                                    let hola = 0
-                            </script>
+                            
                             @foreach($listaFront as $client)
-                            <script> 
-                                    if(hola == 0){
-                                        let bookings = @json($listaFront);
-                                        console.log(bookings);
-                                        hola++;
-                                    }
-                            </script>
-                                <tr>
+                            
+                                <tr id={{ $client['short_id'] }}>
                                     <td>{{ $client['client_name'] }}</td>
                                     <td class="text-truncate" style="max-width: 150px;" data-bs-toggle="tooltip" title="{{ $client['client_email'] }}">
                                         {{ $client['client_email'] }}
@@ -126,13 +118,13 @@
                                         @php $client['client_kind'] = 'blue'; @endphp
                                     @endif 
                                         <svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" fill="currentColor" class="bi bi-balloon-fill" viewBox="0 0 16 16">
-                                            <path style="color: {{ $client['client_kind'] }} !important;" fill-rule="evenodd" d="M8.48 10.901C11.211 10.227 13 7.837 13 5A5 5 0 0 0 3 5c0 2.837 1.789 5.227 4.52 5.901l-.244.487a.25.25 0 1 0 .448.224l.04-.08c.009.17.024.315.051.45.068.344.208.622.448 1.102l.013.028c.212.422.182.85.05 1.246-.135.402-.366.751-.534 1.003a.25.25 0 0 0 .416.278l.004-.007c.166-.248.431-.646.588-1.115.16-.479.212-1.051-.076-1.629-.258-.515-.365-.732-.419-1.004a2 2 0 0 1-.037-.289l.008.017a.25.25 0 1 0 .448-.224zM4.352 3.356a4 4 0 0 1 3.15-2.325C7.774.997 8 1.224 8 1.5s-.226.496-.498.542c-.95.162-1.749.78-2.173 1.617a.6.6 0 0 1-.52.341c-.346 0-.599-.329-.457-.644"/>
+                                            <path id="colorear{{ $client['short_id'] }}" style="color: {{ $client['client_kind'] }} !important;" fill-rule="evenodd" d="M8.48 10.901C11.211 10.227 13 7.837 13 5A5 5 0 0 0 3 5c0 2.837 1.789 5.227 4.52 5.901l-.244.487a.25.25 0 1 0 .448.224l.04-.08c.009.17.024.315.051.45.068.344.208.622.448 1.102l.013.028c.212.422.182.85.05 1.246-.135.402-.366.751-.534 1.003a.25.25 0 0 0 .416.278l.004-.007c.166-.248.431-.646.588-1.115.16-.479.212-1.051-.076-1.629-.258-.515-.365-.732-.419-1.004a2 2 0 0 1-.037-.289l.008.017a.25.25 0 1 0 .448-.224zM4.352 3.356a4 4 0 0 1 3.15-2.325C7.774.997 8 1.224 8 1.5s-.226.496-.498.542c-.95.162-1.749.78-2.173 1.617a.6.6 0 0 1-.52.341c-.346 0-.599-.329-.457-.644"/>
                                         </svg>
                                     </td>
                                     <td>{{ $client['short_id'] }}</td>
                                     <td>{{ $client['date_booking'] }}</td>
                                     <td>
-                                        <button class="btn btn-outline-dark border-0 text-center" data-bs-toggle="modal" data-bs-target="#clientModal" data-client="{{ json_encode($client) }}">
+                                        <button class="btn btn-outline-dark border-0 text-center" data-bs-toggle="modal" data-bs-target="#userActionModal" data-client="{{ json_encode($client) }}">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" fill="currentColor" class="bi bi-segmented-nav text-dar btn-hover-action" viewBox="0 0 16 16">
                                                 <path d="M0 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm6 3h4V5H6zm9-1V6a1 1 0 0 0-1-1h-3v4h3a1 1 0 0 0 1-1"/>
                                             </svg>
@@ -154,50 +146,96 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="clientModal" tabindex="-1" aria-labelledby="clientModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+
+<div id="userActionModal" class="modal" tabindex="-1" role="dialog" aria-labelledby="clientModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="clientModalLabel">Detalles del Cliente</h5>
+                <h5 class="modal-title" id="clientModalLabel">Cambiar Tipo de Cliente</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <!-- Los datos del cliente se cargarán dinámicamente aquí -->
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary">Guardar Cambios</button>
+                <form id="userActionForm">
+                    <div class="form-group">
+                        <label for="clientKindSelect">Selecciona el tipo de cliente:</label>
+                        <select id="clientKindSelect" class="form-control">
+
+                            <option value="red" style="background-color:#ffc1c1">
+                               
+                                Problemático
+                            </option>
+                            
+                            <option value="blue" style="background-color:#c1f1ff">
+                               
+                                Neutro
+                            </option>
+
+                            <option value="green" style="background-color:#c1ffce">
+                                
+                                Habitual
+                            </option>
+
+                        </select>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
+ 
+
 <script>
-    const clientModal = document.getElementById('clientModal');
-    clientModal.addEventListener('show.bs.modal', event => {
-        const button = event.relatedTarget;
-        const client = JSON.parse(button.getAttribute('data-client'));
-        const modalBody = clientModal.querySelector('.modal-body');
-        modalBody.innerHTML = `
-            <p><strong>Nombre:</strong> ${client.name}</p>
-            <p><strong>Apellido:</strong> ${client.lastName}</p>
-            <p><strong>Edad:</strong> ${client.age}</p>
-            <p><strong>Tipo:</strong> ${client.type}</p>
-            <p><strong>Notas:</strong> ${client.notes}</p>
-            <p><strong>Últimas Visitas:</strong> ${client.visitas.join(', ')}</p>
-            <p><strong>Actividades:</strong> ${client.actividades.join(', ')}</p>
-        `;
+    // Agregar un event listener a todos los botones para abrir el modal con los datos específicos
+    document.querySelectorAll('[data-bs-toggle="modal"]').forEach(button => {
+        button.addEventListener('click', function() {
+            const clientData = JSON.parse(this.getAttribute('data-client'));
+            const clientKind = clientData.client_kind;
+            const shortId = clientData.short_id;
+
+            // Selecciona el valor correspondiente en el select
+            const select = document.getElementById('clientKindSelect');
+            select.value = clientKind;
+
+            // Agregar el short_id al formulario para incluirlo en el fetch
+            document.getElementById('userActionForm').setAttribute('data-short-id', shortId);
+        });
     });
 
-    function toggleEndDate(checkbox) {
-                            const endDate = document.getElementById('endDate');
-                            if (checkbox.checked) {
-                                endDate.disabled = true;
-                                endDate.classList.add('d-none');
-                            } else {
-                                endDate.disabled = false;
-                                endDate.classList.remove('d-none');
-                            }
-                        }
+    // FETCH DEL MODAL
+    document.getElementById('clientKindSelect').addEventListener('change', function() {
+        const selectedValue = this.value;
+        const clientKindText = this.options[this.selectedIndex].text;
+
+        // Obtener el short_id del formulario
+        const shortId = document.getElementById('userActionForm').getAttribute('data-short-id');
+
+        fetch("{{ route('userActions') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": document.querySelector('meta[name=\"csrf-token\"]').content
+            },
+            body: JSON.stringify({
+                client_kind: clientKindText,
+                new_client_kind: selectedValue,
+                short_id: shortId
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Error al actualizar el tipo de cliente");
+            }
+            return response.json();
+        })
+        .then(data => {
+            document.querySelector(`#colorear${shortId}`).style.color = selectedValue;
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            console.log("Hubo un problema al actualizar el tipo de cliente");
+        });
+    });
+
 </script>
 @endsection

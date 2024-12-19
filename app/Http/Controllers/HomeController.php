@@ -53,7 +53,7 @@ class HomeController extends Controller
                     ->orWhere('filename', 'like', $searchQuery);
             });
         }
-// Aplica filtros si se reciben en el request por fecha
+        // Aplica filtros si se reciben en el request por fecha
         if ($request->filled('startDate')) {
             if ($request->filled('exactDate')) {
                 $bookingQuery->whereDate('date_booking', $request->startDate);
@@ -100,6 +100,41 @@ class HomeController extends Controller
         $listaFront = array_merge($listaFront, $filesMapped);
 
         return view('admin.users.index', compact('listaFront'));
+    }
+
+    public function userActions(Request $request)
+    {  
+    
+        $shortId = $request->input('short_id');
+        $newClientKind = $request->input('new_client_kind');
+     
+        // Inicializa los contadores de cambios
+        $bookingUpdated = 0;
+        $fileUpdated = 0;
+    
+        // Buscar y actualizar en Booking
+        $bookingUpdated = Booking::where('short_id', $shortId)
+            ->update(['client_kind' => $newClientKind]);
+    
+        // Buscar y actualizar en File
+        $fileUpdated = File::where('short_id', $shortId)
+            ->update(['client_kind' => $newClientKind]);
+    
+        // Verificar si se realizó algún cambio
+        if ($bookingUpdated === 0 && $fileUpdated === 0) {
+            return response()->json([
+                'message' => 'Short ID not found in any database.'
+            ], 400);
+        }
+    
+        // Respuesta exitosa con el número de registros modificados
+        return response()->json([
+            'message' => 'Client kind updated successfully.',
+            'booking_updated' => $bookingUpdated,
+            'file_updated' => $fileUpdated,
+        ]); 
+        
+        
     }
 
     public function emails(Request $request)

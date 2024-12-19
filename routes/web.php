@@ -39,14 +39,23 @@ Route::middleware(['auth'])->group(function () {
 
     // Grupo de rutas protegidas con middleware adicional (opcional)
     Route::group(['middleware' => 'adminOrBasic'], function () {
+
+        // ##########################################################################################
         // Ruta para gestionar usuarios
         Route::get('/panel/users', [HomeController::class, 'users'])->name('users.index'); 
+        // Ruta para realizar acciones en usuarios
+        Route::post('/panel/user-actions', [HomeController::class, 'userActions'])->name('userActions');
 
-        // Ruta para enviar correos 
+        
+        // ##########################################################################################
+        // Ruta para ver y filtrar correos
         Route::get('/panel/emails', [HomeController::class, 'emails'])->name('emails.index');
+        // Ruta para enviar correos 
         Route::post('/panel/send', [HomeController::class, 'send'])->name('send'); 
-
-        // Nuevas rutas para gestionar plantillas de correos
+        
+        
+        // ##########################################################################################
+        // Rutas para gestionar plantillas de correos
         Route::prefix('panel/email-templates')->name('emailTemplates.')->group(function () {
             Route::get('/', [EmailTemplateController::class, 'index'])->name('index'); // Listar plantillas
             Route::post('/', [EmailTemplateController::class, 'store'])->name('store'); // Crear plantilla
