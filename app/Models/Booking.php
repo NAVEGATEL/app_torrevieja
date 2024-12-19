@@ -33,7 +33,7 @@ class Booking extends Model
         'client_phone',
         'client_email',
         'client_id',
-        'client_status',
+        'client_kind',
         
         'currency',
         'total_price',

@@ -12,33 +12,7 @@ class BookingController extends Controller
      * Crear una reserva individual.
      */
     public function store(Request $request)
-    {
-        $validatedData = $request->validate([
-            'short_id' => 'required|string|unique:bookings',
-            'product_name' => 'nullable|string',
-            'supplier_company_name' => 'nullable|string',
-            'seller_company_name' => 'nullable|string',
-            'language_code' => 'nullable|string',
-            'location' => 'nullable|string',
-            'service_flow' => 'nullable|string',
-            'date_event' => 'nullable|date',
-            'date_prebooking' => 'nullable|date',
-            'date_booking' => 'nullable|date',
-            'date_modified' => 'nullable|date',
-            'date_enjoyed' => 'nullable|date',
-            'client_name' => 'nullable|string',
-            'client_phone' => 'nullable|string',
-            'client_email' => 'nullable|string',
-            'client_id' => 'nullable|string', // Campo nuevo
-            'currency' => 'nullable|string',
-            'total_price' => 'nullable|numeric',
-            'payment_partial' => 'nullable|numeric',
-            'ticket_type_count' => 'nullable|array',
-            'payment_transaction' => 'nullable|array',
-            'status' => 'nullable|string',
-            'source' => 'nullable|string',
-        ]);
-
+    { 
         $validatedData['location'] = $validatedData['location'] ?? 'N/A'; // Valor predeterminado para `location`
 
         $booking = Booking::create($validatedData);
