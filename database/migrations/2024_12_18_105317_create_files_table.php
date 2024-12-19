@@ -13,13 +13,15 @@ return new class extends Migration
     {
         Schema::create('files', function (Blueprint $table) {
             $table->id();
-            $table->string('filename');
-            $table->string('nombre_cliente');
-            $table->string('dni');
-            $table->string('email');
-            $table->string('telefono');
-            $table->date('fechaFirma');
-            $table->string('anyoNacimiento');
+            $table->string('filename')->nullable();
+            $table->string('nombre_cliente')->nullable();
+            $table->string('dni')->nullable();
+            $table->string('email')->nullable();
+            $table->string('telefono')->nullable();
+            $table->date('fechaFirma')->nullable();
+            $table->string('anyoNacimiento')->nullable();
+            $table->string('short_id')->nullable();
+            $table->string('client_kind')->nullable()->default('blue');
             $table->timestamps();
         });
     }

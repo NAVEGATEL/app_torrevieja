@@ -15,6 +15,9 @@ class File extends Model
         'email',
         'telefono',
         'fechaFirma',
-        'anyoNacimiento'
+        'anyoNacimiento',
+        'short_id',       
+        'client_kind',
+        'email_news'  
     ];
 }
