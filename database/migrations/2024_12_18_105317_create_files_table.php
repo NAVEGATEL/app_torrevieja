@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('files', function (Blueprint $table) {
             $table->id();
             $table->string('filename')->nullable();
-            $table->string('nombre_cliente')->nullable();
+            $table->string('client_name')->nullable();
             $table->string('dni')->nullable();
-            $table->string('email')->nullable();
-            $table->string('telefono')->nullable();
-            $table->date('fechaFirma')->nullable();
+            $table->string('client_email')->nullable();
+            $table->string('client_phone')->nullable();
+            $table->date('date_booking')->nullable();
             $table->string('anyoNacimiento')->nullable();
             $table->string('short_id')->nullable();
             $table->string('client_kind')->nullable()->default('blue');

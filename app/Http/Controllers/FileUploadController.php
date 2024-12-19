@@ -35,11 +35,11 @@ class FileUploadController extends Controller
             // Guardar los datos en la base de datos
             File::create([
                 'filename' => $filename,
-                'nombre_cliente' => $request->input('nombre_cliente'),
+                'client_name' => $request->input('nombre_cliente'),
                 'dni' => $request->input('dni'),
-                'email' => $request->input('email'),
-                'telefono' => $request->input('telefono'),
-                'fechaFirma' => $fechaFirma,
+                'client_email' => $request->input('email'),
+                'client_phone' => $request->input('telefono'),
+                'date_booking' => $fechaFirma,
                 'anyoNacimiento' => $request->input('anyoNacimiento'),
                 'short_id' => $request->input('short_id'), // Agregado para capturar el short_id
                 'client_kind' => $request->input('client_kind') ?? 'blue', // Usa 'blue' si no se proporciona un valor

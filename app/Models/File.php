@@ -10,14 +10,15 @@ class File extends Model
 
     protected $fillable = [
         'filename',
-        'nombre_cliente',
+        'client_name',       // Cambiado para coincidir
         'dni',
-        'email',
-        'telefono',
-        'fechaFirma',
+        'client_email',      // Cambiado para coincidir
+        'client_phone',      // Cambiado para coincidir
+        'date_booking',      // Cambiado para coincidir
         'anyoNacimiento',
         'short_id',       
         'client_kind',
-        'email_news'  
+        'email_news',  
     ];
+    
 }
