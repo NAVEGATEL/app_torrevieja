@@ -8,26 +8,16 @@ use Illuminate\Support\Facades\Mail;
 
 use App\Models\Booking;  
 use App\Models\EmailTemplate;
-
+use App\Models\File;
 use App\Http\Controllers\BookingController;
 
 class HomeController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->middleware('auth');
     }
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
     public function index()
     {
 
@@ -37,13 +27,49 @@ class HomeController extends Controller
         return view('admin.panel', compact('bookings'));
     }
 
-    
-
-
     public function users(Request $request)
     {
-        $activities = Booking::pluck('product_name')->unique()->toArray();
 
+        $bookings = Booking::take(10)->get();
+
+        $files = File::take(190)->get();
+
+        // Mapea los datos de ambas colecciones
+        $listaFront = $bookings->map(function ($booking) {
+            return [
+                'short_id' => $booking->short_id,
+                'client_name' => $booking->client_name,
+                'client_email' => $booking->client_email,
+                'client_phone' => $booking->client_phone,
+                'client_kind' => $booking->client_kind,
+                'source_id' => $booking->source_id,
+                'date_booking' => $booking->date_booking,
+            ];
+        })->toArray();
+
+        $filesMapped = $files->map(function ($file) {
+            return [
+                'short_id' => $file->short_id,
+                'client_name' => $file->client_name,
+                'client_email' => $file->client_email,
+                'client_phone' => $file->client_phone,
+                'client_kind' => $file->client_kind,
+                'source_id' => $file->source_id,
+                'date_booking' => $file->date_booking,
+                'dni' => $file->dni,
+                'filename' => $file->filename,
+            ];
+        })->toArray();
+
+        // Unifica ambas colecciones bajo la misma variable
+        $listaFront = array_merge($listaFront, $filesMapped);
+
+    
+        return view('admin.users.index', compact('listaFront'));
+    }
+
+    public function _users(Request $request)
+    {
 
         $query = Booking::query();
     
@@ -56,11 +82,6 @@ class HomeController extends Controller
             });
         }
     
-        // Filtro por actividad
-        if ($request->filled('activityFilter')) {
-            $query->where('product_name', $request->activityFilter);
-        }
-    
         // Filtro por fechas
         if ($request->filled('startDate')) {
             if ($request->filled('exactDate')) {
@@ -71,28 +92,58 @@ class HomeController extends Controller
                 $query->whereDate('date_event', '>=', $request->startDate);
             }
         }
-        // Excluir clientes con nombre "N/A"
+        
         $query->where('client_name', '!=', 'N/A');
-        // Paginación de resultados
+        
         $bookings = $query->paginate(74);
     
-        return view('admin.users.index', compact('bookings', 'activities'));
+        return view('admin.users.index', compact('bookings'));
     }
-    
 
-
-
-
-
-
-
-
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
     public function emails(Request $request)
+    {
+        // Obtener productos seleccionados (actividades)
+        $selectedProducts = $request->input('activities', []);
+        // Obtener ubicaciones seleccionadas
+        $selectedLocations = $request->input('locations', []);
+    
+        // Obtener plantillas de correos que no están eliminadas (deleted = false)
+        $emailTemplates = File::where('deleted', false)->get();
+    
+        // Obtener todas las actividades únicas (productos) desde el modelo Booking
+        $productNames = Booking::pluck('product_name')->unique()->toArray();
+    
+        // Obtener todas las ubicaciones únicas (solo países) desde el modelo Booking
+        $locations = Booking::pluck('location')
+            ->map(function ($location) {
+                // Tomar solo la primera parte de la ubicación antes de la coma
+                return explode(',', $location)[0];
+            })
+            ->unique()
+            ->toArray();
+    
+        // Obtener correos electrónicos únicos de los clientes desde el modelo Booking
+        $clientEmails = Booking::when($selectedProducts, function ($query) use ($selectedProducts) {
+            return $query->whereIn('product_name', $selectedProducts);
+        })
+        ->when($selectedLocations, function ($query) use ($selectedLocations) {
+            return $query->whereIn('location', $selectedLocations);
+        })
+        ->pluck('client_email')
+        ->filter(function ($email) {
+            return $email && trim($email) !== "" && !str_ends_with(trim($email), '@reply.getyourguide.com');
+        })
+        ->unique()
+        ->toArray();
+    
+        // Recuperar archivos asociados (si es necesario, ajusta según el caso)
+        $files = File::all();  // Si necesitas recuperar archivos, ajusta la consulta según lo que se necesite
+    
+        // Pasar los datos a la vista
+        return view('admin.emails.index', compact('clientEmails', 'productNames', 'locations', 'emailTemplates', 'files'));
+    }
+
+    public function _emails(Request $request)
     {
         // Obtener productos seleccionados
         $selectedProducts = $request->input('activities', []);
@@ -173,35 +224,6 @@ class HomeController extends Controller
         return redirect()->route('emails.index')->with('success', 'Correos enviados exitosamente.');
     }
     
-    
-
-    
-    // public function upload(Request $request)
-    // {
-    //     // Valida que se haya enviado un archivo
-    //     $request->validate([
-    //         'upload' => 'required|image|mimes:jpg,jpeg,png,gif|max:2048'
-    //     ]);
-
-    //     // Guarda la imagen en la carpeta public con un nombre único
-    //     $path = $request->file('upload')->store('images', 'public');
-        
-    //     // Construye la URL completa al archivo
-    //     $url = asset('storage/' . $path);
-
-    //     // Retorna la respuesta en el formato que CKEditor espera
-    //     return response()->json([
-    //         'url' => $url
-    //     ]);
-    // }
-
-
-
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
     public function settings()
     {
         // Recupera 15 registros por página
