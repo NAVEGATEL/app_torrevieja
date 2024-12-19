@@ -1,7 +1,7 @@
 @extends('admin.layouts.private')
 
 @section('content')
-<div class="container mt-4">
+<div class="container-fluid mt-4">
     <div class="row">
         <div class="col-md-12 mb-4">
             <h1 class="text-center">Área de Clientes</h1>
@@ -28,7 +28,8 @@
                 @endphp
 
                 <form id="searchForm" class="row g-4" method="GET" action="{{ route('users.index') }}">
-                    <div class="col">
+                    <div class="col-0 col-sm-1"></div>
+                    <div class="col-4">
                         <label for="searchQuery" class="form-label fw-bold">Buscar usuarios</label>
                         <input
                             type="text"
@@ -40,7 +41,7 @@
                         />
                     </div>
                      
-                    <div class="col-md-4">
+                    <div class="col-4">
                         <label for="dateRange" class="form-label fw-bold">Filtrar por fechas</label>
                         <div class="d-flex gap-2">
                             <input
@@ -59,7 +60,7 @@
                                 {{ shouldCheckExactDate() ? 'disabled' : '' }}
                             />
                         </div>
-                        <div class="form-check mt-2">
+                        <div class="form-check ">
                             <input
                                 type="checkbox"
                                 id="exactDate"
@@ -71,11 +72,13 @@
                             <label for="exactDate" class="form-check-label">Búsqueda de fecha concreta</label>
                         </div>
                     </div>
-                    <div class="col-md-2 mt-4">
-                        <button type="submit" class="btn btn-outline-primary btn-lg px-5 py-0 shadow mt-md-4">
+                    <div class="col-1 mt-4">
+                        <label for="" class="form-label fw-bold">Filtrar</label>
+                        <button type="submit" class="btn btn-outline-primary btn-lg py-2 shadow">
                             Buscar
                         </button>
                     </div>
+
                 </form>
                 <!-- Renderiza los enlaces de paginación -->
                  <!-- $listaFront->links()  -->
@@ -89,7 +92,7 @@
         <div class="col-md-12">
             <div class="card">
 
-                <div class="card-body">
+                <div class="card-body table-responsive">
                     <table id="clientTable" class="table table-striped">
                         <thead>
                             <tr>
@@ -123,8 +126,8 @@
                                     </td>
                                     <td>{{ $client['short_id'] }}</td>
                                     <td>{{ $client['date_booking'] }}</td>
-                                    <td id="{{ $client['filename'] }}">
-                                        <button class="btn btn-outline-dark border-0 text-center" data-bs-toggle="modal" data-bs-target="#userActionModal" data-client="{{ json_encode($client) }}">
+                                    <td @if(!empty($client['filename'])) id="{{ $client['filename'] }}" @endif>
+                                    <button class="btn btn-outline-dark border-0 text-center" data-bs-toggle="modal" data-bs-target="#userActionModal" data-client="{{ json_encode($client) }}">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" fill="currentColor" class="bi bi-segmented-nav text-dar btn-hover-action" viewBox="0 0 16 16">
                                                 <path d="M0 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm6 3h4V5H6zm9-1V6a1 1 0 0 0-1-1h-3v4h3a1 1 0 0 0 1-1"/>
                                             </svg>
