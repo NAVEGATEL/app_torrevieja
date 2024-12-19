@@ -137,6 +137,8 @@ class HomeController extends Controller
         
     }
 
+    
+
     public function emails(Request $request)
     {
         // Obtener productos seleccionados (actividades)

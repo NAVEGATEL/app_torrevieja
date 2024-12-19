@@ -42,7 +42,7 @@ class FileClients extends Seeder
                 'client_name' => 'Cliente Tres',
                 'dni' => '34567890C',
                 'client_email' => 'cliente3@example.com',
-                'client_phone' => '600345678',
+                'client_phone' => '600612345',
                 'date_booking' => '2024-12-17',
                 'anyoNacimiento' => '1978',
                 'short_id' => "NN-".Str::random(8),

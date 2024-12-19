@@ -123,7 +123,7 @@
                                     </td>
                                     <td>{{ $client['short_id'] }}</td>
                                     <td>{{ $client['date_booking'] }}</td>
-                                    <td>
+                                    <td id="{{ $client['filename'] }}">
                                         <button class="btn btn-outline-dark border-0 text-center" data-bs-toggle="modal" data-bs-target="#userActionModal" data-client="{{ json_encode($client) }}">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" fill="currentColor" class="bi bi-segmented-nav text-dar btn-hover-action" viewBox="0 0 16 16">
                                                 <path d="M0 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm6 3h4V5H6zm9-1V6a1 1 0 0 0-1-1h-3v4h3a1 1 0 0 0 1-1"/>
@@ -159,25 +159,19 @@
                     <div class="form-group">
                         <label for="clientKindSelect">Selecciona el tipo de cliente:</label>
                         <select id="clientKindSelect" class="form-control">
-
-                            <option value="red" style="background-color:#ffc1c1">
-                               
-                                Problemático
-                            </option>
-                            
-                            <option value="blue" style="background-color:#c1f1ff">
-                               
-                                Neutro
-                            </option>
-
-                            <option value="green" style="background-color:#c1ffce">
-                                
-                                Habitual
-                            </option>
-
+                            <option value="red" style="background-color:#ffc1c1">Problemático</option>
+                            <option value="blue" style="background-color:#c1f1ff">Neutro</option>
+                            <option value="green" style="background-color:#c1ffce">Habitual</option>
                         </select>
                     </div>
                 </form>
+
+                <div id="fileList" class="mt-3">
+                        <h6>Contrato Firmados:</h6>
+                        <iframe id="previewFrame" src="" style="width: 100%; height: 300px; border: none; margin-top: 10px;"></iframe>
+                        <a id="enlaceDinamico" href="#"> </a> 
+                </div>
+
             </div>
         </div>
     </div>
@@ -192,6 +186,7 @@
             const clientData = JSON.parse(this.getAttribute('data-client'));
             const clientKind = clientData.client_kind;
             const shortId = clientData.short_id;
+            const fileName = this.closest('td').id;
 
             // Selecciona el valor correspondiente en el select
             const select = document.getElementById('clientKindSelect');
@@ -199,6 +194,15 @@
 
             // Agregar el short_id al formulario para incluirlo en el fetch
             document.getElementById('userActionForm').setAttribute('data-short-id', shortId);
+
+            // Actualizar enlace dinámico
+            const enlaceDinamico = document.getElementById('enlaceDinamico');
+            enlaceDinamico.href = `/storage/uploads/${fileName}`;
+            enlaceDinamico.innerHTML = `Descargar contrato: ${fileName}`;
+
+            // Mostrar vista previa del archivo
+            const previewFrame = document.getElementById('previewFrame');
+            previewFrame.src = `/storage/uploads/${fileName}`;
         });
     });
 
@@ -236,6 +240,17 @@
             console.log("Hubo un problema al actualizar el tipo de cliente");
         });
     });
+
+    function toggleEndDate(checkbox) {
+            const endDate = document.getElementById('endDate');
+            if (checkbox.checked) {
+                endDate.disabled = true;
+                endDate.classList.add('d-none');
+            } else {
+                endDate.disabled = false;
+                endDate.classList.remove('d-none');
+            }
+        }
 
 </script>
 @endsection

@@ -39,6 +39,18 @@ Route::middleware(['auth'])->group(function () {
 
     // Grupo de rutas protegidas con middleware adicional (opcional)
     Route::group(['middleware' => 'adminOrBasic'], function () {
+        Route::get('/storage/uploads/{filename}', function ($filename) {
+            $path = storage_path('app/uploads/' . $filename);
+        
+            if (!file_exists($path)) {
+                abort(404);
+            }
+        
+            $mimeType = mime_content_type($path);
+            return response()->file($path, [
+                'Content-Type' => $mimeType,
+            ]);
+        })->name('storage.files');
 
         // ##########################################################################################
         // Ruta para gestionar usuarios
