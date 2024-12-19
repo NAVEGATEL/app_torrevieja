@@ -29,32 +29,67 @@ class HomeController extends Controller
 
     public function users(Request $request)
     {
+        // Inicializa las consultas de Booking y File
+        $bookingQuery = Booking::query();
+        $fileQuery = File::query();
 
-        $bookings = Booking::take(10)->get();
+        // Aplica filtros si se reciben en el request por name,email,phone,short_id,dni,filename
+        if ($request->filled('searchQuery')) {
+            $searchQuery = '%' . $request->searchQuery . '%';
 
-        $files = File::take(190)->get();
+            $bookingQuery->where(function ($query) use ($searchQuery) {
+                $query->where('client_name', 'like', $searchQuery)
+                    ->orWhere('client_email', 'like', $searchQuery)
+                    ->orWhere('client_phone', 'like', $searchQuery)
+                    ->orWhere('short_id', 'like', $searchQuery);
+            });
+
+            $fileQuery->where(function ($query) use ($searchQuery) {
+                $query->where('client_name', 'like', $searchQuery)
+                    ->orWhere('client_email', 'like', $searchQuery)
+                    ->orWhere('client_phone', 'like', $searchQuery)
+                    ->orWhere('short_id', 'like', $searchQuery)
+                    ->orWhere('dni', 'like', $searchQuery)
+                    ->orWhere('filename', 'like', $searchQuery);
+            });
+        }
+// Aplica filtros si se reciben en el request por fecha
+        if ($request->filled('startDate')) {
+            if ($request->filled('exactDate')) {
+                $bookingQuery->whereDate('date_booking', $request->startDate);
+                $fileQuery->whereDate('date_booking', $request->startDate);
+            } elseif ($request->filled('endDate')) {
+                $bookingQuery->whereBetween('date_booking', [$request->startDate, $request->endDate]);
+                $fileQuery->whereBetween('date_booking', [$request->startDate, $request->endDate]);
+            } else {
+                $bookingQuery->whereDate('date_booking', '>=', $request->startDate);
+                $fileQuery->whereDate('date_booking', '>=', $request->startDate);
+            }
+        }
+
+        // Obtén los primeros 50 registros filtrados de cada tabla
+        $bookings = $bookingQuery->take(50)->get();
+        $files = $fileQuery->take(50)->get();
 
         // Mapea los datos de ambas colecciones
         $listaFront = $bookings->map(function ($booking) {
             return [
-                'short_id' => $booking->short_id,
                 'client_name' => $booking->client_name,
                 'client_email' => $booking->client_email,
                 'client_phone' => $booking->client_phone,
                 'client_kind' => $booking->client_kind,
-                'source_id' => $booking->source_id,
+                'short_id' => $booking->short_id,
                 'date_booking' => $booking->date_booking,
             ];
         })->toArray();
 
         $filesMapped = $files->map(function ($file) {
             return [
-                'short_id' => $file->short_id,
                 'client_name' => $file->client_name,
                 'client_email' => $file->client_email,
                 'client_phone' => $file->client_phone,
                 'client_kind' => $file->client_kind,
-                'source_id' => $file->source_id,
+                'short_id' => $file->short_id,
                 'date_booking' => $file->date_booking,
                 'dni' => $file->dni,
                 'filename' => $file->filename,
@@ -64,40 +99,7 @@ class HomeController extends Controller
         // Unifica ambas colecciones bajo la misma variable
         $listaFront = array_merge($listaFront, $filesMapped);
 
-    
         return view('admin.users.index', compact('listaFront'));
-    }
-
-    public function _users(Request $request)
-    {
-
-        $query = Booking::query();
-    
-        // Filtro por búsqueda escrita
-        if ($request->filled('searchQuery')) {
-            $query->where(function ($subQuery) use ($request) {
-                $subQuery->where('client_name', 'like', '%' . $request->searchQuery . '%')
-                         ->orWhere('client_email', 'like', '%' . $request->searchQuery . '%')
-                         ->orWhere('client_phone', 'like', '%' . $request->searchQuery . '%');
-            });
-        }
-    
-        // Filtro por fechas
-        if ($request->filled('startDate')) {
-            if ($request->filled('exactDate')) {
-                $query->whereDate('date_event', $request->startDate);
-            } elseif ($request->filled('endDate')) {
-                $query->whereBetween('date_event', [$request->startDate, $request->endDate]);
-            } else {
-                $query->whereDate('date_event', '>=', $request->startDate);
-            }
-        }
-        
-        $query->where('client_name', '!=', 'N/A');
-        
-        $bookings = $query->paginate(74);
-    
-        return view('admin.users.index', compact('bookings'));
     }
 
     public function emails(Request $request)
