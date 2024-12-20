@@ -52,14 +52,49 @@
     <h1 class="text-center py-5">Consentimiento de Uso</h1>
  
     <div id="form-inicial" class="text-center row py-5">
-        <input type="text" id="inputText" placeholder="Ticket Nº" class="form-control col-2 mb-3" />
+        <input type="text" id="inputText" placeholder="Ticket Nº" class="form-control col-2 mb-3" disabled />
         <div class="d-flex justify-content-around align-items-center">
-            <button id="obtenerticketbtn" class="btn btn-primary mt-2 w-25">Enviar</button>
-            <button id="generarTicket" class="btn btn-outline-dark mt-2 w-25"> Generar Ticket </button>
+            <button id="obtenerticketbtn" class="btn btn-primary mt-2 w-25" disabled>Enviar</button>
+            <button id="generarTicket" class="btn btn-outline-dark mt-2 w-25" disabled> Generar Ticket </button>
+        </div>
+
+        <div class="form-check mt-3 text-start">
+            <input type="checkbox" class="form-check-input" id="acceptPolicies">
+            <label class="form-check-label" for="acceptPolicies">
+                Acepto las <a href="https://actividadestorrevieja.com/politica-de-privacidad/" target="_blank">políticas de privacidad</a>, <a href="https://actividadestorrevieja.com/politica-de-cookies/" target="_blank">políticas de cookies</a> y el <a href="https://actividadestorrevieja.com/en/legal-warning/" target="_blank">tratamiento de datos</a>.
+            </label>
         </div>
     </div>
-
 </div>
+
+<script>
+    // Obtener los elementos
+    const acceptCheckbox = document.getElementById('acceptPolicies');
+    const inputText = document.getElementById('inputText');
+    const obtenerTicketBtn = document.getElementById('obtenerticketbtn');
+    const generarTicketBtn = document.getElementById('generarTicket');
+
+    // Función para habilitar o deshabilitar los botones e input
+    function toggleButtons() {
+        if (acceptCheckbox.checked) {
+            inputText.disabled = false;
+            obtenerTicketBtn.disabled = false;
+            generarTicketBtn.disabled = false;
+        } else {
+            inputText.disabled = true;
+            obtenerTicketBtn.disabled = true;
+            generarTicketBtn.disabled = true;
+        }
+    }
+
+    // Escuchar cambios en el checkbox
+    acceptCheckbox.addEventListener('change', toggleButtons);
+
+    // Inicializar el estado de los botones
+    toggleButtons();
+</script>
+
+
 
 <!-- ###################################################################################################### -->
 <!-- ###################################################################################################### -->
