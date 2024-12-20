@@ -376,17 +376,12 @@
 
                 <p id="granText" class="p-4 border" style="  font-size:11px  ;background-color:rgb(211, 211, 211); border-color: #dee2e6;"">${textos.es.granText}</p>
 
-
                 <!-- Campo para elegir el número de clientes -->
                 <label for="numClientes"><b> ${textos.es.numClientes}: </b></label>
                 <input type="number" id="numClientes" class="form-control mb-3" min="1" value="1" placeholder="${textos.es.numClientes}" />
-                
-                
+
                 <div id="clientesContainer"></div>
 
-
-                
-                
                 <!-- Checkbox Actividades -->
                 <div class="row mb-4 clienteContainer">
                 <hr class="my-4">
@@ -421,13 +416,14 @@
 
                 <div class="d-flex justify-content-center align-items-center flex-column clienteContainer">
                     <!-- Fecha -->
-<div class="mx-5">
-    <label for="fecha">${textos.es.fecha}:</label>
-    <input type="datetime-local" 
-           id="fecha" 
-           class="form-control mb-3" 
-           value="${new Date().toISOString().slice(0, 19)}" />
-</div>
+                    
+                    <div class="mx-5">
+                        <label for="fecha">${textos.es.fecha}:</label>
+                        <input type="datetime-local" 
+                            id="fecha" 
+                            class="form-control mb-3" 
+                            value="${new Date().toLocaleString('sv-SE', { timeZone: 'Europe/Madrid' }).replace(' ', 'T').slice(0, 19)}" />
+                    </div>
 
 
                     <!-- Botón de enviar -->

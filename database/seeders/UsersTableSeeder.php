@@ -39,10 +39,10 @@ class UsersTableSeeder extends Seeder
                 'password' => Hash::make('bmw2015')
             ],
             [
-                'name' => 'Nachito',
+                'name' => 'Mario',
                 'rol_id' => 3,
-                'email' => 'nachito@aragoneses.com',
-                'password' => Hash::make('123')
+                'email' => 'mario@navegatel.es',
+                'password' => Hash::make('654321')
             ]
         ];
 
