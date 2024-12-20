@@ -36,6 +36,7 @@
             limpiarFirma: "Limpiar",
             cliente: "Cliente",
             fechaNacimiento: "Fecha de Nacimiento",
+            generarTicket: "Generar Ticket"
 
         },
         en: {
@@ -66,6 +67,7 @@
             limpiarFirma: "Clear",
             cliente: "Client",
             fechaNacimiento: "Bith date",
+            generarTicket: "Create Ticket"
 
         }
     };

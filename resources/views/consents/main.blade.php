@@ -21,12 +21,12 @@
 <!-- ###################################################################################################### -->
 <!-- ###################################################################################################### -->
 <!-- ###################################################################################################### -->
-<div class="container mb-5 pb-5 ">
+<div class="container mb-5 py-5 ">
 
     <!-- Modulo modal e impresion --> 
-    <div class="modal fade" id="modalTodoListo"  tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true" >
+    <div class="modal fade py-5" id="modalTodoListo"  tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true" >
 
-        <div class="modal-dialog" style="">
+        <div class="modal-dialog py-5" style="">
             <div class="modal-content" style="width: 900px !important; margin-left: -200px !important;">
                 <div class="modal-header">
                     <h5 class="modal-titles" id="modalLabels">Todo listo</h5>
@@ -49,16 +49,44 @@
         <button id="btnEN" class="btn btn-outline-primary">EN</button>
     </div>
 
-    <h1 class="text-center">Consentimiento de Uso</h1>
+    <h1 class="text-center py-5">Consentimiento de Uso</h1>
  
-    <div id="form-inicial" class="text-center row">
+    <div id="form-inicial" class="text-center row py-5">
         <input type="text" id="inputText" placeholder="Ticket Nº" class="form-control col-2 mb-3" />
-        <button id="obtenerticketbtn" class="btn btn-outline-primary mt-2">Enviar</button>
+        <div class="d-flex justify-content-around align-items-center">
+            <button id="obtenerticketbtn" class="btn btn-primary mt-2 w-25">Enviar</button>
+            <button id="generarTicket" class="btn btn-outline-dark mt-2 w-25"> Generar Ticket </button>
+        </div>
     </div>
 
 </div>
 
+<!-- ###################################################################################################### -->
+<!-- ###################################################################################################### -->
+<!-- ###################################################################################################### -->
+<!-- Generar el número de ticket de manera aleatoria -->
+<script>
+    document.getElementById('generarTicket').addEventListener('click', function() {
+        // Obtener la fecha y hora actuales
+        const now = new Date();
 
+        // Formatear el valor NN-díaMesAñoHoraMinutosSegundos
+        const formattedDate = 
+            'NN-' +
+            String(now.getDate()).padStart(2, '0') +
+            String(now.getMonth() + 1).padStart(2, '0') +
+            String(now.getFullYear()).slice(-2) +
+            String(now.getHours()).padStart(2, '0') +
+            String(now.getMinutes()).padStart(2, '0') +
+            String(now.getSeconds()).padStart(2, '0');
+
+        // Insertar el valor en el input
+        document.getElementById('inputText').value = formattedDate;
+        
+        // Simular el clic en el botón "Enviar"
+        document.getElementById('obtenerticketbtn').click();
+    });
+</script>
 
 <!-- ###################################################################################################### -->
 <!-- ###################################################################################################### -->
@@ -123,7 +151,8 @@
             telefonoPlaceholder: document.querySelectorAll('input[placeholder*="Teléfono"]'),
             emailPlaceholder: document.querySelectorAll('input[placeholder*="Email"]'),
             fechaNacimientoLabel: document.querySelectorAll('label[for*="fechaNac"]'),
-            consentimientoMenorTitulo: document.querySelectorAll('.h6baby')
+            consentimientoMenorTitulo: document.querySelectorAll('.h6baby'),
+            generarTicket: document.querySelector('#generarTicket')
         };
 
         // Validar que los elementos existen antes de cambiar el contenido
@@ -140,6 +169,7 @@
         if (elementos.fechaLabel) elementos.fechaLabel.textContent = textos[idioma].fecha + ':';
         if (elementos.padreTutorLabel) elementos.padreTutorLabel.textContent = textos[idioma].padreTutor + ':';
         if (elementos.firmaLabel) elementos.firmaLabel.textContent = textos[idioma].firma + ':';
+        if (elementos.generarTicket) elementos.generarTicket.textContent = textos[idioma].generarTicket;
 
         elementos.nombreApellidoPlaceholder.forEach(el => el.placeholder = textos[idioma].nombreApellido);
         elementos.dniPlaceholder.forEach(el => el.placeholder = textos[idioma].dni);
