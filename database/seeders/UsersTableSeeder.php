@@ -40,7 +40,7 @@ class UsersTableSeeder extends Seeder
             ],
             [
                 'name' => 'Mario',
-                'rol_id' => 3,
+                'rol_id' => 2,
                 'email' => 'mario@navegatel.es',
                 'password' => Hash::make('654321')
             ]
