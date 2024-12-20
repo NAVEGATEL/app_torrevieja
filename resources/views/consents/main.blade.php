@@ -70,18 +70,18 @@
 <script>
     // Obtener los elementos
     const acceptCheckbox = document.getElementById('acceptPolicies');
-    const inputText = document.getElementById('inputText');
+    const inputText2 = document.getElementById('inputText');
     const obtenerTicketBtn = document.getElementById('obtenerticketbtn');
     const generarTicketBtn = document.getElementById('generarTicket');
 
     // Función para habilitar o deshabilitar los botones e input
     function toggleButtons() {
         if (acceptCheckbox.checked) {
-            inputText.disabled = false;
+            inputText2.disabled = false;
             obtenerTicketBtn.disabled = false;
             generarTicketBtn.disabled = false;
         } else {
-            inputText.disabled = true;
+            inputText2.disabled = true;
             obtenerTicketBtn.disabled = true;
             generarTicketBtn.disabled = true;
         }
