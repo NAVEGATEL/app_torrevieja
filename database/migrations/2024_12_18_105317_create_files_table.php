@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('dni')->nullable();
             $table->string('client_email')->nullable();
             $table->string('client_phone')->nullable();
-            $table->date('date_booking')->nullable();
+            $table->datetime('date_booking')->nullable();
             $table->string('anyoNacimiento')->nullable();
             $table->string('short_id')->nullable();
             $table->string('client_kind')->nullable()->default('blue');

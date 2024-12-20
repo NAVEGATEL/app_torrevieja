@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
             UsersTableSeeder::class,
             SettingSeeder::class,
             PlantillasNews::class,
-            FileClients::class,
+            // FileClients::class,
             // BookingSeeder::class // Si no tienes el DUMP.sql, 
                                    // descomenta esta línea para importar los datos de esta tabla
         ]);

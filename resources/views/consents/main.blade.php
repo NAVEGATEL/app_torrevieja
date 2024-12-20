@@ -82,7 +82,7 @@
 
         // Insertar el valor en el input
         document.getElementById('inputText').value = formattedDate;
-        
+
         // Simular el clic en el botón "Enviar"
         document.getElementById('obtenerticketbtn').click();
     });
@@ -418,10 +418,14 @@
 
                 <div class="d-flex justify-content-center align-items-center flex-column clienteContainer">
                     <!-- Fecha -->
-                    <div class="mx-5">
-                        <label for="fecha">${textos.es.fecha}:</label>
-                        <input type="date" id="fecha" class="form-control mb-3" value="${new Date().toISOString().split('T')[0]}" />
-                    </div>
+<div class="mx-5">
+    <label for="fecha">${textos.es.fecha}:</label>
+    <input type="datetime-local" 
+           id="fecha" 
+           class="form-control mb-3" 
+           value="${new Date().toISOString().slice(0, 19)}" />
+</div>
+
 
                     <!-- Botón de enviar -->
                     <button type="submit" id="fetchBtn" onclick="navidad(event)" class=" mb-5 btn btn-outline-primary">Enviar</button>
