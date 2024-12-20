@@ -105,7 +105,8 @@
                 alert('Por favor, introduce un número de ticket.');
                 return;
             }
-
+            localStorage.setItem('short_id_eks', text)
+            
             fetch('https://jsonplaceholder.typicode.com/posts/1')
                 .then(response => {
                     if (!response.ok) throw new Error('Error en la solicitud');
