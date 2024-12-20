@@ -4,9 +4,11 @@
 <div class="container mt-4">
 
 
+<!-- 
 @foreach($bookings as $activity)
-    {{$activity}}
+{{$activity}}
 @endforeach
+-->
 
 
     <div class="row">
