@@ -137,31 +137,27 @@ class HomeController extends Controller
         
     }
 
-    
-
     public function emails(Request $request)
     {
-        // Obtener productos seleccionados (actividades)
+        // Obtener productos seleccionados
         $selectedProducts = $request->input('activities', []);
         // Obtener ubicaciones seleccionadas
         $selectedLocations = $request->input('locations', []);
+
+        $emailTemplates = EmailTemplate::where('deleted', false)->get();
     
-        // Obtener plantillas de correos que no están eliminadas (deleted = false)
-        $emailTemplates = File::where('deleted', false)->get();
-    
-        // Obtener todas las actividades únicas (productos) desde el modelo Booking
+        // Obtener todas las actividades únicas
         $productNames = Booking::pluck('product_name')->unique()->toArray();
     
-        // Obtener todas las ubicaciones únicas (solo países) desde el modelo Booking
+        // Obtener todas las ubicaciones únicas (solo países)
         $locations = Booking::pluck('location')
             ->map(function ($location) {
-                // Tomar solo la primera parte de la ubicación antes de la coma
                 return explode(',', $location)[0];
             })
             ->unique()
             ->toArray();
     
-        // Obtener correos electrónicos únicos de los clientes desde el modelo Booking
+        // Obtener correos electrónicos únicos, excluyendo ciertos dominios
         $clientEmails = Booking::when($selectedProducts, function ($query) use ($selectedProducts) {
             return $query->whereIn('product_name', $selectedProducts);
         })
@@ -175,11 +171,8 @@ class HomeController extends Controller
         ->unique()
         ->toArray();
     
-        // Recuperar archivos asociados (si es necesario, ajusta según el caso)
-        $files = File::all();  // Si necesitas recuperar archivos, ajusta la consulta según lo que se necesite
-    
         // Pasar los datos a la vista
-        return view('admin.emails.index', compact('clientEmails', 'productNames', 'locations', 'emailTemplates', 'files'));
+        return view('admin.emails.index', compact('clientEmails', 'productNames', 'locations', 'emailTemplates'));
     }
 
     public function _emails(Request $request)
