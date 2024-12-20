@@ -83,6 +83,8 @@
         // Insertar el valor en el input
         document.getElementById('inputText').value = formattedDate;
 
+        localStorage.setItem('short_id_eks', formattedDate)
+
         // Simular el clic en el botón "Enviar"
         document.getElementById('obtenerticketbtn').click();
     });
@@ -367,7 +369,7 @@
                     </div>
 
 
-                    <h5 class="my-3"><b>${textos.es.ticketPlaceholder}: ${ticketNumber}</b></h5> 
+                    <h5 class="my-3"><b id="shot_id_imp">${textos.es.ticketPlaceholder}: ${ticketNumber}</b></h5> 
                 </div>
 
 
@@ -686,7 +688,7 @@
         const cantidadDeClientes = document.querySelector("#numClientescopy").innerHTML
         const filenameEd = `${localStorage.getItem('telPrint')}_${localStorage.getItem('dniPrint')}_${localStorage.getItem('printDate')}.pdf`.replace(/\s+/g, '_');
         const fechaFirma = localStorage.getItem('printDate');
-        console.log(cantidadDeClientes);
+        
         
 
 
@@ -708,6 +710,7 @@
                 formData.append('telefono', telCliente);
                 formData.append('fechaFirma', fechaFirma);
                 formData.append('anyoNacimiento', fechaNacCliente);
+                formData.append('short_id', localStorage.getItem('short_id_eks'));
     
                 const response = await fetch(`/upload-pdf?filename=${encodeURIComponent(filenameEd)}`, {
                     method: 'POST',
