@@ -106,7 +106,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- <script src="resources\js\admin\obtencionDatos.js"></script> -->
+<script src="resources\js\admin\obtencionDatos.js"></script>
 
 <script>
 
