@@ -25,7 +25,7 @@ class HomeController extends Controller
         $bookings = Booking::paginate(15);
          
         return view('admin.panel', compact('bookings'));
-    }
+    } 
 
     public function users(Request $request)
     {

@@ -100,15 +100,15 @@ async function fetchBookingsWeekly8(accessToken) {
         }
 
         // Configuración inicial: Rango de 30 días
-        let endDate = Math.floor(Date.now() / 1000); 
-        // let endDate = Math.floor(new Date("2021-06-23T07:47:25.000Z").getTime() / 1000); // Timestamp desde la fecha
-        // let endDate = Math.floor(new Date("2015-01-26T07:46:07.000Z").getTime() / 1000); // Timestamp desde la fecha
-
+        let endDate = Math.floor(Date.now() / 1000);
+        const sixMonthsAgo = endDate - oneDayInSeconds * 30 * 3; // Timestamp de 6 meses atrás
         let noDataWeeks = 0;
+        // let endDate = Math.floor(new Date("2015-01-26T07:46:07.000Z").getTime() / 1000); // Timestamp desde la fecha
+ 
 
-        while (noDataWeeks < 3) {
+        while (noDataWeeks < 3 && endDate >= sixMonthsAgo) {
             const startDate = endDate - oneDayInSeconds * 30; // Rango inicial de 30 días
-
+        
             console.groupCollapsed(`📅 [Inicio de Ciclo] Procesando rango: ${new Date(startDate * 1000).toISOString()} a ${new Date(endDate * 1000).toISOString()}`);
             const previousTotal = allBookings.length; // Guardar el total previo para este ciclo
 
@@ -149,6 +149,7 @@ async function fetchBookingsWeekly8(accessToken) {
                     verification_code: booking.verification_code || null, // NUEVO
                     verification_type: booking.verification_type || null, // NUEVO
                 }));
+
                 console.log(bookingsToSave);
 
                 try {
@@ -301,7 +302,7 @@ async function init() {
 
         // Simulación de la obtención de datos
         const accessToken = await fetchAccessToken();
-        console.log(accessToken);
+   
 
         await fetchBookingsWeekly8(accessToken);
 
