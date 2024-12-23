@@ -16,106 +16,143 @@ use App\Http\Controllers\BookingController;
 
 class HomeController extends Controller
 {
-    public function index(Request $request)
+    private function getSelectedYear(Request $request)
     {
-    // Obtener el año actual o el año seleccionado por el usuario
-    $selectedYear = $request->input('year', Carbon::now()->year); // Año actual como valor por defecto
-
-    // Obtener el rango de años con ventas, y agregar 2014 como mínimo
-    $years = Booking::selectRaw('YEAR(date_booking) as year')
-        ->distinct()
-        ->orderBy('year', 'desc')
-        ->pluck('year')
-        ->push(2014) // Agregar 2014 como mínimo
-        ->unique() // Eliminar duplicados
-        ->sortDesc(); // Ordenar de manera descendente
-
-    // Datos de ventas por año
-    $salesData = [];
-    
-    // Datos de ventas sin fecha (N/A)
-    $missingData = Booking::whereNull('date_booking')->sum('total_price'); // Total de ventas sin fecha
-    $salesData['N/A'] = [
-        ['N/A'],
-        [$missingData] // Agregar los datos de "N/A"
-    ];
-
-    foreach ($years as $year) {
-        $sales = Booking::selectRaw('MONTH(date_booking) as month, SUM(total_price) as total_sales')
-            ->whereYear('date_booking', $year)
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'month' => $item->month,
-                    'total_sales' => $item->total_sales,
-                ];
-            });
-
-        // Generar matriz para el año
-        $months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-        $salesMatrix = [
-            $months,
-            array_map(function ($monthIndex) use ($sales) {
-                $data = $sales->firstWhere('month', $monthIndex + 1);
-                return $data ? $data['total_sales'] : 0;
-            }, range(0, 11)),
-        ];
-
-        $salesData[$year] = $salesMatrix;
+        // Obtener el año seleccionado o el actual (si no se pasa el parámetro 'year')
+        return $request->input('year', Carbon::now()->year);
     }
 
+    private function getYears()
+    {
+        // Obtener los años con reservas, asegurando que el año mínimo sea 2014
+        return Booking::selectRaw('YEAR(date_booking) as year')
+            ->distinct()
+            ->orderBy('year', 'desc')
+            ->pluck('year')
+            ->push(2014) // Agregar 2014 como mínimo
+            ->unique() // Eliminar duplicados
+            ->sortDesc(); // Ordenar de manera descendente
+    }
 
-
-
-
-
-
-
+    // total_sales
+    private function getSalesDataByMonth($years)
+    {
+        $salesData = [];
     
-        // Matriz 2: Reservas por Ciudad
-        $reservationsData = [
-            ['Madrid', 'Barcelona', 'Valencia'],  // Ciudades
-            [20, 15, 10],                         // Reservas por ciudad
+        // Datos de ventas sin fecha (N/A)
+        $missingData = Booking::whereNull('date_booking')->sum('total_price'); // Total de ventas sin fecha
+        $salesData['N/A'] = [
+            ['N/A'],
+            [$missingData] // Agregar los datos de "N/A"
+        ];
+    
+        foreach ($years as $year) {
+            $sales = Booking::selectRaw('MONTH(date_booking) as month, SUM(total_price) as total_sales')
+                ->whereYear('date_booking', $year)
+                ->groupBy('month')
+                ->orderBy('month')
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'month' => $item->month,
+                        'total_sales' => $item->total_sales,
+                    ];
+                });
+    
+            // Generar matriz para el año
+            $months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+            $salesMatrix = [
+                $months,
+                array_map(function ($monthIndex) use ($sales) {
+                    $data = $sales->firstWhere('month', $monthIndex + 1);
+                    return $data ? $data['total_sales'] : 0;
+                }, range(0, 11)),
+            ];
+    
+            $salesData[$year] = $salesMatrix;
+        }
+    
+        return $salesData;
+    }
+
+    // total_bookings
+    private function getReservationsByMonth($years)
+    {
+        $reservationsData = [];
+        
+        // Contamos las reservas sin fecha y las distribuimos por mes como 0 si no hay dato
+        $missingReservations = Booking::whereNull('date_booking')->count();
+        $reservationsData['N/A'] = [
+            ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            array_fill(0, 12, $missingReservations)  // Asignamos las reservas sin fecha a todos los meses
         ];
 
+        foreach ($years as $year) {
+            // Contamos las reservas por mes para el año
+            $monthlyReservations = Booking::selectRaw('MONTH(date_booking) as month, COUNT(*) as total_reservations')
+                ->whereYear('date_booking', $year)
+                ->groupBy('month')
+                ->orderBy('month')
+                ->get()
+                ->map(function ($item) {
+                    return [
+                        'month' => $item->month,
+                        'total_reservations' => $item->total_reservations,
+                    ];
+                });
 
+            // Generar matriz para el año
+            $months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+            $reservationsMatrix = [
+                $months,
+                array_map(function ($monthIndex) use ($monthlyReservations) {
+                    $data = $monthlyReservations->firstWhere('month', $monthIndex + 1);
+                    return $data ? $data['total_reservations'] : 0;
+                }, range(0, 11)),
+            ];
 
+            $reservationsData[$year] = $reservationsMatrix;
+        }
 
-
-
-
-
-
-
-
-
+        return $reservationsData;
+    }
 
     
-        // Matriz 3: Estados de Reservas
+
+    private function getStatusData()
+    {
+        // Obtén los datos de los estados de reservas (puedes hacerlo dinámicamente si es necesario)
+        // Este es solo un ejemplo estático; puedes modificarlo para que sea dinámico.
         $statusData = [
             ['Pendiente', 'Confirmado', 'Cancelado'], // Estados
             [10, 30, 15],                             // Cantidad por estado
         ];
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // Pasar los datos a la vista
-        return view('admin.panel', compact('salesData', 'reservationsData', 'statusData', 'years', 'selectedYear'));
-
+        return $statusData;
     }
+
+
+    public function index(Request $request)
+    {
+        // Paso 1: Obtener el año seleccionado o el actual
+        $selectedYear = $this->getSelectedYear($request);
+    
+        // Paso 2: Obtener los años disponibles para las gráficas
+        $years = $this->getYears();
+    
+        // Paso 3: Obtener los datos de ventas por mes
+        $salesData = $this->getSalesDataByMonth($years);
+    
+        // Paso 4: Obtener las reservas por ciudad
+        $reservationsData = $this->getReservationsByMonth($years);
+    
+        // Paso 5: Obtener los estados de las reservas
+        $statusData = $this->getStatusData();
+    
+        // Paso 6: Pasar los datos a la vista
+        return view('admin.panel', compact('salesData', 'reservationsData', 'statusData', 'years', 'selectedYear'));
+    }
+    
 
     public function users(Request $request)
     {

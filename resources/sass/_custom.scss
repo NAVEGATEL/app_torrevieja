@@ -108,7 +108,6 @@
     border-radius: 5px;
     background: #ddd;
     outline: none;
-    transition: background 0.3s;
 }
 
 #yearSelector::-webkit-slider-thumb {
@@ -128,4 +127,33 @@
     border-radius: 50%;
     cursor: pointer;
 }
-// TERMINA: Esto es el color eprsonalizado de la barra de años para el primer gráfico del panel
+// TERMINA: Esto es el color eprsonalizado de la barra de años para el primer gráfico del panel rgb(192, 145, 75);
+
+
+
+#yearSelector2 {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 5px;
+    background: #ddd;
+    outline: none;
+}
+
+#yearSelector2::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: rgb(255, 191, 1);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#yearSelector2::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: rgb(255, 191, 1);
+    border-radius: 50%;
+    cursor: pointer;
+}
