@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;  
-use App\Services\UserDataService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Pagination\LengthAwarePaginator;
+
 use Carbon\Carbon;
 
+use App\Services\UserDataService;
 use App\Models\Booking;  
 use App\Models\EmailTemplate;
 use App\Models\File;
@@ -118,18 +120,28 @@ class HomeController extends Controller
     }
 
     
-
-    private function getStatusData()
+    private function getCantidadActividades()
     {
-        // Obtén los datos de los estados de reservas (puedes hacerlo dinámicamente si es necesario)
-        // Este es solo un ejemplo estático; puedes modificarlo para que sea dinámico.
-        $statusData = [
-            ['Pendiente', 'Confirmado', 'Cancelado'], // Estados
-            [10, 30, 15],                             // Cantidad por estado
-        ];
-
-        return $statusData;
+        // Obtener las actividades y contar cuántas veces se ha realizado cada tipo de actividad
+        $statusData = Booking::select('product_name', DB::raw('count(*) as total'))
+            ->groupBy('product_name')  // Agrupar por el tipo de actividad (product_name)
+            ->get();
+    
+        // Formatear los datos para enviarlos a la vista
+        $activityTypes = $statusData->pluck('product_name')->toArray();  // Tipos de actividades (product_name)
+        $activityCounts = $statusData->pluck('total')->toArray();  // Cantidades de actividades realizadas
+    
+        // Decodificar las entidades HTML en los nombres de actividades
+        $activityTypes = array_map('html_entity_decode', $activityTypes);
+    
+        // Retornar los datos de actividades
+        return [$activityTypes, $activityCounts];
     }
+    
+    
+
+    
+    
 
 
     public function index(Request $request)
@@ -147,7 +159,7 @@ class HomeController extends Controller
         $reservationsData = $this->getReservationsByMonth($years);
     
         // Paso 5: Obtener los estados de las reservas
-        $statusData = $this->getStatusData();
+        $statusData = $this->getCantidadActividades();
     
         // Paso 6: Pasar los datos a la vista
         return view('admin.panel', compact('salesData', 'reservationsData', 'statusData', 'years', 'selectedYear'));
