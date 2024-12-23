@@ -39,7 +39,7 @@
                             placeholder="Nombre, Teléfono, Email, Reserva y DNI"
                             value="{{ request('searchQuery') }}"
                         />
-                    </div>
+                    </div> 
                      
                     <div class="col-4">
                         <label for="dateRange" class="form-label fw-bold">Filtrar por fechas</label>

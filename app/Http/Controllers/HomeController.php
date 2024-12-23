@@ -68,8 +68,8 @@ class HomeController extends Controller
         }
 
         // Obtén los primeros 50 registros filtrados de cada tabla
-        $bookings = $bookingQuery->take(50)->get();
-        $files = $fileQuery->take(50)->get();
+        $bookings = $bookingQuery->get();
+        $files = $fileQuery->get();
 
         // Mapea los datos de ambas colecciones
         $listaFront = $bookings->map(function ($booking) {
