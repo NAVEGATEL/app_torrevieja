@@ -27,7 +27,7 @@
                     }
                 @endphp
 
-                <form id="searchForm" class="row g-4" method="GET" action="{{ route('users.index') }}">
+                <form id="searchForm" class="row g-4 py-4" method="GET" action="{{ route('users.index') }}">
                     <div class="col-0 col-sm-1"></div>
                     <div class="col-4">
                         <label for="searchQuery" class="form-label fw-bold">Buscar usuarios</label>
@@ -81,7 +81,7 @@
 
                 </form>
                 <!-- Renderiza los enlaces de paginación -->
-                 <!-- $listaFront->links()  -->
+                {{ $listaFront->links() }}
                 </div>
             </div>
         </div>
