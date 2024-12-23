@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;  
-use Illuminate\Pagination\LengthAwarePaginator; 
+use App\Services\UserDataService;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 use App\Models\Booking;  
 use App\Models\EmailTemplate;
@@ -44,11 +45,198 @@ class HomeController extends Controller
     }
 
 
+    
+
     public function users(Request $request)
     {
+        // Inicializa las consultas de Booking y File
+        $bookingQuery = Booking::query();
+        $fileQuery = File::query();
+    
+        $isFiltered = $request->filled('searchQuery') || $request->filled('startDate') || $request->filled('endDate');
+    
+        if ($isFiltered) {
+            // Aplica filtros si se reciben en el request por name, email, phone, short_id, dni, filename
+            if ($request->filled('searchQuery')) {
+                $searchQuery = '%' . $request->searchQuery . '%';
+    
+                $bookingQuery->where(function ($query) use ($searchQuery) {
+                    $query->where('client_name', 'like', $searchQuery)
+                        ->orWhere('client_email', 'like', $searchQuery)
+                        ->orWhere('client_phone', 'like', $searchQuery)
+                        ->orWhere('short_id', 'like', $searchQuery);
+                });
+    
+                $fileQuery->where(function ($query) use ($searchQuery) {
+                    $query->where('client_name', 'like', $searchQuery)
+                        ->orWhere('client_email', 'like', $searchQuery)
+                        ->orWhere('client_phone', 'like', $searchQuery)
+                        ->orWhere('short_id', 'like', $searchQuery)
+                        ->orWhere('dni', 'like', $searchQuery)
+                        ->orWhere('filename', 'like', $searchQuery);
+                });
+            }
+    
+            // Aplica filtros por fecha
+            if ($request->filled('startDate')) {
+                if ($request->filled('exactDate')) {
+                    $bookingQuery->whereDate('date_booking', $request->startDate);
+                    $fileQuery->whereDate('date_booking', $request->startDate);
+                } elseif ($request->filled('endDate')) {
+                    $bookingQuery->whereBetween('date_booking', [$request->startDate, $request->endDate]);
+                    $fileQuery->whereBetween('date_booking', [$request->startDate, $request->endDate]);
+                } else {
+                    $bookingQuery->whereDate('date_booking', '>=', $request->startDate);
+                    $fileQuery->whereDate('date_booking', '>=', $request->startDate);
+                }
+            }
+        } else {
+            // Limita a los primeros 50 registros si no hay filtros
+            $bookingQuery->limit(50);
+            $fileQuery->limit(50);
+        }
+    
+        // Obtén los registros filtrados
+        $bookings = $bookingQuery->get();
+        $files = $fileQuery->get();
+    
+        // Mapea los datos de ambas colecciones
+        $listaFront = $bookings->map(function ($booking) {
+            return [
+                'client_name' => $booking->client_name,
+                'client_email' => $booking->client_email,
+                'client_phone' => $booking->client_phone,
+                'client_kind' => $booking->client_kind,
+                'short_id' => $booking->short_id,
+                'date_booking' => $booking->date_booking,
+            ];
+        });
+    
+        $filesMapped = $files->map(function ($file) {
+            return [
+                'client_name' => $file->client_name,
+                'client_email' => $file->client_email,
+                'client_phone' => $file->client_phone,
+                'client_kind' => $file->client_kind,
+                'short_id' => $file->short_id,
+                'date_booking' => $file->date_booking,
+                'dni' => $file->dni,
+                'filename' => $file->filename,
+            ];
+        });
+    
+        // Unifica ambas colecciones bajo una sola
+        $mergedData = $listaFront->merge($filesMapped);
+    
+        // Pagina la colección combinada manualmente
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $perPage = 10; // Cambia este valor según el número de elementos que quieras por página
+        $currentItems = $mergedData->slice(($currentPage - 1) * $perPage, $perPage)->values();
+        $paginatedData = new LengthAwarePaginator(
+            $currentItems,
+            $mergedData->count(),
+            $perPage,
+            $currentPage,
+            ['path' => LengthAwarePaginator::resolveCurrentPath()]
+        );
+    
+        return view('admin.users.index', compact('paginatedData'));
+    }
+    
 
-        // Pasar los datos paginados a la vista
-        return view('admin.users.index', compact('listaFront'));
+
+
+
+
+
+
+
+
+    public function _usersusers(Request $request)
+    {
+        // Inicializa las consultas de Booking y File
+        $bookingQuery = Booking::query();
+        $fileQuery = File::query();
+
+        // Aplica filtros si se reciben en el request por name,email,phone,short_id,dni,filename
+        if ($request->filled('searchQuery')) {
+            $searchQuery = '%' . $request->searchQuery . '%';
+
+            $bookingQuery->where(function ($query) use ($searchQuery) {
+                $query->where('client_name', 'like', $searchQuery)
+                    ->orWhere('client_email', 'like', $searchQuery)
+                    ->orWhere('client_phone', 'like', $searchQuery)
+                    ->orWhere('short_id', 'like', $searchQuery);
+            });
+
+            $fileQuery->where(function ($query) use ($searchQuery) {
+                $query->where('client_name', 'like', $searchQuery)
+                    ->orWhere('client_email', 'like', $searchQuery)
+                    ->orWhere('client_phone', 'like', $searchQuery)
+                    ->orWhere('short_id', 'like', $searchQuery)
+                    ->orWhere('dni', 'like', $searchQuery)
+                    ->orWhere('filename', 'like', $searchQuery);
+            });
+        }
+        // Aplica filtros si se reciben en el request por fecha
+        if ($request->filled('startDate')) {
+            if ($request->filled('exactDate')) {
+                $bookingQuery->whereDate('date_booking', $request->startDate);
+                $fileQuery->whereDate('date_booking', $request->startDate);
+            } elseif ($request->filled('endDate')) {
+                $bookingQuery->whereBetween('date_booking', [$request->startDate, $request->endDate]);
+                $fileQuery->whereBetween('date_booking', [$request->startDate, $request->endDate]);
+            } else {
+                $bookingQuery->whereDate('date_booking', '>=', $request->startDate);
+                $fileQuery->whereDate('date_booking', '>=', $request->startDate);
+            }
+        }
+
+        // Obtén los registros paginados filtrados de cada tabla
+        $bookings = $bookingQuery->paginate(50);
+        $files = $fileQuery->paginate(50);
+
+        // Mapea los datos de ambas colecciones
+        $listaFront = $bookings->map(function ($booking) {
+            return [
+                'client_name' => $booking->client_name,
+                'client_email' => $booking->client_email,
+                'client_phone' => $booking->client_phone,
+                'client_kind' => $booking->client_kind,
+                'short_id' => $booking->short_id,
+                'date_booking' => $booking->date_booking,
+            ];
+        });
+
+        $filesMapped = $files->map(function ($file) {
+            return [
+                'client_name' => $file->client_name,
+                'client_email' => $file->client_email,
+                'client_phone' => $file->client_phone,
+                'client_kind' => $file->client_kind,
+                'short_id' => $file->short_id,
+                'date_booking' => $file->date_booking,
+                'dni' => $file->dni,
+                'filename' => $file->filename,
+            ];
+        });
+
+        // Unifica ambas colecciones bajo una sola
+        $mergedData = $listaFront->merge($filesMapped);
+
+        // Pagina la colección combinada manualmente
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $perPage = 10; // Cambia este valor según el número de elementos que quieras por página
+        $currentItems = $mergedData->slice(($currentPage - 1) * $perPage, $perPage)->values();
+        $paginatedData = new LengthAwarePaginator(
+            $currentItems,
+            $mergedData->count(),
+            $perPage,
+            $currentPage,
+            ['path' => LengthAwarePaginator::resolveCurrentPath()]
+        );
+
+        return view('admin.users.index', compact('paginatedData'));
     }
 
 

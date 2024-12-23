@@ -12,7 +12,7 @@
         <!-- Formulario de búsqueda -->
         <div class="col-md-12 mb-4">
             <div class="card shadow-sm">
-                <div class="card-header bg-dark text-white">
+                <div class="card-header bg-dark text-white border border-1 border-dark">
                     <h5 class="card-title mb-0">Buscar Clientes</h5>
                 </div>
                 <div class="card-body">
@@ -27,7 +27,7 @@
                     }
                 @endphp
 
-                <form id="searchForm" class="row g-4 py-4" method="GET" action="{{ route('users.index') }}">
+                <form id="searchForm" class="row g-4 py-4 mb-4" method="GET" action="{{ route('users.index') }}">
                     <div class="col-0 col-sm-1"></div>
                     <div class="col-4">
                         <label for="searchQuery" class="form-label fw-bold">Buscar usuarios</label>
@@ -80,16 +80,14 @@
                     </div>
 
                 </form>
-                @if ($listaFront instanceof \Illuminate\Pagination\LengthAwarePaginator && $listaFront->hasPages())
-                    {{ $listaFront->links() }}
-                @endif
+                    {{ $paginatedData->links() }}
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Tabla de clientes -->
-    <div class="row">
+    <div class="row mb-4">
         <div class="col-md-12">
             <div class="card">
 
@@ -109,7 +107,7 @@
                         <tbody>
                             <!-- Este Script partido de Hola es para mostrar por consola un resultado o los que se quieran para ver que obtenemos -->
                             
-                            @foreach($listaFront as $client)
+                            @foreach($paginatedData as $client)
                             
                                 <tr id={{ $client['short_id'] }}>
                                     <td>{{ $client['client_name'] }}</td>
