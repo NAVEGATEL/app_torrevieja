@@ -80,8 +80,9 @@
                     </div>
 
                 </form>
-                <!-- Renderiza los enlaces de paginación -->
-                {{ $listaFront->links() }}
+                @if ($listaFront instanceof \Illuminate\Pagination\LengthAwarePaginator && $listaFront->hasPages())
+                    {{ $listaFront->links() }}
+                @endif
                 </div>
             </div>
         </div>

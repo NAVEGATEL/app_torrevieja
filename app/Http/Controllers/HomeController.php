@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;  
+use Illuminate\Pagination\LengthAwarePaginator; 
 
 use App\Models\Booking;  
 use App\Models\EmailTemplate;
@@ -42,13 +43,14 @@ class HomeController extends Controller
         return view('admin.panel', compact('salesData', 'reservationsData', 'statusData'));
     }
 
+
     public function users(Request $request)
     {
         // Inicializa las consultas de Booking y File
         $bookingQuery = Booking::query();
         $fileQuery = File::query();
 
-        // Aplica filtros si se reciben en el request por name,email,phone,short_id,dni,filename
+        // Aplica filtros si se reciben en el request por name, email, phone, short_id, dni, filename
         if ($request->filled('searchQuery')) {
             $searchQuery = '%' . $request->searchQuery . '%';
 
@@ -68,6 +70,7 @@ class HomeController extends Controller
                     ->orWhere('filename', 'like', $searchQuery);
             });
         }
+
         // Aplica filtros si se reciben en el request por fecha
         if ($request->filled('startDate')) {
             if ($request->filled('exactDate')) {
@@ -82,12 +85,12 @@ class HomeController extends Controller
             }
         }
 
-        // Obtén los primeros 50 registros filtrados de cada tabla
+        // Obtén los datos sin paginar
         $bookings = $bookingQuery->get();
         $files = $fileQuery->get();
 
         // Mapea los datos de ambas colecciones
-        $listaFront = $bookings->map(function ($booking) {
+        $bookingsMapped = $bookings->map(function ($booking) {
             return [
                 'client_name' => $booking->client_name,
                 'client_email' => $booking->client_email,
@@ -96,7 +99,7 @@ class HomeController extends Controller
                 'short_id' => $booking->short_id,
                 'date_booking' => $booking->date_booking,
             ];
-        })->toArray();
+        });
 
         $filesMapped = $files->map(function ($file) {
             return [
@@ -109,13 +112,30 @@ class HomeController extends Controller
                 'dni' => $file->dni,
                 'filename' => $file->filename,
             ];
-        })->toArray();
+        });
 
-        // Unifica ambas colecciones bajo la misma variable
-        $listaFront = array_merge($listaFront, $filesMapped);
+        // Combina ambas colecciones
+        $combinedData = $bookingsMapped->merge($filesMapped);
 
+        // Crear paginación manualmente
+        $perPage = 25;
+        $currentPage = $request->input('page', 1);
+        $currentPageItems = $combinedData->slice(($currentPage - 1) * $perPage, $perPage)->values();
+
+        $listaFront = new LengthAwarePaginator(
+            $currentPageItems,
+            $combinedData->count(),
+            $perPage,
+            $currentPage,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        // Pasar los datos paginados a la vista
         return view('admin.users.index', compact('listaFront'));
     }
+
+
+
 
     public function userActions(Request $request)
     {  
