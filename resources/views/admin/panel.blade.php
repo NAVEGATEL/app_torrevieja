@@ -101,18 +101,12 @@
     </div>
 
 
-</div>
-
+</div> 
+<script src="{{ asset('js/admin/obtencionDatos.js') }}" type="module"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<script src="resources\js\admin\obtencionDatos.js"></script>
-
-<script>
-
-
-
-    // init();
+<script> 
     // Total de Ventas
     const totalSalesCtx = document.getElementById('totalSalesChart').getContext('2d');
     new Chart(totalSalesCtx, {
@@ -168,6 +162,5 @@
             responsive: true
         }
     });
-
-</script>
+</script> 
 @endsection

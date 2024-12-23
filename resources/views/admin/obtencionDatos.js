@@ -1032,15 +1032,14 @@ async function fetchBookingsWeekly8(accessToken) {
     }
 }
 
-async function init() {
+export async function init() {
     // Asi es la fecha actual para buscar por date: let endDate = Math.floor(Date.now() / 1000); // Fecha actual en timestamp
     try {
         const accessToken = await fetchAccessToken();
-        await fetchBookingsWeekly_(accessToken);
+        await fetchBookingsWeekly8(accessToken);
     } catch (error) {
         console.error("Initialization error:", error);
     }
 }
 
-// Llamar a la función init al cargar la página
-document.addEventListener("DOMContentLoaded", init);
+init()
