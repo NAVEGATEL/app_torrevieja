@@ -44,9 +44,6 @@ class HomeController extends Controller
         return view('admin.panel', compact('salesData', 'reservationsData', 'statusData'));
     }
 
-
-    
-
     public function users(Request $request)
     {
         // Inicializa las consultas de Booking y File
@@ -142,16 +139,7 @@ class HomeController extends Controller
     
         return view('admin.users.index', compact('paginatedData'));
     }
-    
-
-
-
-
-
-
-
-
-
+ 
     public function _usersusers(Request $request)
     {
         // Inicializa las consultas de Booking y File
@@ -238,9 +226,6 @@ class HomeController extends Controller
 
         return view('admin.users.index', compact('paginatedData'));
     }
-
-
-
 
     public function userActions(Request $request)
     {  
