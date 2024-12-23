@@ -118,7 +118,7 @@ class HomeController extends Controller
         $combinedData = $bookingsMapped->merge($filesMapped);
     
         // Crear paginación manualmente
-        $perPage = 52;
+        $perPage = 525;
         $currentPage = $request->input('page', 1);
         $currentPageItems = $combinedData->slice(($currentPage - 1) * $perPage, $perPage)->values();
     
