@@ -187,15 +187,134 @@ async function fetchBookingsWeekly8(accessToken) {
     }
 }
 
-async function init() {
-   try {
-        const accessToken = await fetchAccessToken();
-        console.log(accessToken);
-        
-        await fetchBookingsWeekly8(accessToken);
-    } catch (error) {
-        console.error("Initialization error:", error);
+let toastInterval;
+
+function createToast(message, isError = false) {
+    // Crear contenedor del toast
+    let toastContainer = document.getElementById("toast-container");
+
+    // Si no existe el contenedor, lo creamos
+    if (!toastContainer) {
+        toastContainer = document.createElement("div");
+        toastContainer.id = "toast-container";
+        toastContainer.style.position = "fixed";
+        toastContainer.style.bottom = "20px";
+        toastContainer.style.right = "20px";
+        toastContainer.style.zIndex = "1050";
+        toastContainer.style.maxWidth = "300px";
+        toastContainer.style.display = "none";
+        document.body.appendChild(toastContainer);
+    }
+
+    // Crear contenido del toast
+    const toast = document.createElement("div");
+    toast.id = "toast";
+    toast.style.backgroundColor = isError ? "#d9534f" : "#333"; // Rojo para errores
+    toast.style.color = "white";
+    toast.style.borderRadius = "5px";
+    toast.style.padding = "15px";
+    toast.style.display = "flex";
+    toast.style.alignItems = "center";
+    toast.style.boxShadow = "0 4px 6px rgba(0, 0, 0, 0.1)";
+    toast.style.marginBottom = "10px";
+
+    // Crear spinner si no es error
+    const toastSpinner = document.createElement("div");
+    toastSpinner.id = "toast-spinner";
+    if (!isError) {
+        toastSpinner.style.border = "4px solid transparent";
+        toastSpinner.style.borderTop = "4px solid white";
+        toastSpinner.style.borderRadius = "50%";
+        toastSpinner.style.width = "20px";
+        toastSpinner.style.height = "20px";
+        toastSpinner.style.marginRight = "10px";
+        toastSpinner.style.animation = "spin 1s linear infinite";
+    } else {
+        toastSpinner.style.display = "none";
+    }
+
+    // Crear mensaje
+    const toastMessage = document.createElement("span");
+    toastMessage.id = "toast-message";
+    toastMessage.style.transition = "opacity 0.5s"; // Animación de desvanecimiento
+    toastMessage.textContent = message;
+
+    // Ensamblar elementos
+    toast.appendChild(toastSpinner);
+    toast.appendChild(toastMessage);
+    toastContainer.appendChild(toast);
+
+    // Mostrar el toast
+    toastContainer.style.display = "block";
+}
+
+function updateToastMessage(message) {
+    const toastMessage = document.getElementById("toast-message");
+    if (toastMessage) {
+        // Animación de desvanecimiento
+        toastMessage.style.opacity = 0; // Ocultar mensaje actual
+        setTimeout(() => {
+            toastMessage.textContent = message; // Cambiar texto
+            toastMessage.style.opacity = 1; // Mostrar nuevo texto
+        }, 500); // Tiempo de desvanecimiento
     }
 }
 
-init()
+function removeToast() {
+    const toastContainer = document.getElementById("toast-container");
+    if (toastContainer) {
+        toastContainer.remove();
+        clearInterval(toastInterval); // Limpiar intervalo si existe
+    }
+}
+
+// Añadir animación spinner al estilo
+const style = document.createElement("style");
+style.textContent = `
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}`;
+document.head.appendChild(style);
+
+async function init() {
+    try {
+        // Mostrar mensaje inicial
+        createToast("⏳ Obteniendo datos actualizados de Turitop...");
+
+        // Cambiar el mensaje cada 5 segundos con emojis
+        let messages = [
+            "⏳ Obteniendo datos actualizados de Turitop...",
+            "🔄 Por favor, no cambies de ventana...",
+            "📊 Actualizando información, casi listo...",
+        ];
+        let currentMessageIndex = 0;
+
+        toastInterval = setInterval(() => {
+            currentMessageIndex = (currentMessageIndex + 1) % messages.length;
+            updateToastMessage(messages[currentMessageIndex]);
+        }, 5000);
+
+        // Simulación de la obtención de datos
+        const accessToken = await fetchAccessToken();
+        console.log(accessToken);
+
+        await fetchBookingsWeekly8(accessToken);
+
+        // Mostrar mensaje de éxito y ocultar después de 30 segundos
+        removeToast();
+        createToast("✅ Datos actualizados correctamente.");
+        setTimeout(removeToast, 30000);
+    } catch (error) {
+        // Mostrar mensaje de error
+        console.error("Initialization error:", error);
+        removeToast();
+        createToast("❌ Error al obtener datos de Turitop. Por favor, revise la consola.", true);
+    }
+}
+
+init();
