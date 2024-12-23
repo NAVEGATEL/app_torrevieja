@@ -38,7 +38,11 @@
                             class="form-control form-control-lg pb-2 pt-3"
                             placeholder="Nombre, Teléfono, Email, Reserva y DNI"
                             value="{{ request('searchQuery') }}"
+                            minlength="3"
+                            oninput="validateSearchQuery(this)"
                         />
+                        <small id="searchQueryHelp" class="text-danger d-none">El campo debe tener al menos 3 caracteres.</small>
+
                     </div> 
                      
                     <div class="col-4">

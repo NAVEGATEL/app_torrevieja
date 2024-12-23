@@ -57,7 +57,7 @@ class HomeController extends Controller
     
         if ($isFiltered) {
             // Aplica filtros si se reciben en el request por name, email, phone, short_id, dni, filename
-            if ($request->filled('searchQuery')) {
+            if ($request->filled('searchQuery') && strlen($request->searchQuery) >= 3) {
                 $searchQuery = '%' . $request->searchQuery . '%';
     
                 $bookingQuery->where(function ($query) use ($searchQuery) {
@@ -77,7 +77,7 @@ class HomeController extends Controller
                 });
             }
     
-            // Aplica filtros por fecha
+            // Aplica filtros por fecha si están presentes
             if ($request->filled('startDate')) {
                 if ($request->filled('exactDate')) {
                     $bookingQuery->whereDate('date_booking', $request->startDate);
