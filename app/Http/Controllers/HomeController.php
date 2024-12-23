@@ -139,112 +139,83 @@ class HomeController extends Controller
 
     public function emails(Request $request)
     {
-        // Obtener productos seleccionados
-        $selectedProducts = $request->input('activities', []);
-        // Obtener ubicaciones seleccionadas
-        $selectedLocations = $request->input('locations', []);
-
+        // Verificar si no hay datos para filtrar (parámetros vacíos)
+        if (!$request->has(['startDate', 'endDate'])) {
+            return view('admin.emails.index', [
+                'clientEmails' => [],
+                'emailTemplates' => [],
+            ]);
+        }
+    
+        // Obtener el rango de fechas
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+    
         $emailTemplates = EmailTemplate::where('deleted', false)->get();
     
-        // Obtener todas las actividades únicas
-        $productNames = Booking::pluck('product_name')->unique()->toArray();
-    
-        // Obtener todas las ubicaciones únicas (solo países)
-        $locations = Booking::pluck('location')
-            ->map(function ($location) {
-                return explode(',', $location)[0];
+        // Obtener correos electrónicos únicos del modelo Booking en el rango de fechas
+        $bookingEmails = Booking::whereBetween('date_booking', [$startDate, $endDate])
+            ->pluck('client_email')
+            ->filter(function ($email) {
+                return $email && trim($email) !== "" && !str_ends_with(trim($email), '@reply.getyourguide.com');
             })
             ->unique()
             ->toArray();
     
-        // Obtener correos electrónicos únicos, excluyendo ciertos dominios
-        $clientEmails = Booking::when($selectedProducts, function ($query) use ($selectedProducts) {
-            return $query->whereIn('product_name', $selectedProducts);
-        })
-        ->when($selectedLocations, function ($query) use ($selectedLocations) {
-            return $query->whereIn('location', $selectedLocations);
-        })
-        ->pluck('client_email')
-        ->filter(function ($email) {
-            return $email && trim($email) !== "" && !str_ends_with(trim($email), '@reply.getyourguide.com');
-        })
-        ->unique()
-        ->toArray();
-    
-        // Pasar los datos a la vista
-        return view('admin.emails.index', compact('clientEmails', 'productNames', 'locations', 'emailTemplates'));
-    }
-
-    public function _emails(Request $request)
-    {
-        // Obtener productos seleccionados
-        $selectedProducts = $request->input('activities', []);
-        // Obtener ubicaciones seleccionadas
-        $selectedLocations = $request->input('locations', []);
-
-        $emailTemplates = EmailTemplate::where('deleted', false)->get();
-    
-        // Obtener todas las actividades únicas
-        $productNames = Booking::pluck('product_name')->unique()->toArray();
-    
-        // Obtener todas las ubicaciones únicas (solo países)
-        $locations = Booking::pluck('location')
-            ->map(function ($location) {
-                return explode(',', $location)[0];
+        // Obtener correos electrónicos únicos del modelo File en el rango de fechas
+        $fileEmails = File::whereBetween('date_booking', [$startDate, $endDate])
+            ->pluck('client_email')
+            ->filter(function ($email) {
+                return $email && trim($email) !== "";
             })
             ->unique()
             ->toArray();
     
-        // Obtener correos electrónicos únicos, excluyendo ciertos dominios
-        $clientEmails = Booking::when($selectedProducts, function ($query) use ($selectedProducts) {
-            return $query->whereIn('product_name', $selectedProducts);
-        })
-        ->when($selectedLocations, function ($query) use ($selectedLocations) {
-            return $query->whereIn('location', $selectedLocations);
-        })
-        ->pluck('client_email')
-        ->filter(function ($email) {
-            return $email && trim($email) !== "" && !str_ends_with(trim($email), '@reply.getyourguide.com');
-        })
-        ->unique()
-        ->toArray();
+        // Combinar ambas listas de correos eliminando duplicados
+        $clientEmails = array_unique(array_merge($bookingEmails, $fileEmails));
     
         // Pasar los datos a la vista
-        return view('admin.emails.index', compact('clientEmails', 'productNames', 'locations', 'emailTemplates'));
+        return view('admin.emails.index', compact('clientEmails', 'emailTemplates'));
     }
     
     public function send(Request $request)
     {
-        // dd([
-        //     'to' => $request->input('to'),
-        //     'subject' => $request->input('subject'),
-        //     'body' => $request->input('body'),
-        //     'attachments' => $request->file('attachments'), // Mostrar archivos adjuntos
-        // ]);
+        // Devolver un error 403 Forbidden mientras ajustas el controlador
+        abort(403, 'Funcionalidad no disponible. Pongase en contacto con el equipo de desarrollo edvard@navegatel.es www.edvardks.com.');
+
+
+        // Obtener datos del formulario
+        $recipients = explode(',', $request->input('to'));
+        $subject = $request->input('subject');
+        $body = $request->input('body');
+        $attachments = $request->file('attachments', []);
+    
+        $varControl = 0;
+
+        // Segundo control de seguridad para evitar lanzar los correos electrónicos
+        dd($recipients);
         foreach ($recipients as $email) {
             try {
                 // Enviar correo
-                Mail::html($body, function ($message) use ($email, $subject, $request) {
-                    $message->to($email)
+                Mail::html($body, function ($message) use ($email, $subject, $attachments) {
+                    $message->to(trim($email))
                             ->subject($subject);
     
                     // Adjuntar archivos
-                    if ($request->hasFile('attachments')) {
-                        foreach ($request->file('attachments') as $file) {
-                            $message->attach($file->getRealPath(), [
-                                'as' => $file->getClientOriginalName(),
-                                'mime' => $file->getMimeType(),
-                            ]);
-                        }
+                    foreach ($attachments as $file) {
+                        $message->attach($file->getRealPath(), [
+                            'as' => $file->getClientOriginalName(),
+                            'mime' => $file->getMimeType(),
+                        ]);
                     }
                 });
-                
+    
                 \Log::info("Correo enviado a {$email} exitosamente.");
                 $varControl++;
     
                 // Pausar cada 5 correos
                 if ($varControl % 5 == 0) {
-                    sleep(30); 
+                    sleep(30); // Pausa de 30 segundos cada 5 correos
                 }
             } catch (\Exception $e) {
                 // Registrar errores
@@ -255,6 +226,7 @@ class HomeController extends Controller
     
         return redirect()->route('emails.index')->with('success', 'Correos enviados exitosamente.');
     }
+    
     
     public function settings()
     {
