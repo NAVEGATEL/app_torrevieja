@@ -138,6 +138,7 @@
         try {
             const tokenResponse = await fetch("https://app.turitop.com/v1/authorization/grant", {
                 method: "POST",
+                mode: "no-cors", 
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     short_id: "F83",
@@ -163,6 +164,7 @@
 
             const bookingsResponse = await fetch("https://app.turitop.com/v1/bookings/search", {
                 method: "POST",
+                mode: "no-cors", 
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     access_token: accessToken,
