@@ -130,32 +130,94 @@
 <!-- ###################################################################################################### -->
 <!-- Aquí es donde se obtiene el número de ticket, se hace un fetch para buscar en turitop y luego se crea el form -->
 <script>
-        const inputText = document.getElementById('inputText');
-        const obtenerticketbtn = document.getElementById('obtenerticketbtn');
+    const inputText = document.getElementById('inputText');
+    const obtenerticketbtn = document.getElementById('obtenerticketbtn');
 
-        // función primera donde se pide el número de ticket
-        obtenerticketbtn.addEventListener('click', () => {
-            const text = inputText.value.trim();
-            if (!text) {
-                alert('Por favor, introduce un número de ticket.');
-                return;
+    // Función para obtener el token de acceso
+    async function fetchAccessToken() {
+        try {
+            const tokenResponse = await fetch("https://app.turitop.com/v1/authorization/grant", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    short_id: "F83",
+                    secret_key: "1jLrCT9A1ebKMZHcnGqaOZTYQsiZtMwb"
+                }),
+            });
+
+            const tokenData = await tokenResponse.json();
+            if (tokenData.status !== "SUCCESS") {
+                throw new Error("Failed to fetch access token: " + tokenData.message);
             }
-            localStorage.setItem('short_id_eks', text)
-            
-            fetch('https://jsonplaceholder.typicode.com/posts/1')
-                .then(response => {
-                    if (!response.ok) throw new Error('Error en la solicitud');
-                    return response.json();
-                })
-                .then(data => { 
-                    crearFormularioNuevo(text); 
-                })
-                .catch(error => {
-                    console.error(error);
-                    alert('Hubo un error: ' + error.message);
-                });
-        });
+            return tokenData.data.access_token;
+        } catch (error) {
+            console.error("Error fetching access token:", error);
+            throw error;
+        }
+    }
+
+    // Función para consultar el short_id en la API de TuriTop
+    async function checkShortIdExists(shortId) {
+        try {
+            const accessToken = await fetchAccessToken();
+
+            const bookingsResponse = await fetch("https://app.turitop.com/v1/bookings/search", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    access_token: accessToken,
+                    data: {
+                        filter: {
+                            bookings_date_from: 0, // Fecha más amplia posible
+                            bookings_date_to: Math.floor(Date.now() / 1000), // Fecha actual
+                            product_short_id: shortId,
+                            show_deleted: 1,
+                            checked_in: 1,
+                        },
+                    },
+                }),
+            });
+
+            const bookingsData = await bookingsResponse.json();
+            if (!bookingsData || bookingsData.status !== "SUCCESS") {
+                throw new Error("Failed to fetch bookings: " + bookingsData.message);
+            }
+
+            // Verifica si existen bookings con el short_id
+            const bookings = bookingsData.data.bookings;
+            return bookings && bookings.length > 0;
+        } catch (error) {
+            console.error("Error checking short ID:", error);
+            throw error;
+        }
+    }
+
+    // Evento principal donde se solicita el número de ticket
+    obtenerticketbtn.addEventListener('click', async () => {
+        const text = inputText.value.trim();
+        if (!text) {
+            alert('Por favor, introduce un número de ticket.');
+            return;
+        }
+
+        localStorage.setItem('short_id_eks', text);
+
+        try {
+            const exists = await checkShortIdExists(text);
+            if (exists) {
+                crearFormularioNuevo(text);
+            } else {
+                alert('El número de ticket no existe en la base de datos de TuriTop.');
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Hubo un error al verificar el ticket: ' + error.message);
+        }
+    });
+
+ 
 </script>
+
 
 
 

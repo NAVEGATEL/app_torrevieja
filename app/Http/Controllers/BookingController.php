@@ -20,6 +20,11 @@ class BookingController extends Controller
         return response()->json(['success' => true, 'data' => $booking]);
     }
 
+    public function getSearch(Request $request){
+
+        return true;
+    }
+
     /**
      * Crear reservas en lote.
      */
@@ -60,3 +65,5 @@ class BookingController extends Controller
         }
     }
 }
+
+

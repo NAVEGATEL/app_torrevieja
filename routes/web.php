@@ -32,6 +32,9 @@ Route::get('/consentT', function () {
 
 Route::post('/upload-pdf', [FileUploadController::class, 'store']);
 
+
+
+
 // Grupo de rutas protegidas por autenticación
 Route::middleware(['auth'])->group(function () {
     // Ruta para el panel principal (dashboard)
@@ -72,10 +75,9 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/', [EmailTemplateController::class, 'index'])->name('index'); // Listar plantillas
             Route::post('/', [EmailTemplateController::class, 'store'])->name('store'); // Crear plantilla
             Route::delete('/{id}/logic-delete', [EmailTemplateController::class, 'logicDelete'])->name('emailTemplates.logicDelete'); // Eliminar lógica
-            
         });
     });
-});
+}); 
 
 // Logout personalizado
 Route::post('/logout', function () {
