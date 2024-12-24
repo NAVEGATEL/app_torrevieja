@@ -148,7 +148,7 @@
                     return response.json();
                 })
                 .then(data => { 
-                    crearFormularioNuevo("NN-"+text); 
+                    crearFormularioNuevo(text); 
                 })
                 .catch(error => {
                     console.error(error);
