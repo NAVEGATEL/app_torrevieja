@@ -837,124 +837,7 @@
         }
     }
 
-
-
-    function _copiarForm(modalContent) {
-        const formularioClientes = document.getElementById("formularioClientes");
-        // Buscar el div específico por su ID o clase 
-        if (formularioClientes) {
-            // Clonar el formulario y eliminar el ID para evitar duplicados
-            const formularioClonado = formularioClientes.cloneNode(true);
-            formularioClonado.removeAttribute("id");
-
-            // Eliminar todos los botones y checkboxes del formulario clonado
-            formularioClonado.querySelectorAll("button, input[type=checkbox]").forEach(elemento => elemento.remove());
-
-            // Aplicar estilos de envoltura para evitar desbordamientos
-            formularioClonado.classList.add("wrap");
-
-            // Obtener todos los inputs, textareas y selects del formulario clonado
-            const inputs = formularioClonado.querySelectorAll("input, textarea, select");
-
-            // Validar los campos usando el método nativo checkValidity()
-            if (!formularioClonado.checkValidity()) {
-                formularioClonado.reportValidity(); // Muestra los mensajes de validación nativos
-                return; // Detener la ejecución si algún campo requerido no es válido
-            }
-
-            // Convertir todos los inputs en texto con formato adecuado
-            inputs.forEach((input) => {
-                // Buscar y eliminar cualquier label o span asociado al input
-                const previousSibling = input.previousElementSibling;
-                if (previousSibling && (previousSibling.tagName.toLowerCase() === "label" || previousSibling.tagName.toLowerCase() === "span")) {
-                    previousSibling.remove();
-                }
-
-                // Crear el contenedor de texto
-                const contenedorTexto = document.createElement("div");
-                contenedorTexto.style.marginBottom = "10px"; // Separación entre elementos
-                contenedorTexto.style.fontSize = "12px"; // Tamaño adecuado para documentos A4
-                contenedorTexto.style.lineHeight = "1.5"; // Espaciado entre líneas para mejorar la legibilidad
-
-                // Crear el nuevo label (en formato bold)
-                const nuevoLabel = document.createElement("b");
-                nuevoLabel.textContent = input.placeholder || "Campo"; // Usar el placeholder como label si no hay label o span
-                nuevoLabel.textContent += ": ";
-                nuevoLabel.style.marginRight = "5px"; // Espaciado entre el label y el valor
-
-                // Crear el nuevo valor (en formato italic)
-                const valor = document.createElement("i");
-                valor.textContent = input.value || "N/A"; // Obtener el valor del input
-                valor.style.marginLeft = "5px"; // Espaciado para mejorar la legibilidad
-
-                // Asignar el ID del input al <i> con el sufijo "copy"
-                valor.id = input.id ? `${input.id}copy` : "unknownCopy";
-
-                // Añadir el nuevo label y valor al contenedor
-                contenedorTexto.appendChild(nuevoLabel);
-                contenedorTexto.appendChild(valor);
-
-                // Reemplazar el input con el contenedor de texto
-                input.parentNode.replaceChild(contenedorTexto, input);
-            });
-
-
-
-            // Clonar canvas de firma si existe
-            const canvasOriginales = formularioClientes.querySelectorAll("canvas");
-            canvasOriginales.forEach((canvasOriginal, index) => {
-                const canvasClonado = document.createElement("canvas");
-                canvasClonado.width = canvasOriginal.width;
-                canvasClonado.height = canvasOriginal.height;
-
-                // Copiar el contenido del canvas
-                const contextoOriginal = canvasOriginal.getContext("2d");
-                const contextoClonado = canvasClonado.getContext("2d");
-                const imagenData = contextoOriginal.getImageData(0, 0, canvasOriginal.width, canvasOriginal.height);
-                contextoClonado.putImageData(imagenData, 0, 0);
-
-                // Reemplazar el canvas original clonado con el nuevo
-                const canvasPadre = formularioClonado.querySelectorAll("canvas")[index].parentNode;
-                canvasPadre.replaceChild(canvasClonado, formularioClonado.querySelectorAll("canvas")[index]);
-            });
-
-            // Crear un contenedor con formato A4
-            const contenedorA4 = document.createElement("div");
-            contenedorA4.style.width = "210mm"; // Ancho de A4
-            contenedorA4.style.minHeight = "297mm"; // Altura de A4
-            contenedorA4.style.margin = "0 auto";
-            contenedorA4.style.padding = "15mm"; // Márgenes internos estándar
-            contenedorA4.style.backgroundColor = "#fff";
-            contenedorA4.style.boxShadow = "0 0 5px rgba(0, 0, 0, 0.1)";
-            contenedorA4.style.boxSizing = "border-box";
-
-            // Insertar el formulario clonado en el contenedor A4
-            contenedorA4.appendChild(formularioClonado);
-
-            // Ajustar estilos para evitar solapamientos
-            formularioClonado.style.display = "flex";
-            formularioClonado.style.flexDirection = "column";
-            formularioClonado.style.gap = "15px"; // Separación uniforme entre elementos
-            formularioClonado.style.overflowWrap = "break-word"; // Evitar textos desbordados
-
-            // Limpiar el contenido previo y agregar el contenedor con formato A4
-            modalContent.innerHTML = "";
-            modalContent.appendChild(contenedorA4);
-
-            // Almacenar información relevante en el almacenamiento local
-            localStorage.setItem("telPrint", document.getElementById("telCliente1").value);
-            localStorage.setItem("dniPrint", document.getElementById("dniCliente1").value);
-
-            const currentDate = new Date();
-            const formattedDate = `${currentDate.getDate()}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
-            localStorage.setItem("printDate", formattedDate);
-
-            return true;
-        } else {
-            console.error("El formulario 'formularioClientes' no existe en el DOM.");
-        }
-    }
-
+ 
   
     function imprimirPDF() {
         console.log("Iniciando impresión...");
@@ -1022,14 +905,17 @@
                 formData.append('fechaFirma', fechaFirma);
                 formData.append('anyoNacimiento', fechaNacCliente);
                 formData.append('short_id', localStorage.getItem('short_id_eks'));
-    
+                
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
                 const response = await fetch(`/upload-pdf?filename=${encodeURIComponent(filenameEd)}`, {
                     method: 'POST',
                     headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        'X-CSRF-TOKEN': csrfToken,
                     },
                     body: formData,
                 });
+
     
                 if (response.ok) {
                     console.log('Archivo guardado exitosamente en el backend.');
