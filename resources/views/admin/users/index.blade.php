@@ -84,7 +84,7 @@
                     </div>
 
                 </form>
-                    {{ $paginatedData->links() }}
+                    {{ $paginatedData->appends(request()->except('page'))->links() }}
                 </div>
             </div>
         </div>
@@ -99,13 +99,13 @@
                     <table id="clientTable" class="table table-striped">
                         <thead>
                             <tr>
-                                <th class="text-center">Nombre</th>
-                                <th class="text-center">Email</th> 
-                                <th class="text-center">Teléfono</th>
-                                <th class="text-center">Tipo</th>
-                                <th class="text-center">Reserva</th>
-                                <th class="text-center">Fecha</th>
-                                <th class="text-center">Acciones</th>
+                                <th class="text-start">Nombre</th>
+                                <th class="text-start">Email</th> 
+                                <th class="text-start">Teléfono</th>
+                                <th class="text-start">Tipo</th>
+                                <th class="text-start">Reserva</th>
+                                <th class="text-start">Fecha</th>
+                                <th class="text-start">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -130,10 +130,20 @@
                                     <td>{{ $client['short_id'] }}</td>
                                     <td>{{ $client['date_booking'] }}</td>
                                     <td @if(!empty($client['filename'])) id="{{ $client['filename'] }}" @endif>
-                                    <button class="btn btn-outline-dark border-0 text-center" data-bs-toggle="modal" data-bs-target="#userActionModal" data-client="{{ json_encode($client) }}">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" fill="currentColor" class="bi bi-segmented-nav text-dar btn-hover-action" viewBox="0 0 16 16">
-                                                <path d="M0 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm6 3h4V5H6zm9-1V6a1 1 0 0 0-1-1h-3v4h3a1 1 0 0 0 1-1"/>
-                                            </svg>
+
+                                        <button class="btn {{ empty($client['filename']) ? 'btn-outline-danger' : 'btn-outline-dark' }} border-0 text-center" data-bs-toggle="modal" data-bs-target="#userActionModal" data-client="{{ json_encode($client) }}">
+                                              
+                                        <svg fill="currentColor" class="bi bi-segmented-nav text-dar btn-hover-action" width="27" height="27" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 237.783 237.783" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 237.783 237.783">
+                                            <g>
+                                                <path d="m42.735,50.071h96.959c3.313,0 6,2.687 6,6s-2.687,6-6,6h-96.959c-3.313,0-6-2.687-6-6s2.686-6 6-6zm0,25.934h96.959c3.313,0 6,2.687 6,6s-2.687,6-6,6h-96.959c-3.313,0-6-2.687-6-6s2.686-6 6-6zm0,25.935h96.959c3.313,0 6,2.687 6,6s-2.687,6-6,6h-96.959c-3.313,0-6-2.687-6-6s2.686-6 6-6zm0,25.935h96.959c3.313,0 6,2.687 6,6s-2.687,6-6,6h-96.959c-3.313,0-6-2.687-6-6s2.686-6 6-6z"/>
+                                                <path d="m42.735,62.071h96.959c3.313,0 6-2.687 6-6s-2.687-6-6-6h-96.959c-3.313,0-6,2.687-6,6s2.686,6 6,6z"/>
+                                                <path d="m42.735,88.005h96.959c3.313,0 6-2.687 6-6s-2.687-6-6-6h-96.959c-3.313,0-6,2.687-6,6s2.686,6 6,6z"/>
+                                                <path d="m42.735,113.94h96.959c3.313,0 6-2.687 6-6s-2.687-6-6-6h-96.959c-3.313,0-6,2.687-6,6s2.686,6 6,6z"/>
+                                                <path d="m42.735,139.875h96.959c3.313,0 6-2.687 6-6s-2.687-6-6-6h-96.959c-3.313,0-6,2.687-6,6s2.686,6 6,6z"/>
+                                                <path d="m237.783,98.361c0-1.591-0.632-3.117-1.757-4.243l-16.356-16.355c-1.125-1.125-2.651-1.757-4.243-1.757s-3.117,0.632-4.243,1.757l-28.756,28.756v-88.117c0-3.313-2.686-6-6-6h-170.428c-3.314,0-6,2.687-6,6v200.979c0,3.313 2.686,6 6,6h170.429c3.314,0 6-2.687 6-6v-63.18l53.597-53.597c1.125-1.125 1.757-2.651 1.757-4.243zm-225.783,115.02v-188.979h158.429v94.117l-35.291,35.291h-92.403c-3.313,0-6,2.687-6,6s2.687,6 6,6h80.403l-1.033,1.033c-0.777,0.777-1.326,1.753-1.586,2.821l-4.157,17.05h-25.148c-3.313,0-6,2.687-6,6s2.687,6 6,6c0,0 29.714,0 29.86,0 0.473,0 0.95-0.056 1.421-0.171l21.629-5.273c1.068-0.26 2.044-0.809 2.821-1.586l23.482-23.482v45.181h-158.427zm127.649-31.374l-10.408,2.538 2.538-10.408 83.648-83.648 7.871,7.871-83.649,83.647z"/>
+                                            </g>
+                                        </svg>
+
                                         </button>
                                     </td>
                                 </tr>
@@ -172,10 +182,10 @@
                     </div>
                 </form>
 
-                <div id="fileList" class="mt-3">
-                        <h6>Contrato Firmados:</h6>
-                        <iframe id="previewFrame" src="" style="width: 100%; height: 300px; border: none; margin-top: 10px;"></iframe>
-                        <a id="enlaceDinamico" href="#"> </a> 
+                <div id="fileList" class="mt-3" >
+                    <h6>Contrato Firmados:</h6>
+                    <iframe id="previewFrame" src="" style="width: 100%; height: 300px; border: none; margin-top: 10px;"></iframe>
+                    <a id="enlaceDinamico" href="#"> </a> 
                 </div>
 
             </div>
@@ -186,6 +196,24 @@
  
 
 <script>
+    document.getElementById('userActionModal').addEventListener('show.bs.modal', function (event) {
+        // Obtener el botón que activó el modal
+        var button = event.relatedTarget;
+        // Obtener los datos del cliente desde el atributo data-client
+        var client = JSON.parse(button.getAttribute('data-client'));
+
+        // Obtener el elemento #fileList
+        var fileList = document.getElementById('fileList');
+
+        // Verificar si el filename está vacío
+        if (!client.filename || client.filename === "") {
+            // Si está vacío, ocultar #fileList
+            fileList.style.display = 'none';
+        } else {
+            // Si no está vacío, mostrar #fileList
+            fileList.style.display = 'block';
+        }
+    });
     // Agregar un event listener a todos los botones para abrir el modal con los datos específicos
     document.querySelectorAll('[data-bs-toggle="modal"]').forEach(button => {
         button.addEventListener('click', function() {
