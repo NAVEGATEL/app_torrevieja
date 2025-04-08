@@ -30,6 +30,12 @@ Route::get('/consentT', function () {
     return view('consents.consentT');
 })->name('consentT');
 
+Route::get('/consentMoto', function () {
+    return view('consents.consentM');
+})->name('consentM');
+
+Route::post('/consent/submit', [ConsentController::class, 'submit'])->name('consent.submit');
+
 Route::post('/upload-pdf', [FileUploadController::class, 'store']);
 
 
