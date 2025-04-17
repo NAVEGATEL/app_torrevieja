@@ -337,105 +337,161 @@
 
     <!-- Script para imprimir el contenido -->
     <script>
+        function checkFields() {
+            let missing = [];
+            const fieldsToCheck = [
+                { name: 'nombre_contrato', label: 'Nombre del contrato' },
+                { name: 'documento_identidad', label: 'Documento de Identidad' },
+                { name: 'telefono', label: 'Teléfono' },
+                { name: 'nombre_apellidos', label: 'Nombre y Apellidos' },
+                { name: 'direccion', label: 'Dirección' },
+                { name: 'poblacion', label: 'Población' },
+                { name: 'provincia', label: 'Provincia' },
+                { name: 'pais', label: 'País' },
+                { name: 'email', label: 'Email' },
+                { name: 'moto_num', label: 'Moto Nº' },
+                { name: 'numero_personas', label: 'Número de Personas' },
+                { name: 'tiempo_excursion', label: 'Tiempo de la excursión' },
+                { name: 'dia', label: 'Día' },
+                { name: 'mes', label: 'Mes' },
+                { name: 'anio', label: 'Año' }
+            ];
+            fieldsToCheck.forEach(field => {
+                const inputElem = document.querySelector(`input[name="${field.name}"]`);
+                if (!inputElem || !inputElem.value.trim()) {
+                    missing.push(field.label);
+                }
+            });
+                // Comprobación del consentimiento obligatorio
+            const consentimiento = document.querySelector('input[name="no_consentimiento"]');
+            if (!consentimiento || !consentimiento.checked) {
+                missing.push("Consentimiento de tratamiento de datos");
+            }
+
+            if (missing.length > 0) {
+                alert("Los siguientes campos son obligatorios:\n" + missing.join("\n"));
+                return false;
+            }
+            if (missing.length > 0) {
+                alert("Los siguientes campos son obligatorios:\n" + missing.join("\n"));
+                return false;
+            }
+            return true;
+        }
+
         function printBody() {
-        // Obtenemos el contenedor principal
-        const content = document.querySelector('.imprimit');
-        if (!content) return;
-
-        // Clonamos todo el contenido (para no alterar el original)
-        const contentClone = content.cloneNode(true);
-
-        // ───────────────────────────────────────────────────────────────────
-        // 1. Eliminar elementos que NO se deben imprimir:
-        //    - Botones (si usan clase .no-print)
-        //    - Footer (si usa clase .footer)
-        //    - Header, si tuvieras
-        // ───────────────────────────────────────────────────────────────────
-        contentClone.querySelectorAll('.no-print, .footer, head').forEach(el => el.remove());
-        contentClone.querySelectorAll('header, footer, nav, .footer, .header, .no-print, head, svg').forEach(el => el.remove());
-        contentClone.querySelectorAll(
-            'header, footer, nav, .footer, .header, .no-print, head,' +
-            '.cabecera-extra, .info-top'
-        ).forEach(el => el.remove());
-        contentClone.querySelectorAll(
-            'header, footer, nav, .footer, .header, .no-print, head, .bg-grisSuave'
-        ).forEach(el => el.remove());
-        contentClone.querySelectorAll('#csrfToken').forEach(el => el.remove());
-
-
-        // ───────────────────────────────────────────────────────────────────
-        // 2. Capturar firma y reemplazar canvas por imagen
-        //    (esto asume que tus canvas tienen ID 'signature-pad-participant' y 'signature-pad-tutor')
-        // ───────────────────────────────────────────────────────────────────
-
-        // Firma del participante
-        const signatureParticipant = document.getElementById('signature-pad-participant');
-        if (signatureParticipant) {
-            const dataUrlParticipant = signatureParticipant.toDataURL('image/png');
-            const participantImage = document.createElement('img');
-            participantImage.src = dataUrlParticipant;
-            participantImage.style.border = '1px solid #000'; // opcional, para verse igual
-            // Buscar el canvas clon en el DOM clonado y reemplazarlo
-            const participantCanvasClone = contentClone.querySelector('#signature-pad-participant');
-            if (participantCanvasClone) {
-            participantCanvasClone.replaceWith(participantImage);
+            // Verificar que los campos obligatorios estén rellenados
+            if (!checkFields()) {
+                return;
             }
-        }
+            // Obtenemos el contenedor principal
+            const content = document.querySelector('.imprimit');
+            if (!content) return;
 
-        // Firma del tutor
-        const signatureTutor = document.getElementById('signature-pad-tutor');
-        if (signatureTutor) {
-            const dataUrlTutor = signatureTutor.toDataURL('image/png');
-            const tutorImage = document.createElement('img');
-            tutorImage.src = dataUrlTutor;
-            tutorImage.style.border = '1px solid #000'; // opcional
-            // Buscar el canvas clon en el DOM clonado y reemplazarlo
-            const tutorCanvasClone = contentClone.querySelector('#signature-pad-tutor');
-            if (tutorCanvasClone) {
-            tutorCanvasClone.replaceWith(tutorImage);
+            // Clonamos todo el contenido (para no alterar el original)
+            const contentClone = content.cloneNode(true);
+
+            // ───────────────────────────────────────────────────────────────────
+            // 1. Eliminar elementos que NO se deben imprimir:
+            //    - Botones (si usan clase .no-print)
+            //    - Footer (si usa clase .footer)
+            //    - Header, si tuvieras
+            // ───────────────────────────────────────────────────────────────────
+            contentClone.querySelectorAll('.no-print, .footer, head').forEach(el => el.remove());
+            contentClone.querySelectorAll('header, footer, nav, .header, .no-print, head, svg').forEach(el => el.remove());
+            contentClone.querySelectorAll(
+                'header, footer, nav, .header, .no-print, head,' +
+                '.cabecera-extra, .info-top'
+            ).forEach(el => el.remove());
+            contentClone.querySelectorAll(
+                'header, footer, nav, .header, .no-print, head, .bg-grisSuave'
+            ).forEach(el => el.remove());
+            contentClone.querySelectorAll('#csrfToken').forEach(el => el.remove());
+            contentClone.querySelectorAll('input[name="csrf-token"], meta[name="csrf-token"]').forEach(el => el.remove());
+
+
+
+            // ───────────────────────────────────────────────────────────────────
+            // 2. Capturar firma y reemplazar canvas por imagen
+            //    (esto asume que tus canvas tienen ID 'signature-pad-participant' y 'signature-pad-tutor')
+            // ───────────────────────────────────────────────────────────────────
+
+            // Firma del participante
+            const signatureParticipant = document.getElementById('signature-pad-participant');
+            if (signatureParticipant) {
+                const dataUrlParticipant = signatureParticipant.toDataURL('image/png');
+                const participantImage = document.createElement('img');
+                participantImage.src = dataUrlParticipant;
+                participantImage.style.border = '1px solid #000'; // opcional, para verse igual
+                // Buscar el canvas clon en el DOM clonado y reemplazarlo
+                const participantCanvasClone = contentClone.querySelector('#signature-pad-participant');
+                if (participantCanvasClone) {
+                participantCanvasClone.replaceWith(participantImage);
+                }
             }
-        }
 
-        // ───────────────────────────────────────────────────────────────────
-        // 3. Reemplazar cada input por un texto (span) con el valor
-        //    y para los checkbox mostrar "Sí" o "No".
-        // ───────────────────────────────────────────────────────────────────
-        const inputs = contentClone.querySelectorAll('input');
-        inputs.forEach(input => {
-            const span = document.createElement('span');
-            if (input.type === 'checkbox') {
-            // Mostramos "Sí" / "No" según su estado
-            span.textContent = input.checked ? 'Sí' : 'No';
-            } else {
-            // Para texto, email, tel, etc.
-            span.textContent = input.value;
+            // Firma del tutor
+            const signatureTutor = document.getElementById('signature-pad-tutor');
+            if (signatureTutor) {
+                const dataUrlTutor = signatureTutor.toDataURL('image/png');
+                const tutorImage = document.createElement('img');
+                tutorImage.src = dataUrlTutor;
+                tutorImage.style.border = '1px solid #000'; // opcional
+                // Buscar el canvas clon en el DOM clonado y reemplazarlo
+                const tutorCanvasClone = contentClone.querySelector('#signature-pad-tutor');
+                if (tutorCanvasClone) {
+                tutorCanvasClone.replaceWith(tutorImage);
+                }
             }
-            input.parentNode.replaceChild(span, input);
-        });
 
-        // ───────────────────────────────────────────────────────────────────
-        // 4. Abrir nueva ventana, inyectar el contenido clonado y llamar a print
-        // ───────────────────────────────────────────────────────────────────
-        const printWindow = window.open('', '', 'height=800,width=900');
-        printWindow.document.write('<html><head><title>Formulario</title>');
-        printWindow.document.write(
-            '<style>' +
-            'body { font-family: Arial, sans-serif; margin: 20px; } ' +
-            '.container { max-width: 900px; margin: auto; } ' +
-            '</style>'
-        );
-        printWindow.document.write('</head><body>');
-        printWindow.document.write(contentClone.innerHTML);
-        printWindow.document.write('</body></html>');
-        printWindow.document.close();
-        printWindow.focus();
+            // ───────────────────────────────────────────────────────────────────
+            // 3. Reemplazar cada input por un texto (span) con el valor
+            //    y para los checkbox mostrar "Sí" o "No".
+            // ───────────────────────────────────────────────────────────────────
+            const inputs = contentClone.querySelectorAll('input');
+            inputs.forEach(input => {
+                const span = document.createElement('span');
+                if (input.type === 'checkbox') {
+                // Mostramos "Sí" / "No" según su estado
+                span.textContent = input.checked ? 'Sí' : 'No';
+                } else {
+                // Para texto, email, tel, etc.
+                span.textContent = input.value;
+                }
+                input.parentNode.replaceChild(span, input);
+            });
+            // 6. Construir el nombre del archivo basado en los valores de ciertos inputs
+            const dni = document.querySelector('input[name="documento_identidad"]').value || 'IdNotFound';
+            const fullname = document.querySelector('input[name="nombre_contrato"]').value || 'NameNotFound';
+            const now = new Date();
+            const day = ('0' + now.getDate()).slice(-2);
+            const month = ('0' + (now.getMonth() + 1)).slice(-2);
+            const year = now.getFullYear();
+            const fecha = `${day}${month}${year}`;
+            const filename = `${dni}_${fullname}_${fecha}_motoagua.pdf`;
+            // ───────────────────────────────────────────────────────────────────
+            // 4. Abrir nueva ventana, inyectar el contenido clonado y llamar a print
+            // ───────────────────────────────────────────────────────────────────
+            const printWindow = window.open('', '', 'height=800,width=900');
+            printWindow.document.write(`<html><head><title>${filename}</title>`);
+            printWindow.document.write(
+                '<style>' +
+                'body { font-family: Arial, sans-serif; margin: 20px; } ' +
+                '.container { max-width: 900px; margin: auto; } ' +
+                '</style>'
+            );
+            printWindow.document.write('</head><body>');
+            printWindow.document.write(contentClone.innerHTML);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.focus();
 
-        // Esperar un poco antes de imprimir, para asegurar que cargue todo
-        setTimeout(() => {
-            printWindow.print();
-            printWindow.close();
-        }, 500);
-        }
+            // Esperar un poco antes de imprimir, para asegurar que cargue todo
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 500);
+            }
 
     </script>
 
