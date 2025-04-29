@@ -1,6 +1,10 @@
 <nav class="navbar navbar-expand-lg p-3">
     <h1 class="text-light fs-1 fuente-uno">
-        Administración
+        @if(request()->routeIs('panel'))
+            <span id="dynamic-title">Dashboard Financiero y de Actividades</span> <span id="yearHeader" class="badge bg-light text-dark">{{ isset($selectedYear) ? $selectedYear : '' }}</span>
+        @else
+            Administración
+        @endif
     </h1>
 
     <button class="navbar-toggler mb-3 me-5 border-0 btn btn-outline-light" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">

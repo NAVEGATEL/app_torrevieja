@@ -1,93 +1,219 @@
 // EMPEIZA: Esto es el color eprsonalizado de la barra de años para el primer gráfico del panel
 
 /* Estilo para el slider */
-#yearSelector1 {
+#yearSelector1, #yearSelector2 {
     -webkit-appearance: none;
     width: 100%;
     height: 8px;
-    border-radius: 5px;
-    background: #ddd;
+    border-radius: 10px;
+    background: #f0f0f0;
     outline: none;
+    transition: background 0.3s ease;
 }
 
 #yearSelector1::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     background: rgba(75, 192, 192, 1);
     border-radius: 50%;
     cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
 }
 
 #yearSelector1::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     background: rgba(75, 192, 192, 1);
     border-radius: 50%;
     cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
 }
-// TERMINA: Esto es el color eprsonalizado de la barra de años para el primer gráfico del panel rgb(192, 145, 75);
 
-
-
-#yearSelector2 {
-    -webkit-appearance: none;
-    width: 100%;
-    height: 8px;
-    border-radius: 5px;
-    background: #ddd;
-    outline: none;
+#yearSelector1::-webkit-slider-thumb:hover,
+#yearSelector1::-moz-range-thumb:hover {
+    transform: scale(1.1);
 }
 
 #yearSelector2::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 20px;
-    height: 20px;
-    background: rgb(255, 191, 1);
+    width: 22px;
+    height: 22px;
+    background: rgb(255, 191, 0);
     border-radius: 50%;
     cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
 }
 
 #yearSelector2::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    background: rgb(255, 191, 1);
+    width: 22px;
+    height: 22px;
+    background: rgb(255, 191, 0);
     border-radius: 50%;
     cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+}
+
+#yearSelector2::-webkit-slider-thumb:hover,
+#yearSelector2::-moz-range-thumb:hover {
+    transform: scale(1.1);
+}
+
+/* Estilos para las tarjetas del dashboard */
+.card {
+    transition: all 0.3s ease;
 }
 
 
 
+.card-header {
+    font-weight: 500;
+}
 
+/* Estilos para la leyenda del gráfico circular */
+.legend-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
 
-/* Estilos para la leyenda del pastel */
+.legend-scroll::-webkit-scrollbar {
+    width: 5px;
+}
+
+.legend-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.legend-scroll::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+
 #legend {
     margin: 0;
     padding: 0;
     max-height: 100%;
-    overflow-y: auto;
 }
 
 #legend li {
     margin-bottom: 10px;
     display: flex;
     align-items: center;
-    padding-right: 10px;
-    padding-left: 5px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+#legend li:hover {
+    background-color: rgba(0, 0, 0, 0.05);
 }
 
 #legend li div {
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
     margin-right: 10px;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
 }
 
 #legend li span {
     font-size: 14px;
     color: #333;
-    white-space: nowrap; /* Evita que los nombres de actividades se partan */
+    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; /* Si el texto es largo, lo corta con puntos suspensivos */
+    text-overflow: ellipsis;
+    font-weight: 500;
+}
+
+/* Estilos para los badges de año en los títulos */
+.badge {
+    font-weight: 500;
+    padding: 5px 8px;
+    border-radius: 6px;
+}
+
+/* Estilos para el título principal del dashboard */
+.dashboard-title {
+    font-size: 2.2rem;
+    color: var(--color-1);
+    position: relative;
+    padding-bottom: 15px;
+    margin-bottom: 30px;
+}
+
+.dashboard-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background-color: var(--color-1);
+    border-radius: 2px;
+}
+
+/* Estilos para el título dinámico en el encabezado */
+#dynamic-title {
+    position: relative;
+    display: inline-block;
+}
+
+#yearHeader {
+    font-size: 0.5em;
+    vertical-align: top;
+    margin-left: 5px;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: var(--color-1) !important;
+    font-weight: bold;
+    padding: 2px 8px;
+    border-radius: 12px;
+    position: relative;
+    top: -5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+/* Efectos visuales para años específicos en las tarjetas */
+.year-highlight-2025 {
+    border-left: 4px solid rgba(75, 192, 192, 1) !important;
+}
+
+.year-highlight-2024 {
+    border-left: 4px solid rgba(255, 159, 64, 1) !important;
+}
+
+.year-highlight-2023 {
+    border-left: 4px solid rgba(153, 102, 255, 1) !important;
+}
+
+.year-highlight-2022 {
+    border-left: 4px solid rgba(255, 99, 132, 1) !important;
+}
+
+/* Animación para cambios de año */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.badge.bg-primary, .badge.bg-warning {
+    transition: all 0.3s ease;
+}
+
+.badge.bg-primary:hover, .badge.bg-warning:hover {
+    animation: pulse 0.5s ease;
 }
