@@ -42,7 +42,7 @@
         en: {
             city: CIUDAD,
             titulo: "Usage Consent",
-            granText: "By this document I acknowledge that the company ACTIVIDADES NÁUTICAS TORREVIEJA, S.L., operator of the jet ski initiation activity, has explained to me what the activity consists of, the instructions for use, safety measures, and the procedure to follow during the excursion for its proper development. I have also been informed about the limitations and cases where the jet ski cannot be used, such as being under the influence of alcohol, drugs, or having impaired physical or mental abilities, etc... I take responsibility for any damage caused to the material provided here and agree to pay for any breakages caused by not following the instructions given by the company's monitors. I also acknowledge that this text has been translated for me, which I sign to confirm my full understanding and consent. I release the company from any responsibility for the loss of objects during the activity.",
+            granText: "By this document I acknowledge that the company ACTIVIDADES NÁUTICAS TORREVIEJA, S.L., operator of the jet ski initiation activity, has explained to me what the activity consists of, the instructions for use, safety measures, and the whole procedure to be followed throughout its development for the correct use of the aforesaid.I have also been informed about the limitations and the situations in which the device is not to be used, such as being under the effects of alcohol or drugs, experiencing a decrease of physical or mental faculties, etc. I am responsible for any damage caused to the material I am provided by the operator and I accept to pay the reparations in case of not following the indications of the instructors. I have been translated this text, which I sign to indicate approval and conformity after being aware of and understanding all its content. I exempt the company from any responsibility for the loss of objects by performing the activity.",
             granText2: "We inform you that your personal data, which may appear in this contract, will be incorporated into a file under our responsibility, with the purpose of informing you about the products and services offered by ACTIVIDADES NÁUTICAS TORREVIEJA, S.L. Additionally, you allow us to use any photo taken of you during the activity for our promotion. If you wish to exercise your rights of access, rectification, cancellation, and opposition, you can contact us in writing at: Flyboard Torrevieja, Paseo Vistalegre s/n - 03181 Torrevieja (Alicante), or via email at protecciondedatos@flyboardtorrevieja.com with the subject: UNSUBSCRIBE.",
             ticketPlaceholder: "Ticket No.",
             enviar: "Send",
@@ -111,6 +111,20 @@
     .footer { font-size: 12px; margin-top: 20px; }
     .no-print { text-align: center; margin-top: 20px; }
     input{margin: 10px 5px;}
+    .signatures-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+    }
+    .signature-container {
+        flex: 1;
+    }
+    
+    @media print {
+        .no-print {
+            display: none !important;
+        }
+    }
 </style>
 
 <!-- Contenido del formulario -->
@@ -139,53 +153,103 @@
 
             <!-- Título -->
             <div class="title">
-                DECLARACIÓN RESPONSABLE PARA LA PRÁCTICA DE JETSKI
+                EXCURSIÓN PARA LA INTRODUCCIÓN A LA MOTO NÁUTICA
             </div>
 
             <!-- Texto del Contrato -->
             <div class="section">
-                <p>
-                    Yo, <input type="text" name="nombre_contrato" style="min-width: 300px;">, con DNI/Pasaporte/NIE 
-                    <input type="text" name="documento_identidad" style="min-width: 180px;">, y teléfono 
-                    <input type="tel" name="telefono" style="min-width: 150px;">, declaro haber recibido la información necesaria relativa a la actividad de Jetski, entendiendo que la misma conlleva riesgos inherentes propios de la práctica de deportes acuáticos.
+                <div style="display: flex; flex-wrap: wrap; justify-content: space-between; margin-bottom: 20px; background-color: #f9f9f9; padding: 15px;">
+                    <div style="flex: 1; min-width: 48%; padding-right: 15px;">
+                        <div style="margin-bottom: 1px;">
+                            <label style="color: #654321; font-weight: 500; display: inline-block; width: 160px;">Nombre y Apellidos</label>
+                            <input type="text" name="nombre_contrato" style="width: 65%; border: none; border-bottom: 1px dotted #000;">
+                        </div>
+                        
+                        <div style="margin-bottom: 1px;">
+                            <label style="color: #654321; font-weight: 500; display: inline-block; width: 160px;">Dirección</label>
+                            <input type="text" name="direccion" style="width: 65%; border: none; border-bottom: 1px dotted #000;">
+                        </div>
+                        
+                        <div style="margin-bottom: 1px;">
+                            <label style="color: #654321; font-weight: 500; display: inline-block; width: 160px;">Población</label>
+                            <input type="text" name="poblacion" style="width: 65%; border: none; border-bottom: 1px dotted #000;">
+                        </div>
+                        
+                        <div style="margin-bottom: 1px;">
+                            <label style="color: #654321; font-weight: 500; display: inline-block; width: 160px;">País</label>
+                            <input type="text" name="pais" style="width: 65%; border: none; border-bottom: 1px dotted #000;">
+                        </div>
+                    </div>
+                    
+                    <div style="flex: 1; min-width: 48%;">
+                        <div style="margin-bottom: 1px;">
+                            <label style="color: #654321; font-weight: 500; display: inline-block; width: 160px;">DNI/Pasaporte/NIE</label>
+                            <input type="text" name="documento_identidad" style="width: 65%; border: none; border-bottom: 1px dotted #000;">
+                        </div>
+                        
+                        <div style="margin-bottom: 1px;">
+                            <label style="color: #654321; font-weight: 500; display: inline-block; width: 160px;">Tel.</label>
+                            <input type="tel" name="telefono" style="width: 65%; border: none; border-bottom: 1px dotted #000;">
+                        </div>
+                        
+                        <div style="margin-bottom: 1px;">
+                            <label style="color: #654321; font-weight: 500; display: inline-block; width: 160px;">Provincia</label>
+                            <input type="text" name="provincia" style="width: 65%; border: none; border-bottom: 1px dotted #000;">
+                        </div>
+                        
+                        <div style="margin-bottom: 1px;">
+                            <label style="color: #654321; font-weight: 500; display: inline-block; width: 160px;">Email</label>
+                            <input type="email" name="email" style="width: 65%; border: none; border-bottom: 1px dotted #000;">
+                        </div>
+                        
+                       
+                    </div>
+                </div>
+                
+                <p style="font-size: 0.85em; line-height: 1.3;">
+                    Por el presente documento reconozco que la empresa ACTIVIDADES NÁUTICAS TORREVIEJA, S.L. operadora de la actividad de iniciación a la moto náutica me ha explicado en qué consiste la actividad, me ha explicado las instrucciones de uso, las medidas de seguridad y todo el procedimiento a seguir durante el desarrollo de la excursión para su correcto desarrollo. Así mismo, he sido informado de las limitaciones y los supuestos en los que no se puede usar la moto acuática, tales como el estar bajo los efectos del alcohol, drogas, tener mermadas las capacidades físicas o mentales, etc... Me hago responsable de cualquier daño ocasionado al material que aquí se me presta y me comprometo a abonar la rotura del mismo, si éste se rompiera por no seguir las indicaciones de los monitores de la empresa. Igualmente reconozco que me ha sido traducido este texto, el cual firmo dándome por enterado de todo su contenido y otorgando mi plena conformidad y consentimiento. Eximo a la empresa de cualquier responsabilidad de la pérdida de objetos realizando la actividad.
                 </p>
-                <p>
-                    Así mismo, exonero de toda responsabilidad a ACTIVIDADES NÁUTICAS TORREVIEJA, S.L. y a sus representantes legales por cualquier accidente o daño que pudiera sufrir durante la actividad, asumiendo personalmente y de manera voluntaria dichos riesgos.
-                </p>
-                <p>
-                    Autorizo el uso de mi imagen en fotografías y grabaciones que se realicen durante el desarrollo de la actividad para fines informativos y de promoción, sin derecho a retribución económica.
+                <p style="font-size: 0.85em; line-height: 1.3;">
+                    I recognize that ACTIVIDADES NÁUTICAS TORREVIEJA, S.L., the operator company, has explained to me what this activity consists in, the operating instructions, the security measures and the whole procedure to be followed throughout its development for the correct use of the aforesaid.I have also been informed about the limitations and the situations in which the device is not to be used, such as being under the effects of alcohol or drugs, experiencing a decrease of physical or mental faculties, etc. I am responsible for any damage caused to the material I am provided by the operator and I accept to pay the reparations in case of not following the indications of the instructors. I have been translated this text, which I sign to indicate approval and conformity after being aware of and understanding all its content. I exempt the company from any responsibility for the loss of objects by performing the activity.
                 </p>
             </div>
 
             <!-- Datos Personales -->
             <div class="section">
                 <h4>DATOS PERSONALES</h4>
-                <div>
-                    <label>Nombre y Apellidos:</label>
-                    <input type="text" name="nombre_apellidos" style="min-width: 400px;">
-                </div>
-                <div>
-                    <label>Dirección:</label>
-                    <input type="text" name="direccion" style="min-width: 400px;">
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <label>Población:</label>
-                        <input type="text" name="poblacion" style="min-width: 150px;">
+                <div style="display: flex; flex-wrap: wrap; justify-content: space-between; margin-bottom: 20px; background-color: #f9f9f9; padding: 15px;">
+                    <div style="flex: 1; min-width: 48%; padding-right: 15px;">
+                        <div style="margin-bottom: 1px;">
+                            <label style="color: #654321; font-weight: 500; display: inline-block; width: 130px; vertical-align: top;">Nombre y<br>Apellidos:</label>
+                            <input type="text" name="nombre_apellidos" style="width: 60%; border: none; border-bottom: 1px dotted #000;">
+                        </div>
+                        
+                        <div style="margin-bottom: 1px;">
+                            <label style="color: #654321; font-weight: 500; display: inline-block; width: 130px;">Dirección:</label>
+                            <input type="text" name="direccion" style="width: 60%; border: none; border-bottom: 1px dotted #000;">
+                        </div>
+                        
+                        <div style="margin-bottom: 1px;">
+                            <label style="color: #654321; font-weight: 500; display: inline-block; width: 130px;">Población:</label>
+                            <input type="text" name="poblacion" style="width: 60%; border: none; border-bottom: 1px dotted #000;">
+                        </div>
                     </div>
-                    <div class="col">
-                        <label>Provincia:</label>
-                        <input type="text" name="provincia" style="min-width: 150px;">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <label>País:</label>
-                        <input type="text" name="pais" style="min-width: 150px;">
-                    </div>
-                    <div class="col">
-                        <label>Email:</label>
-                        <input type="email" name="email" style="min-width: 200px;">
+                    
+                    <div style="flex: 1; min-width: 48%;">
+                        <div style="margin-bottom: 1px;">
+                            <label style="color: #654321; font-weight: 500; display: inline-block; width: 130px;">Email</label>
+                            <input type="email" name="email" style="width: 60%; border: none; border-bottom: 1px dotted #000;">
+                        </div>
+                        
+                        <div style="margin-bottom: 1px;">
+                            <label style="color: #654321; font-weight: 500; display: inline-block; width: 130px;">País:</label>
+                            <input type="text" name="pais" style="width: 60%; border: none; border-bottom: 1px dotted #000;">
+                        </div>
+                        
+                        <div style="margin-bottom: 1px;">
+                            <label style="color: #654321; font-weight: 500; display: inline-block; width: 130px;">Fecha nacimiento:</label>
+                            <input type="date" name="fecha_nacimiento" id="fecha_nacimiento" onchange="verificarEdad()" style="width: 60%; border: none; border-bottom: 1px dotted #000;">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -206,11 +270,11 @@
                 <br>
                 <div>
                     <label>OFERTA COMBINADA:</label>
-                    <input type="number" name="oferta_combinada" style="min-width: 200px;"> €
+                    <input type="number" name="oferta_combinada" id="oferta_combinada" onchange="calcularTotal()" style="min-width: 200px;"> €
                 </div>
                 <div>
                     <label>FOTOS O GOPRO:</label>
-                    <input type="number" name="fotos_gopro" style="min-width: 200px;"> €
+                    <input type="number" name="fotos_gopro" id="fotos_gopro" onchange="calcularTotal()" style="min-width: 200px;"> €
                 </div>
                 <br>
                 <div>
@@ -219,11 +283,19 @@
                     <input type="checkbox" name="pago_efectivo"> <label style="font-weight:normal;">Pago en efectivo</label>
                 </div>
                 <br>
-                <div class="price-box">
-                    <div>PRECIO</div>
-                    <div>IVA 21%</div>
-                    <div style="border-top: 1px solid #000; padding-top: 5px;">TOTAL</div>
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div class="price-box" style="flex: 1;">
+                        <div>PRECIO <span id="precio_base">0.00</span> €</div>
+                        <div>IVA 21% <span id="iva">0.00</span> €</div>
+                        <div style="border-top: 1px solid #000; padding-top: 5px;">TOTAL <span id="precio_total">0.00</span> €</div>
+                    </div>
+                
+                    <!-- Imagen de moto de agua -->
+                    <div style="flex: 1; text-align: right;">
+                        <img src="/img/moto de agua.PNG" alt="Moto de Agua" style="width: 300px; height: auto;">
+                    </div>
                 </div>
+
             </div>
 
             <!-- Consentimiento -->
@@ -241,22 +313,25 @@
                     <input type="text" name="mes" style="min-width: 120px;"> de 202
                     <input type="text" name="anio" style="min-width: 20px;">
                 </div>
-                <div class="col" style="flex: 1;">
+            </div>
+
+            <div class="signatures-row">
+                <div class="signature-container">
                     <label>Firma del Participante:</label>
                     <canvas class="sign-box" id="signature-pad-participant"></canvas>
-                    <button type="button" class="btn btn-secondary" onclick="clearSignature('signature-pad-participant')">Limpiar Firma</button>
+                    <button type="button" class="btn btn-secondary no-print" onclick="clearSignature('signature-pad-participant')">Limpiar Firma</button>
+                </div>
+                <div class="signature-container" id="firma_tutor_container">
+                    <label>Firma del Tutor Legal:</label>
+                    <canvas class="sign-box" id="signature-pad-tutor"></canvas>
+                    <button type="button" class="btn btn-secondary no-print" onclick="clearSignature('signature-pad-tutor')">Limpiar Firma</button>
                 </div>
             </div>
 
-            <div class="section row" style="margin-top: 15px;">
-                <div class="col" style="flex: 2;">
-                    <label>Nombre del tutor legal (si procede):</label>
-                    <input type="text" name="nombre_tutor" style="min-width: 250px;">
-                </div>
-                <div class="col" style="flex: 1;">
-                    <label>Firma del Tutor Legal:</label>
-                    <canvas class="sign-box" id="signature-pad-tutor"></canvas>
-                    <button type="button" class="btn btn-secondary" onclick="clearSignature('signature-pad-tutor')">Limpiar Firma</button>
+            <div class="section" id="nombre_tutor_container" style="margin-top: 15px;">
+                <div class="col">
+                    <label>Nombre del tutor legal:</label>
+                    <input type="text" name="nombre_tutor" id="nombre_tutor" style="min-width: 250px;">
                 </div>
             </div>
 
@@ -276,8 +351,26 @@
 
     <!-- Firma con el dedo o ratón -->
     <script>
+        // Inicializar los pads de firma al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar los pads de firma
+            initSignaturePad('signature-pad-participant');
+            initSignaturePad('signature-pad-tutor');
+            
+            // Calcular el total inicialmente
+            calcularTotal();
+            
+            // Verificar la edad si ya hay una fecha
+            verificarEdad();
+        });
+
         function initSignaturePad(canvasId) {
             var canvas = document.getElementById(canvasId);
+            if (!canvas) {
+                console.error('Canvas no encontrado:', canvasId);
+                return;
+            }
+            
             var ctx = canvas.getContext('2d');
             var drawing = false;
 
@@ -326,13 +419,83 @@
 
         function clearSignature(canvasId) {
             var canvas = document.getElementById(canvasId);
+            if (!canvas) {
+                console.error('Canvas no encontrado:', canvasId);
+                return;
+            }
             var ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
 
-        // Inicializar los pads de firma
-        initSignaturePad('signature-pad-participant');
-        initSignaturePad('signature-pad-tutor');
+        // Función para calcular automáticamente el total con IVA
+        function calcularTotal() {
+            const ofertaCombinada = parseFloat(document.getElementById('oferta_combinada')?.value) || 0;
+            const fotosGopro = parseFloat(document.getElementById('fotos_gopro')?.value) || 0;
+            
+            const precioBase = ofertaCombinada + fotosGopro;
+            const iva = precioBase * 0.21;
+            const total = precioBase + iva;
+            
+            if (document.getElementById('precio_base')) {
+                document.getElementById('precio_base').textContent = precioBase.toFixed(2);
+            }
+            if (document.getElementById('iva')) {
+                document.getElementById('iva').textContent = iva.toFixed(2);
+            }
+            if (document.getElementById('precio_total')) {
+                document.getElementById('precio_total').textContent = total.toFixed(2);
+            }
+        }
+
+        // Función para verificar la edad y mostrar/ocultar campos de tutor
+        function verificarEdad() {
+            const fechaNacimientoInput = document.getElementById('fecha_nacimiento');
+            if (!fechaNacimientoInput) {
+                console.error('Elemento fecha_nacimiento no encontrado');
+                return;
+            }
+            
+            const fechaNacimiento = fechaNacimientoInput.value;
+            const firmaTutorContainer = document.getElementById('firma_tutor_container');
+            const nombreTutorContainer = document.getElementById('nombre_tutor_container');
+            
+            if (!firmaTutorContainer || !nombreTutorContainer) {
+                console.error('Contenedores de tutor no encontrados');
+                return;
+            }
+            
+            // Si no hay fecha, mantener los campos visibles por defecto
+            if (!fechaNacimiento) {
+                return;
+            }
+            
+            const hoy = new Date();
+            const fechaNac = new Date(fechaNacimiento);
+            let edad = hoy.getFullYear() - fechaNac.getFullYear();
+            const mes = hoy.getMonth() - fechaNac.getMonth();
+            
+            if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNac.getDate())) {
+                edad--;
+            }
+            
+            console.log("Edad calculada:", edad);
+            
+            if (edad < 18) {
+                // Si es menor de edad, mostrar los campos del tutor
+                firmaTutorContainer.style.display = 'block';
+                nombreTutorContainer.style.display = 'block';
+                if (document.getElementById('nombre_tutor')) {
+                    document.getElementById('nombre_tutor').required = true;
+                }
+            } else {
+                // Si es mayor de edad, ocultar los campos del tutor
+                firmaTutorContainer.style.display = 'none';
+                nombreTutorContainer.style.display = 'none';
+                if (document.getElementById('nombre_tutor')) {
+                    document.getElementById('nombre_tutor').required = false;
+                }
+            }
+        }
     </script>
 
     <!-- Script para imprimir el contenido -->
