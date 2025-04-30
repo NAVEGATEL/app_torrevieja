@@ -112,13 +112,22 @@
     .no-print { text-align: center; margin-top: 20px; }
     input{margin: 10px 5px;}
     .signatures-row {
-        display: flex;
-        justify-content: space-between;
-        gap: 20px;
-    }
-    .signature-container {
-        flex: 1;
-    }
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.signature-container {
+    flex: 1;
+    min-width: 0;
+}
+.signature-container.hidden {
+    visibility: hidden;
+    height: 0;
+    padding: 0;
+    margin: 0;
+}
+
     
     @media print {
         .no-print {
@@ -207,10 +216,9 @@
                 </div>
                 
                 <p style="font-size: 0.85em; line-height: 1.3;">
-                    Por el presente documento reconozco que la empresa ACTIVIDADES NÁUTICAS TORREVIEJA, S.L. operadora de la actividad de iniciación a la moto náutica me ha explicado en qué consiste la actividad, me ha explicado las instrucciones de uso, las medidas de seguridad y todo el procedimiento a seguir durante el desarrollo de la excursión para su correcto desarrollo. Así mismo, he sido informado de las limitaciones y los supuestos en los que no se puede usar la moto acuática, tales como el estar bajo los efectos del alcohol, drogas, tener mermadas las capacidades físicas o mentales, etc... Me hago responsable de cualquier daño ocasionado al material que aquí se me presta y me comprometo a abonar la rotura del mismo, si éste se rompiera por no seguir las indicaciones de los monitores de la empresa. Igualmente reconozco que me ha sido traducido este texto, el cual firmo dándome por enterado de todo su contenido y otorgando mi plena conformidad y consentimiento. Eximo a la empresa de cualquier responsabilidad de la pérdida de objetos realizando la actividad.
-                </p>
+                Reconozco que ACTIVIDADES NÁUTICAS TORREVIEJA, S.L. me ha explicado en qué consiste la actividad de moto náutica, las instrucciones, medidas de seguridad y limitaciones de uso (como no estar bajo efectos de alcohol o drogas). Me responsabilizo de los daños al material por mal uso y acepto abonar su reparación si procede. También confirmo que el texto me ha sido traducido, lo entiendo y doy mi consentimiento. Eximo a la empresa de responsabilidad por pérdida de objetos durante la actividad.                </p>
                 <p style="font-size: 0.85em; line-height: 1.3;">
-                    I recognize that ACTIVIDADES NÁUTICAS TORREVIEJA, S.L., the operator company, has explained to me what this activity consists in, the operating instructions, the security measures and the whole procedure to be followed throughout its development for the correct use of the aforesaid.I have also been informed about the limitations and the situations in which the device is not to be used, such as being under the effects of alcohol or drugs, experiencing a decrease of physical or mental faculties, etc. I am responsible for any damage caused to the material I am provided by the operator and I accept to pay the reparations in case of not following the indications of the instructors. I have been translated this text, which I sign to indicate approval and conformity after being aware of and understanding all its content. I exempt the company from any responsibility for the loss of objects by performing the activity.
+                I acknowledge that ACTIVIDADES NÁUTICAS TORREVIEJA, S.L. has explained to me the details of the jet ski activity, including instructions, safety measures, and usage limitations (such as not being under the influence of alcohol or drugs). I take responsibility for any damage to the provided equipment due to misuse and agree to cover the repair costs if necessary. I also confirm that this text has been translated for me, that I understand it fully, and that I give my consent. I release the company from any liability for the loss of personal belongings during the activity.
                 </p>
             </div>
 
@@ -301,7 +309,7 @@
             <!-- Consentimiento -->
             <div class="section">
                 <p>
-                    Por la presente, manifiesto mi consentimiento expreso para participar en la actividad de Jetski. Confirmo haber sido informado/a de las medidas de seguridad establecidas y asumo voluntariamente el riesgo de posibles lesiones o daños personales derivados de la práctica de esta actividad.
+                Consiento participar en la actividad de Jetski, confirmo que me han informado de las medidas de seguridad y asumo voluntariamente el riesgo de posibles lesiones o daños.
                 </p>
             </div>
 
@@ -482,14 +490,14 @@
             
             if (edad < 18) {
                 // Si es menor de edad, mostrar los campos del tutor
-                firmaTutorContainer.style.display = 'block';
+                firmaTutorContainer.classList.remove('hidden');
                 nombreTutorContainer.style.display = 'block';
                 if (document.getElementById('nombre_tutor')) {
                     document.getElementById('nombre_tutor').required = true;
                 }
             } else {
                 // Si es mayor de edad, ocultar los campos del tutor
-                firmaTutorContainer.style.display = 'none';
+                firmaTutorContainer.classList.add('hidden');
                 nombreTutorContainer.style.display = 'none';
                 if (document.getElementById('nombre_tutor')) {
                     document.getElementById('nombre_tutor').required = false;
@@ -560,17 +568,12 @@
             //    - Footer (si usa clase .footer)
             //    - Header, si tuvieras
             // ───────────────────────────────────────────────────────────────────
-            contentClone.querySelectorAll('.no-print, .footer, head').forEach(el => el.remove());
-            contentClone.querySelectorAll('header, footer, nav, .header, .no-print, head, svg').forEach(el => el.remove());
-            contentClone.querySelectorAll(
-                'header, footer, nav, .header, .no-print, head,' +
-                '.cabecera-extra, .info-top'
-            ).forEach(el => el.remove());
-            contentClone.querySelectorAll(
-                'header, footer, nav, .header, .no-print, head, .bg-grisSuave'
-            ).forEach(el => el.remove());
-            contentClone.querySelectorAll('#csrfToken').forEach(el => el.remove());
-            contentClone.querySelectorAll('input[name="csrf-token"], meta[name="csrf-token"]').forEach(el => el.remove());
+            contentClone.querySelectorAll(`
+    .no-print, .footer, head, header, footer, nav, 
+    .header, .cabecera-extra, .info-top, .bg-grisSuave, 
+    #csrfToken, input[name="csrf-token"], meta[name="csrf-token"], 
+    input[type="hidden"]
+`).forEach(el => el.remove());
 
 
 
