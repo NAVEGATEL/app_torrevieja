@@ -147,7 +147,7 @@
 
     <!-- HTML contenido -->
     <div class="container p-5">
-        <form method="POST" action="{{ route('consent.submit') }}">
+        <form method="POST" action="{{ route('consent.submitMoto') }}">
             @csrf
             <!-- Encabezado -->
             <div class="header row">

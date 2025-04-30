@@ -8,6 +8,7 @@ use App\Http\Controllers\EmailController;
 use App\Http\Controllers\EmailTemplateController; // Nuevo controlador
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\FileUploadController;
+use App\Http\Controllers\ConsentController;
 // Ruta de fallback para redirigir a la página principal
 Route::fallback(function () {
     return redirect('/');
@@ -35,6 +36,8 @@ Route::get('/consentMoto', function () {
 })->name('consentM');
 
 Route::post('/consent/submit', [ConsentController::class, 'submit'])->name('consent.submit');
+
+Route::post('/consent/submitMoto', [ConsentController::class, 'submitMoto'])->name('consent.submitMoto');
 
 Route::post('/upload-pdf', [FileUploadController::class, 'store']);
 
