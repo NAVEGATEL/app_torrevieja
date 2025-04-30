@@ -113,19 +113,25 @@
     input{margin: 10px 5px;}
     .signatures-row {
     display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
     justify-content: space-between;
     gap: 20px;
+    margin-top: 20px;
 }
 
 .signature-container {
     flex: 1;
-    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
-.signature-container.hidden {
-    visibility: hidden;
-    height: 0;
-    padding: 0;
-    margin: 0;
+
+.signature-container canvas.sign-box {
+    width: 50%;
+    height: 100px;
+    border: 1px solid #000;
+    box-sizing: border-box;
 }
 
     
@@ -490,14 +496,14 @@
             
             if (edad < 18) {
                 // Si es menor de edad, mostrar los campos del tutor
-                firmaTutorContainer.classList.remove('hidden');
+                firmaTutorContainer.style.display = 'block';
                 nombreTutorContainer.style.display = 'block';
                 if (document.getElementById('nombre_tutor')) {
                     document.getElementById('nombre_tutor').required = true;
                 }
             } else {
                 // Si es mayor de edad, ocultar los campos del tutor
-                firmaTutorContainer.classList.add('hidden');
+                firmaTutorContainer.style.display = 'none';
                 nombreTutorContainer.style.display = 'none';
                 if (document.getElementById('nombre_tutor')) {
                     document.getElementById('nombre_tutor').required = false;
