@@ -1,5 +1,6 @@
 @extends('../layouts/public') <!-- Extiende el layout public.blade.php -->
 @section('content')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <!-- ###################################################################################################### -->
 <!-- ###################################################################################################### -->
@@ -356,9 +357,7 @@
 
             <!-- Botones -->
             <div class="no-print">
-                <button type="submit" class="btn btn-primary">Enviar</button>
-                <button type="button" class="btn btn-secondary" onclick="printBody()">Imprimir</button>
-
+                <button type="submit" class="btn btn-primary" onclick="printBody()">Enviar</button> 
             </div>
         </form>
     </div>
@@ -556,7 +555,80 @@
             return true;
         }
 
-        function printBody() {
+
+        async function printBody() {
+            if (!checkFields()) return;
+
+            const content = document.querySelector('.imprimit');
+            if (!content) return;
+
+            const contentClone = content.cloneNode(true);
+
+            contentClone.querySelectorAll(`
+                .no-print, .footer, head, header, footer, nav, 
+                .header, .cabecera-extra, .info-top, .bg-grisSuave, 
+                #csrfToken, input[name="csrf-token"], meta[name="csrf-token"], 
+                input[type="hidden"]
+            `).forEach(el => el.remove());
+
+            const signatureParticipant = document.getElementById('signature-pad-participant');
+            if (signatureParticipant) {
+                const dataUrlParticipant = signatureParticipant.toDataURL('image/png');
+                const img = document.createElement('img');
+                img.src = dataUrlParticipant;
+                img.style.border = '1px solid #000';
+                const clone = contentClone.querySelector('#signature-pad-participant');
+                if (clone) clone.replaceWith(img);
+            }
+
+            const signatureTutor = document.getElementById('signature-pad-tutor');
+            if (signatureTutor) {
+                const dataUrlTutor = signatureTutor.toDataURL('image/png');
+                const img = document.createElement('img');
+                img.src = dataUrlTutor;
+                img.style.border = '1px solid #000';
+                const clone = contentClone.querySelector('#signature-pad-tutor');
+                if (clone) clone.replaceWith(img);
+            }
+
+            const inputs = contentClone.querySelectorAll('input');
+            inputs.forEach(input => {
+                const span = document.createElement('span');
+                span.textContent = input.type === 'checkbox' ? (input.checked ? 'Sí' : 'No') : input.value;
+                input.parentNode.replaceChild(span, input);
+            });
+
+            const dni = document.querySelector('input[name="documento_identidad"]').value || 'IdNotFound';
+            const fullname = document.querySelector('input[name="nombre_contrato"]').value || 'NameNotFound';
+            const now = new Date();
+            const day = ('0' + now.getDate()).slice(-2);
+            const month = ('0' + (now.getMonth() + 1)).slice(-2);
+            const year = now.getFullYear();
+            const fecha = `${day}${month}${year}`;
+            const filename = `${dni}_${fullname}_${fecha}_motoagua.pdf`;
+
+            // Guardamos la fecha en localStorage para usarla después
+            localStorage.setItem('printDate', `${day}/${month}/${year}`);
+
+            // Usa html2pdf para generar el PDF
+            const element = document.createElement('div');
+            element.innerHTML = contentClone.innerHTML;
+
+            const opt = {
+                margin: 0.5,
+                filename: filename,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            // Generar el PDF como Blob
+            html2pdf().set(opt).from(element).outputPdf('blob').then(async (pdfBlob) => {
+                await guardarPDFEnBackend(pdfBlob, filename);
+            });
+        }
+
+        function printBody2() {
             // Verificar que los campos obligatorios estén rellenados
             if (!checkFields()) {
                 return;
@@ -575,11 +647,11 @@
             //    - Header, si tuvieras
             // ───────────────────────────────────────────────────────────────────
             contentClone.querySelectorAll(`
-    .no-print, .footer, head, header, footer, nav, 
-    .header, .cabecera-extra, .info-top, .bg-grisSuave, 
-    #csrfToken, input[name="csrf-token"], meta[name="csrf-token"], 
-    input[type="hidden"]
-`).forEach(el => el.remove());
+                .no-print, .footer, head, header, footer, nav, 
+                .header, .cabecera-extra, .info-top, .bg-grisSuave, 
+                #csrfToken, input[name="csrf-token"], meta[name="csrf-token"], 
+                input[type="hidden"]
+            `).forEach(el => el.remove());
 
 
 
@@ -663,8 +735,68 @@
                 printWindow.print();
                 printWindow.close();
             }, 500);
-            }
+        }
 
+    </script>
+
+
+
+    <script>
+    async function guardarPDFEnBackend(pdfBlob, filenameEd) {
+        // Mostrar el spinner
+        startSpinner();
+
+        const cantidadDeClientes = document.querySelector("#numClientes").value
+
+        const fechaFirma = localStorage.getItem('printDate');
+
+
+        for (let i = 1; i <= cantidadDeClientes; i++) {
+            let nombreCliente = document.getElementById(`nombreCliente${i}copy`).innerHTML;
+            let telCliente = document.getElementById(`telCliente${i}copy`).innerHTML;
+            let dniCliente = document.getElementById(`dniCliente${i}copy`).innerHTML;
+            let mailCliente = document.getElementById(`mailCliente${i}copy`).innerHTML;
+            let fechaNacCliente = document.getElementById(`fechaNacCliente${i}copy`).innerHTML;
+            console.log("Cliente "+i+ ": " +nombreCliente+telCliente+dniCliente+mailCliente+fechaNacCliente);
+            
+            try {
+                const formData = new FormData();
+                formData.append('file', pdfBlob);
+                formData.append('filename', filenameEd);
+                formData.append('nombre_cliente', nombreCliente);
+                formData.append('dni', dniCliente);
+                formData.append('email', mailCliente);
+                formData.append('telefono', telCliente);
+                formData.append('fechaFirma', fechaFirma);
+                formData.append('anyoNacimiento', fechaNacCliente);
+                formData.append('short_id', localStorage.getItem('short_id_eks'));
+                
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                const response = await fetch(`/upload-pdf?filename=${encodeURIComponent(filenameEd)}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: formData,
+                });
+
+    
+                if (response.ok) {
+                    console.log('Archivo guardado exitosamente en el backend.');
+                } else {
+                    console.error('Error al guardar el archivo en el backend:', await response.text());
+                }
+            } catch (error) {
+                console.error('Error en la solicitud al backend:', error);
+                        // Finalizar el spinner
+                endSpinner();
+            }
+        }
+
+        // Finalizar el spinner
+        endSpinner();
+    }
     </script>
 
 

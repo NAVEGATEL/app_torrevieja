@@ -48,9 +48,10 @@ class ConsentController extends Controller
         $booking->status = 'pendiente';
         $booking->source = 'formulario_moto';
 
-        dd($booking);
         $booking->save();
 
+        return redirect()->back()->with('success', 'Formulario enviado y guardado correctamente.');
+        
         return redirect()->back()->with('success', 'Formulario enviado y guardado correctamente.');
     }
 }
