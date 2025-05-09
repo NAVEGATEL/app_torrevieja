@@ -1,5 +1,11 @@
 @extends('../layouts/public') <!-- Extiende el layout public.blade.php -->
 @section('content')
+<!-- Meta tag CSRF para las peticiones AJAX -->
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+<!-- Asegurarnos de que Bootstrap esté cargado -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <!-- ###################################################################################################### -->
@@ -43,7 +49,7 @@
         en: {
             city: CIUDAD,
             titulo: "Usage Consent",
-            granText: "By this document I acknowledge that the company ACTIVIDADES NÁUTICAS TORREVIEJA, S.L., operator of the jet ski initiation activity, has explained to me what the activity consists of, the instructions for use, safety measures, and the whole procedure to be followed throughout its development for the correct use of the aforesaid.I have also been informed about the limitations and the situations in which the device is not to be used, such as being under the effects of alcohol or drugs, experiencing a decrease of physical or mental faculties, etc. I am responsible for any damage caused to the material I am provided by the operator and I accept to pay the reparations in case of not following the indications of the instructors. I have been translated this text, which I sign to indicate approval and conformity after being aware of and understanding all its content. I exempt the company from any responsibility for the loss of objects by performing the activity.",
+            granText: "By this document I acknowledge that the company ACTIVIDADES NÁUTICAS TORREVIEJA, S.L., operator of the jet ski initiation activity, has explained to me what the activity consists of, the instructions for use, safety measures, and the whole procedure to be followed throughout its development for the correct use of the aforesaid.I have also been informed about the limitations and the situations in which the device is not to be used, such as being under the influence of alcohol or drugs, experiencing a decrease of physical or mental faculties, etc. I am responsible for any damage caused to the material I am provided by the operator and I accept to pay the reparations in case of not following the indications of the instructors. I have been translated this text, which I sign to indicate approval and conformity after being aware of and understanding all its content. I exempt the company from any responsibility for the loss of objects by performing the activity.",
             granText2: "We inform you that your personal data, which may appear in this contract, will be incorporated into a file under our responsibility, with the purpose of informing you about the products and services offered by ACTIVIDADES NÁUTICAS TORREVIEJA, S.L. Additionally, you allow us to use any photo taken of you during the activity for our promotion. If you wish to exercise your rights of access, rectification, cancellation, and opposition, you can contact us in writing at: Flyboard Torrevieja, Paseo Vistalegre s/n - 03181 Torrevieja (Alicante), or via email at protecciondedatos@flyboardtorrevieja.com with the subject: UNSUBSCRIBE.",
             ticketPlaceholder: "Ticket No.",
             enviar: "Send",
@@ -141,6 +147,21 @@
             display: none !important;
         }
     }
+
+    /* Añadir estilos para los campos con error */
+    input.campo-error {
+        border: 2px solid #ff0000 !important;
+        background-color: rgba(255, 0, 0, 0.05);
+    }
+    .canvas-error {
+        border: 2px solid #ff0000 !important;
+    }
+    .campo-obligatorio {
+        color: red;
+        font-size: 11px;
+        display: none;
+        margin-top: 2px;
+    }
 </style>
 
 <!-- Contenido del formulario -->
@@ -148,7 +169,7 @@
 
     <!-- HTML contenido -->
     <div class="container p-5">
-        <form method="POST" action="{{ route('consent.submitMoto') }}">
+        <form id="formularioMoto" method="POST" action="#" onsubmit="return false;">
             @csrf
             <!-- Encabezado -->
             <div class="header row">
@@ -357,10 +378,95 @@
 
             <!-- Botones -->
             <div class="no-print">
-                <button type="submit" class="btn btn-primary" onclick="printBody()">Enviar</button> 
+                <button type="button" class="btn btn-primary" id="submitBtn">Enviar</button>
+                <button type="button" class="btn btn-secondary" onclick="rellenarDatosEjemplo()">Rellenar con datos de ejemplo</button>
             </div>
         </form>
     </div>
+
+    <!-- Bootstrap y scripts necesarios -->
+    <script>
+        // Verificar que Bootstrap está disponible
+        window.addEventListener('load', function() {
+            if (typeof bootstrap === 'undefined') {
+                console.error('Bootstrap no está disponible. Cargando versión de respaldo...');
+                // Intentamos cargar Bootstrap si no está disponible
+                const cssLink = document.createElement('link');
+                cssLink.rel = 'stylesheet';
+                cssLink.href = 'https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css';
+                document.head.appendChild(cssLink);
+                
+                const scriptTag = document.createElement('script');
+                scriptTag.src = 'https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js';
+                document.head.appendChild(scriptTag);
+                
+                scriptTag.onload = function() {
+                    console.log('Bootstrap cargado con éxito');
+                    // Inicializar los botones después de cargar Bootstrap
+                    initButtonHandlers();
+                };
+            } else {
+                console.log('Bootstrap ya está disponible');
+                // Inicializar los botones directamente
+                initButtonHandlers();
+            }
+            
+            // Añadir manejadores para eventos del modal
+            document.body.addEventListener('click', function(e) {
+                // Cuando se hace click en el botón de cerrar o el backdrop del modal
+                if (e.target.hasAttribute('data-bs-dismiss') || 
+                    e.target.classList.contains('modal') && e.target.id === 'previewModal') {
+                    closePreviewModal();
+                }
+            });
+        });
+        
+        function closePreviewModal() {
+            const modalElement = document.getElementById('previewModal');
+            if (modalElement) {
+                // Si es un modal Bootstrap, cerrarlo correctamente
+                if (typeof bootstrap !== 'undefined') {
+                    try {
+                        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                        if (modalInstance) {
+                            modalInstance.hide();
+                        }
+                    } catch (e) {
+                        console.warn('Error al cerrar el modal:', e);
+                    }
+                }
+                
+                // Limpiar el contenido para liberar memoria
+                const previewContent = document.getElementById('previewContent');
+                if (previewContent) {
+                    previewContent.innerHTML = '';
+                }
+            }
+        }
+        
+        function initButtonHandlers() {
+            // Configurar el botón de envío
+            const submitBtn = document.getElementById('submitBtn');
+            if (submitBtn) {
+                submitBtn.addEventListener('click', function(event) {
+                    console.log("Botón de enviar clickeado");
+                    printBody(event);
+                });
+            } else {
+                console.error("No se encontró el botón de envío");
+            }
+            
+            // Configurar el botón de procesar formulario
+            const processFormBtn = document.getElementById('processFormBtn');
+            if (processFormBtn) {
+                processFormBtn.addEventListener('click', function(event) {
+                    procesarFormulario();
+                });
+            } else {
+                console.error("No se encontró el botón de procesar formulario");
+            }
+        }
+    </script>
 
     <!-- Firma con el dedo o ratón -->
     <script>
@@ -513,289 +619,732 @@
 
     <!-- Script para imprimir el contenido -->
     <script>
+        // Función para mostrar toasts en lugar de alertas
+        function showToast(message, type = 'success') {
+            console.log(`Toast (${type}): ${message}`);
+            
+            // Crear el contenedor de toasts si no existe
+            let toastContainer = document.getElementById('toast-container');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toast-container';
+                toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+                document.body.appendChild(toastContainer);
+            }
+            
+            // Crear ID único para este toast
+            const toastId = 'toast-' + new Date().getTime();
+            
+            // Determinar el color del toast según el tipo
+            let bgClass = 'bg-success';
+            if (type === 'error') {
+                bgClass = 'bg-danger';
+            } else if (type === 'warning') {
+                bgClass = 'bg-warning';
+            } else if (type === 'info') {
+                bgClass = 'bg-info';
+            }
+            
+            // Crear el HTML del toast
+            const toastHtml = `
+                <div id="${toastId}" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header ${bgClass} text-white">
+                        <strong class="me-auto">${type === 'error' ? 'Error' : 'Éxito'}</strong>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                </div>
+            `;
+            
+            // Añadir el toast al contenedor
+            toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+            
+            // Si bootstrap no está disponible, simplemente mostrar un alert
+            if (typeof bootstrap === 'undefined') {
+                alert(`${type.toUpperCase()}: ${message}`);
+                return;
+            }
+            
+            // Inicializar y mostrar el toast
+            try {
+                const toast = new bootstrap.Toast(document.getElementById(toastId), {
+                    delay: 5000
+                });
+                toast.show();
+                
+                // Eliminar el toast del DOM después de ocultarse
+                const toastEl = document.getElementById(toastId);
+                toastEl.addEventListener('hidden.bs.toast', () => {
+                    toastEl.remove();
+                });
+            } catch (error) {
+                console.error("Error al mostrar toast:", error);
+                alert(`${type.toUpperCase()}: ${message}`);
+            }
+        }
+
         function checkFields() {
             let missing = [];
+            // Primero, quitar las clases de error de todos los campos
+            document.querySelectorAll('input, canvas').forEach(field => {
+                field.classList.remove('campo-error', 'canvas-error');
+                // Ocultar mensajes de error previos
+                const errorMsg = field.parentElement.querySelector('.campo-obligatorio');
+                if (errorMsg) errorMsg.style.display = 'none';
+            });
+            
+            // Lista de campos obligatorios con su selector y mensaje
             const fieldsToCheck = [
-                { name: 'nombre_contrato', label: 'Nombre del contrato' },
-                { name: 'documento_identidad', label: 'Documento de Identidad' },
-                { name: 'telefono', label: 'Teléfono' },
-                { name: 'nombre_apellidos', label: 'Nombre y Apellidos' },
-                { name: 'direccion', label: 'Dirección' },
-                { name: 'poblacion', label: 'Población' },
-                { name: 'provincia', label: 'Provincia' },
-                { name: 'pais', label: 'País' },
-                { name: 'email', label: 'Email' },
-                { name: 'moto_num', label: 'Moto Nº' },
-                { name: 'numero_personas', label: 'Número de Personas' },
-                { name: 'tiempo_excursion', label: 'Tiempo de la excursión' },
-                { name: 'dia', label: 'Día' },
-                { name: 'mes', label: 'Mes' },
-                { name: 'anio', label: 'Año' }
+                { selector: 'input[name="nombre_contrato"]', label: 'Nombre del contrato' },
+                { selector: 'input[name="documento_identidad"]', label: 'Documento de Identidad' },
+                { selector: 'input[name="telefono"]', label: 'Teléfono' },
+                { selector: 'input[name="nombre_apellidos"]', label: 'Nombre y Apellidos' },
+                { selector: 'input[name="direccion"]', label: 'Dirección' },
+                { selector: 'input[name="poblacion"]', label: 'Población' },
+                { selector: 'input[name="provincia"]', label: 'Provincia' },
+                { selector: 'input[name="pais"]', label: 'País' },
+                { selector: 'input[name="email"]', label: 'Email' },
+                { selector: 'input[name="moto_num"]', label: 'Moto Nº' },
+                { selector: 'input[name="numero_personas"]', label: 'Número de Personas' },
+                { selector: 'input[name="tiempo_excursion"]', label: 'Tiempo de la excursión' },
+                { selector: 'input[name="dia"]', label: 'Día' },
+                { selector: 'input[name="mes"]', label: 'Mes' },
+                { selector: 'input[name="anio"]', label: 'Año' }
             ];
+            
+            // Verificar cada campo y marcar con error si está vacío
             fieldsToCheck.forEach(field => {
-                const inputElem = document.querySelector(`input[name="${field.name}"]`);
+                const inputElem = document.querySelector(field.selector);
                 if (!inputElem || !inputElem.value.trim()) {
                     missing.push(field.label);
+                    
+                    // Marcar el campo con error
+                    inputElem.classList.add('campo-error');
+                    
+                    // Añadir mensaje de campo obligatorio si no existe
+                    let errorMsg = inputElem.parentElement.querySelector('.campo-obligatorio');
+                    if (!errorMsg) {
+                        errorMsg = document.createElement('div');
+                        errorMsg.className = 'campo-obligatorio';
+                        errorMsg.textContent = 'Campo obligatorio';
+                        inputElem.insertAdjacentElement('afterend', errorMsg);
+                    }
+                    errorMsg.style.display = 'block';
+                    
+                    // Agregar evento para quitar el error cuando el usuario escriba
+                    inputElem.addEventListener('input', function() {
+                        if (this.value.trim()) {
+                            this.classList.remove('campo-error');
+                            const msg = this.parentElement.querySelector('.campo-obligatorio');
+                            if (msg) msg.style.display = 'none';
+                        }
+                    });
                 }
             });
-                // Comprobación del consentimiento obligatorio
-            const consentimiento = document.querySelector('input[name="no_consentimiento"]');
-            if (!consentimiento || !consentimiento.checked) {
-                missing.push("Consentimiento de tratamiento de datos");
+                
+            // Comprobar firma del participante
+            const signatureParticipant = document.getElementById('signature-pad-participant');
+            if (signatureParticipant) {
+                const ctx = signatureParticipant.getContext('2d');
+                const pixeles = ctx.getImageData(0, 0, signatureParticipant.width, signatureParticipant.height).data;
+                if (!pixeles.some(pixel => pixel !== 0)) {
+                    missing.push('Firma del participante');
+                    signatureParticipant.classList.add('canvas-error');
+                    
+                    // Añadir mensaje de campo obligatorio
+                    let errorMsg = signatureParticipant.parentElement.querySelector('.campo-obligatorio');
+                    if (!errorMsg) {
+                        errorMsg = document.createElement('div');
+                        errorMsg.className = 'campo-obligatorio';
+                        errorMsg.textContent = 'Firma obligatoria';
+                        signatureParticipant.insertAdjacentElement('afterend', errorMsg);
+                    }
+                    errorMsg.style.display = 'block';
+                }
+            }
+            
+            // Comprobar firma del tutor si es necesaria
+            const fechaNacimiento = document.getElementById('fecha_nacimiento')?.value;
+            if (fechaNacimiento) {
+                const fechaNac = new Date(fechaNacimiento);
+                let edad = new Date().getFullYear() - fechaNac.getFullYear();
+                if (edad < 18) {
+                    const signatureTutor = document.getElementById('signature-pad-tutor');
+                    if (signatureTutor) {
+                        const ctx = signatureTutor.getContext('2d');
+                        const pixeles = ctx.getImageData(0, 0, signatureTutor.width, signatureTutor.height).data;
+                        if (!pixeles.some(pixel => pixel !== 0)) {
+                            missing.push('Firma del tutor');
+                            signatureTutor.classList.add('canvas-error');
+                            
+                            // Añadir mensaje de campo obligatorio
+                            let errorMsg = signatureTutor.parentElement.querySelector('.campo-obligatorio');
+                            if (!errorMsg) {
+                                errorMsg = document.createElement('div');
+                                errorMsg.className = 'campo-obligatorio';
+                                errorMsg.textContent = 'Firma del tutor obligatoria';
+                                signatureTutor.insertAdjacentElement('afterend', errorMsg);
+                            }
+                            errorMsg.style.display = 'block';
+                        }
+                    }
+                    
+                    const nombreTutor = document.getElementById('nombre_tutor');
+                    if (!nombreTutor || !nombreTutor.value.trim()) {
+                        missing.push('Nombre del tutor');
+                        nombreTutor.classList.add('campo-error');
+                        
+                        // Añadir mensaje de campo obligatorio
+                        let errorMsg = nombreTutor.parentElement.querySelector('.campo-obligatorio');
+                        if (!errorMsg) {
+                            errorMsg = document.createElement('div');
+                            errorMsg.className = 'campo-obligatorio';
+                            errorMsg.textContent = 'Campo obligatorio';
+                            nombreTutor.insertAdjacentElement('afterend', errorMsg);
+                        }
+                        errorMsg.style.display = 'block';
+                        
+                        // Quitar error al escribir
+                        nombreTutor.addEventListener('input', function() {
+                            if (this.value.trim()) {
+                                this.classList.remove('campo-error');
+                                const msg = this.parentElement.querySelector('.campo-obligatorio');
+                                if (msg) msg.style.display = 'none';
+                            }
+                        });
+                    }
+                }
+            }
+            
+            // Comprobar que al menos un método de pago esté seleccionado
+            const pagoTarjeta = document.querySelector('input[name="pago_tarjeta"]');
+            const pagoEfectivo = document.querySelector('input[name="pago_efectivo"]');
+            if (!pagoTarjeta.checked && !pagoEfectivo.checked) {
+                missing.push('Método de pago');
+                const pagoContainer = pagoTarjeta.closest('div');
+                pagoContainer.classList.add('campo-error');
+                
+                // Añadir mensaje de campo obligatorio
+                let errorMsg = pagoContainer.querySelector('.campo-obligatorio');
+                if (!errorMsg) {
+                    errorMsg = document.createElement('div');
+                    errorMsg.className = 'campo-obligatorio';
+                    errorMsg.textContent = 'Seleccione un método de pago';
+                    pagoContainer.appendChild(errorMsg);
+                }
+                errorMsg.style.display = 'block';
+                
+                // Quitar error al seleccionar
+                [pagoTarjeta, pagoEfectivo].forEach(elem => {
+                    elem.addEventListener('change', function() {
+                        if (pagoTarjeta.checked || pagoEfectivo.checked) {
+                            pagoContainer.classList.remove('campo-error');
+                            const msg = pagoContainer.querySelector('.campo-obligatorio');
+                            if (msg) msg.style.display = 'none';
+                        }
+                    });
+                });
             }
 
             if (missing.length > 0) {
-                alert("Los siguientes campos son obligatorios:\n" + missing.join("\n"));
-                return false;
-            }
-            if (missing.length > 0) {
-                alert("Los siguientes campos son obligatorios:\n" + missing.join("\n"));
+                showToast("Hay campos obligatorios sin completar. Por favor, revisa los campos marcados en rojo.", "error");
+                // Hacer scroll al primer campo con error
+                const firstError = document.querySelector('.campo-error, .canvas-error');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
                 return false;
             }
             return true;
         }
 
-
-        async function printBody() {
-            if (!checkFields()) return;
-
-            const content = document.querySelector('.imprimit');
-            if (!content) return;
-
+        async function printBody(event) {
+            if (event) event.preventDefault();
+            
+            console.log("Función printBody ejecutada");
+            
+            if (!checkFields()) {
+                console.log("Validación de campos falló");
+                return;
+            }
+            
+            console.log("Validación de campos correcta, preparando vista previa");
+            
+            // Verificamos primero si existe el modal o lo creamos si no existe
+            let previewModalElement = document.getElementById('previewModal');
+            if (!previewModalElement) {
+                console.warn("Modal no encontrado en el DOM. Creándolo dinámicamente...");
+                
+                // Crear el modal dinámicamente
+                const modalHTML = `
+                <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header bg-primary text-white">
+                                <h5 class="modal-title" id="previewModalLabel">Vista previa del formulario</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div id="previewContent" style="max-height: 65vh; overflow-y: auto;"></div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="button" class="btn btn-primary" id="processFormBtn">Confirmar y Descargar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+                
+                // Insertar el modal en el DOM
+                document.body.insertAdjacentHTML('beforeend', modalHTML);
+                previewModalElement = document.getElementById('previewModal');
+                
+                // Configurar el botón de procesar formulario
+                document.getElementById('processFormBtn').addEventListener('click', function() {
+                    procesarFormulario();
+                });
+            }
+            
+            // Ahora buscamos el contenedor de previsualización
+            const previewContent = document.getElementById('previewContent');
+            if (!previewContent) {
+                console.error("No se encontró el contenedor de vista previa incluso después de crear el modal");
+                alert("Error crítico: No se pudo crear el modal de vista previa");
+                return;
+            }
+            
+            // Para el contenido del formulario, intentamos varios selectores posibles
+            let content = document.querySelector('body.imprimit');
+            if (!content) {
+                content = document.querySelector('form#formularioMoto');
+                if (!content) {
+                    content = document.querySelector('form');
+                    if (!content) {
+                        console.error("No se pudo encontrar el contenido del formulario");
+                        alert("Error: No se pudo encontrar el contenido del formulario");
+                        return;
+                    }
+                }
+            }
+            
+            console.log("Contenido encontrado correctamente:", content);
+            previewContent.innerHTML = ''; // Limpiar contenido anterior
+            
+            // Clonar el contenido
             const contentClone = content.cloneNode(true);
-
+            
+            // Eliminar elementos no necesarios en la vista previa
             contentClone.querySelectorAll(`
-                .no-print, .footer, head, header, footer, nav, 
-                .header, .cabecera-extra, .info-top, .bg-grisSuave, 
-                #csrfToken, input[name="csrf-token"], meta[name="csrf-token"], 
+                .no-print, button, meta, script, 
+                input[name="csrf-token"], meta[name="csrf-token"], 
                 input[type="hidden"]
             `).forEach(el => el.remove());
-
+            
+            // Reemplazar canvas con imágenes en el clon
             const signatureParticipant = document.getElementById('signature-pad-participant');
             if (signatureParticipant) {
                 const dataUrlParticipant = signatureParticipant.toDataURL('image/png');
                 const img = document.createElement('img');
                 img.src = dataUrlParticipant;
                 img.style.border = '1px solid #000';
-                const clone = contentClone.querySelector('#signature-pad-participant');
-                if (clone) clone.replaceWith(img);
+                img.style.width = '50%';
+                img.style.height = '100px';
+                const canvasElement = contentClone.querySelector('#signature-pad-participant');
+                if (canvasElement && canvasElement.parentNode) {
+                    canvasElement.parentNode.replaceChild(img, canvasElement);
+                }
             }
-
+            
             const signatureTutor = document.getElementById('signature-pad-tutor');
-            if (signatureTutor) {
+            if (signatureTutor && signatureTutor.closest('div').style.display !== 'none') {
                 const dataUrlTutor = signatureTutor.toDataURL('image/png');
                 const img = document.createElement('img');
                 img.src = dataUrlTutor;
                 img.style.border = '1px solid #000';
-                const clone = contentClone.querySelector('#signature-pad-tutor');
-                if (clone) clone.replaceWith(img);
-            }
-
-            const inputs = contentClone.querySelectorAll('input');
-            inputs.forEach(input => {
-                const span = document.createElement('span');
-                span.textContent = input.type === 'checkbox' ? (input.checked ? 'Sí' : 'No') : input.value;
-                input.parentNode.replaceChild(span, input);
-            });
-
-            const dni = document.querySelector('input[name="documento_identidad"]').value || 'IdNotFound';
-            const fullname = document.querySelector('input[name="nombre_contrato"]').value || 'NameNotFound';
-            const now = new Date();
-            const day = ('0' + now.getDate()).slice(-2);
-            const month = ('0' + (now.getMonth() + 1)).slice(-2);
-            const year = now.getFullYear();
-            const fecha = `${day}${month}${year}`;
-            const filename = `${dni}_${fullname}_${fecha}_motoagua.pdf`;
-
-            // Guardamos la fecha en localStorage para usarla después
-            localStorage.setItem('printDate', `${day}/${month}/${year}`);
-
-            // Usa html2pdf para generar el PDF
-            const element = document.createElement('div');
-            element.innerHTML = contentClone.innerHTML;
-
-            const opt = {
-                margin: 0.5,
-                filename: filename,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-            };
-
-            // Generar el PDF como Blob
-            html2pdf().set(opt).from(element).outputPdf('blob').then(async (pdfBlob) => {
-                await guardarPDFEnBackend(pdfBlob, filename);
-            });
-        }
-
-        function printBody2() {
-            // Verificar que los campos obligatorios estén rellenados
-            if (!checkFields()) {
-                return;
-            }
-            // Obtenemos el contenedor principal
-            const content = document.querySelector('.imprimit');
-            if (!content) return;
-
-            // Clonamos todo el contenido (para no alterar el original)
-            const contentClone = content.cloneNode(true);
-
-            // ───────────────────────────────────────────────────────────────────
-            // 1. Eliminar elementos que NO se deben imprimir:
-            //    - Botones (si usan clase .no-print)
-            //    - Footer (si usa clase .footer)
-            //    - Header, si tuvieras
-            // ───────────────────────────────────────────────────────────────────
-            contentClone.querySelectorAll(`
-                .no-print, .footer, head, header, footer, nav, 
-                .header, .cabecera-extra, .info-top, .bg-grisSuave, 
-                #csrfToken, input[name="csrf-token"], meta[name="csrf-token"], 
-                input[type="hidden"]
-            `).forEach(el => el.remove());
-
-
-
-            // ───────────────────────────────────────────────────────────────────
-            // 2. Capturar firma y reemplazar canvas por imagen
-            //    (esto asume que tus canvas tienen ID 'signature-pad-participant' y 'signature-pad-tutor')
-            // ───────────────────────────────────────────────────────────────────
-
-            // Firma del participante
-            const signatureParticipant = document.getElementById('signature-pad-participant');
-            if (signatureParticipant) {
-                const dataUrlParticipant = signatureParticipant.toDataURL('image/png');
-                const participantImage = document.createElement('img');
-                participantImage.src = dataUrlParticipant;
-                participantImage.style.border = '1px solid #000'; // opcional, para verse igual
-                // Buscar el canvas clon en el DOM clonado y reemplazarlo
-                const participantCanvasClone = contentClone.querySelector('#signature-pad-participant');
-                if (participantCanvasClone) {
-                participantCanvasClone.replaceWith(participantImage);
+                img.style.width = '50%';
+                img.style.height = '100px';
+                const canvasElement = contentClone.querySelector('#signature-pad-tutor');
+                if (canvasElement && canvasElement.parentNode) {
+                    canvasElement.parentNode.replaceChild(img, canvasElement);
                 }
             }
-
-            // Firma del tutor
-            const signatureTutor = document.getElementById('signature-pad-tutor');
-            if (signatureTutor) {
-                const dataUrlTutor = signatureTutor.toDataURL('image/png');
-                const tutorImage = document.createElement('img');
-                tutorImage.src = dataUrlTutor;
-                tutorImage.style.border = '1px solid #000'; // opcional
-                // Buscar el canvas clon en el DOM clonado y reemplazarlo
-                const tutorCanvasClone = contentClone.querySelector('#signature-pad-tutor');
-                if (tutorCanvasClone) {
-                tutorCanvasClone.replaceWith(tutorImage);
-                }
-            }
-
-            // ───────────────────────────────────────────────────────────────────
-            // 3. Reemplazar cada input por un texto (span) con el valor
-            //    y para los checkbox mostrar "Sí" o "No".
-            // ───────────────────────────────────────────────────────────────────
-            const inputs = contentClone.querySelectorAll('input');
-            inputs.forEach(input => {
-                const span = document.createElement('span');
-                if (input.type === 'checkbox') {
-                // Mostramos "Sí" / "No" según su estado
-                span.textContent = input.checked ? 'Sí' : 'No';
-                } else {
-                // Para texto, email, tel, etc.
-                span.textContent = input.value;
-                }
-                input.parentNode.replaceChild(span, input);
-            });
-            // 6. Construir el nombre del archivo basado en los valores de ciertos inputs
-            const dni = document.querySelector('input[name="documento_identidad"]').value || 'IdNotFound';
-            const fullname = document.querySelector('input[name="nombre_contrato"]').value || 'NameNotFound';
-            const now = new Date();
-            const day = ('0' + now.getDate()).slice(-2);
-            const month = ('0' + (now.getMonth() + 1)).slice(-2);
-            const year = now.getFullYear();
-            const fecha = `${day}${month}${year}`;
-            const filename = `${dni}_${fullname}_${fecha}_motoagua.pdf`;
-            // ───────────────────────────────────────────────────────────────────
-            // 4. Abrir nueva ventana, inyectar el contenido clonado y llamar a print
-            // ───────────────────────────────────────────────────────────────────
-            const printWindow = window.open('', '', 'height=800,width=900');
-            printWindow.document.write(`<html><head><title>${filename}</title>`);
-            printWindow.document.write(
-                '<style>' +
-                'body { font-family: Arial, sans-serif; margin: 20px; } ' +
-                '.container { max-width: 900px; margin: auto; } ' +
-                '</style>'
-            );
-            printWindow.document.write('</head><body>');
-            printWindow.document.write(contentClone.innerHTML);
-            printWindow.document.write('</body></html>');
-            printWindow.document.close();
-            printWindow.focus();
-
-            // Esperar un poco antes de imprimir, para asegurar que cargue todo
-            setTimeout(() => {
-                printWindow.print();
-                printWindow.close();
-            }, 500);
-        }
-
-    </script>
-
-
-
-    <script>
-    async function guardarPDFEnBackend(pdfBlob, filenameEd) {
-        // Mostrar el spinner
-        startSpinner();
-
-        const cantidadDeClientes = document.querySelector("#numClientes").value
-
-        const fechaFirma = localStorage.getItem('printDate');
-
-
-        for (let i = 1; i <= cantidadDeClientes; i++) {
-            let nombreCliente = document.getElementById(`nombreCliente${i}copy`).innerHTML;
-            let telCliente = document.getElementById(`telCliente${i}copy`).innerHTML;
-            let dniCliente = document.getElementById(`dniCliente${i}copy`).innerHTML;
-            let mailCliente = document.getElementById(`mailCliente${i}copy`).innerHTML;
-            let fechaNacCliente = document.getElementById(`fechaNacCliente${i}copy`).innerHTML;
-            console.log("Cliente "+i+ ": " +nombreCliente+telCliente+dniCliente+mailCliente+fechaNacCliente);
             
+            // Reemplazar inputs con su valor como texto
+            contentClone.querySelectorAll('input[type="text"], input[type="number"], input[type="tel"], input[type="email"], input[type="date"]').forEach(input => {
+                const value = input.value || '';
+                const span = document.createElement('span');
+                span.textContent = value;
+                span.style.fontWeight = 'bold';
+                span.style.color = '#000';
+                if (input.parentNode) {
+                    input.parentNode.replaceChild(span, input);
+                }
+            });
+            
+            // Manejar checkboxes
+            contentClone.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                const checked = checkbox.checked;
+                const span = document.createElement('span');
+                span.textContent = checked ? '✓' : '✗';
+                span.style.fontWeight = 'bold';
+                if (checkbox.parentNode) {
+                    checkbox.parentNode.replaceChild(span, checkbox);
+                }
+            });
+            
+            // Aplicar algo de estilo al contenido del modal
+            contentClone.style.transform = 'scale(0.8)';
+            contentClone.style.transformOrigin = 'top left';
+            
+            // Añadir el contenido al modal
+            previewContent.appendChild(contentClone);
+            
+            // Mostrar el modal
             try {
-                const formData = new FormData();
-                formData.append('file', pdfBlob);
-                formData.append('filename', filenameEd);
-                formData.append('nombre_cliente', nombreCliente);
-                formData.append('dni', dniCliente);
-                formData.append('email', mailCliente);
-                formData.append('telefono', telCliente);
-                formData.append('fechaFirma', fechaFirma);
-                formData.append('anyoNacimiento', fechaNacCliente);
-                formData.append('short_id', localStorage.getItem('short_id_eks'));
-                
-                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-                const response = await fetch(`/upload-pdf?filename=${encodeURIComponent(filenameEd)}`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken,
-                    },
-                    body: formData,
-                });
-
-    
-                if (response.ok) {
-                    console.log('Archivo guardado exitosamente en el backend.');
+                console.log("Intentando abrir el modal...");
+                if (typeof bootstrap === 'undefined') {
+                    console.error("Bootstrap no está disponible. Cargando respaldo...");
+                    
+                    // Cargar Bootstrap si no está disponible y mostrar el modal después
+                    const scriptTag = document.createElement('script');
+                    scriptTag.src = 'https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js';
+                    scriptTag.onload = function() {
+                        console.log("Bootstrap cargado. Abriendo modal...");
+                        const bsModal = new bootstrap.Modal(previewModalElement);
+                        bsModal.show();
+                    };
+                    document.head.appendChild(scriptTag);
                 } else {
-                    console.error('Error al guardar el archivo en el backend:', await response.text());
+                    // Bootstrap ya está disponible, usar directamente
+                    const bsModal = new bootstrap.Modal(previewModalElement);
+                    bsModal.show();
                 }
             } catch (error) {
-                console.error('Error en la solicitud al backend:', error);
-                        // Finalizar el spinner
-                endSpinner();
+                console.error("Error al mostrar modal con Bootstrap:", error);
+                alert("No se pudo mostrar la vista previa. Procesando formulario directamente.");
+                procesarFormulario();
+            }
+        }
+        
+        async function procesarFormulario() {
+            console.log("Iniciando procesamiento del formulario");
+            
+            try {
+                // Cerrar el modal si existe
+                closePreviewModal();
+                
+                // Mostrar spinner de carga
+                document.body.insertAdjacentHTML('beforeend', '<div id="loading-spinner" class="position-fixed w-100 h-100 d-flex justify-content-center align-items-center bg-white bg-opacity-75" style="top: 0; left: 0; z-index: 9999;"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Procesando...</span></div><div class="ms-2">Procesando formulario...</div></div>');
+                console.log("Spinner de carga mostrado");
+    
+                const content = document.querySelector('.imprimit');
+                if (!content) {
+                    console.error("No se encontró el contenido del formulario");
+                    document.getElementById('loading-spinner')?.remove();
+                    showToast('Error: No se pudo encontrar el contenido del formulario', 'error');
+                    return;
+                }
+    
+                const contentClone = content.cloneNode(true);
+                console.log("Contenido clonado correctamente");
+    
+                contentClone.querySelectorAll(`
+                    .no-print, .footer, head, header, footer, nav, 
+                    .header, .cabecera-extra, .info-top, .bg-grisSuave, 
+                    #csrfToken, input[name="csrf-token"], meta[name="csrf-token"], 
+                    input[type="hidden"]
+                `).forEach(el => el.remove());
+    
+                // Reemplazar canvas con imágenes en el clon
+                console.log("Procesando firmas...");
+                const signatureParticipant = document.getElementById('signature-pad-participant');
+                if (signatureParticipant) {
+                    const dataUrlParticipant = signatureParticipant.toDataURL('image/png');
+                    const img = document.createElement('img');
+                    img.src = dataUrlParticipant;
+                    img.style.border = '1px solid #000';
+                    const clone = contentClone.querySelector('#signature-pad-participant');
+                    if (clone) clone.replaceWith(img);
+                }
+    
+                const signatureTutor = document.getElementById('signature-pad-tutor');
+                if (signatureTutor && signatureTutor.parentNode.style.display !== 'none') {
+                    const dataUrlTutor = signatureTutor.toDataURL('image/png');
+                    const img = document.createElement('img');
+                    img.src = dataUrlTutor;
+                    img.style.border = '1px solid #000';
+                    const clone = contentClone.querySelector('#signature-pad-tutor');
+                    if (clone) clone.replaceWith(img);
+                }
+    
+                // Reemplazar inputs con su valor como texto
+                console.log("Procesando campos de entrada...");
+                const inputs = contentClone.querySelectorAll('input');
+                inputs.forEach(input => {
+                    const span = document.createElement('span');
+                    span.textContent = input.type === 'checkbox' ? (input.checked ? 'Sí' : 'No') : input.value;
+                    input.parentNode.replaceChild(span, input);
+                });
+    
+                // Construir nombre de archivo
+                const dni = document.querySelector('input[name="documento_identidad"]').value || 'IdNotFound';
+                const now = new Date();
+                const day = ('0' + now.getDate()).slice(-2);
+                const month = ('0' + (now.getMonth() + 1)).slice(-2);
+                const year = now.getFullYear();
+                const fecha = `${day}${month}${year}`;
+                const timestamp = Math.floor(now.getTime() / 1000);
+                const filename = `consent_moto_${dni}_${timestamp}.pdf`;
+                
+                // Guardar la fecha en localStorage
+                localStorage.setItem('printDate', `${day}/${month}/${year}`);
+    
+                // Crear elemento con el contenido formateado para PDF
+                console.log("Generando PDF...");
+                const element = document.createElement('div');
+                element.innerHTML = contentClone.innerHTML;
+    
+                const opt = {
+                    margin: 0.5,
+                    filename: filename,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                };
+    
+                // Generar el PDF como data URL
+                console.log("Generando data URL del PDF...");
+                const pdfDataUrl = await html2pdf().set(opt).from(element).outputPdf('datauristring');
+                console.log("PDF generado correctamente");
+                
+                // Enviar PDF al backend
+                console.log("Enviando PDF al backend...");
+                const backendResult = await enviarPDFAlBackend(pdfDataUrl, filename);
+                console.log("Resultado del backend:", backendResult);
+                
+                // También guardar localmente
+                console.log("Guardando PDF localmente...");
+                html2pdf().set(opt).from(element).save();
+                
+                // Mostrar mensaje de éxito
+                document.getElementById('loading-spinner')?.remove();
+                showToast('¡Formulario enviado correctamente!', 'success');
+                
+                // Recargar después de un momento
+                console.log("Recargando página en 3 segundos...");
+                setTimeout(() => {
+                    window.location.reload();
+                }, 3000);
+            } catch (error) {
+                console.error('Error en procesarFormulario:', error);
+                document.getElementById('loading-spinner')?.remove();
+                showToast('Error al procesar el formulario: ' + error.message, 'error');
             }
         }
 
-        // Finalizar el spinner
-        endSpinner();
+    async function enviarPDFAlBackend(pdfDataUrl, filename) {
+        try {
+            console.log("Iniciando envío al backend");
+            // Recopilar datos para el backend
+            const formData = new FormData();
+            
+            // Datos del cliente
+            const clienteData = {
+                nombre: document.querySelector('input[name="nombre_apellidos"]').value,
+                dni: document.querySelector('input[name="documento_identidad"]').value,
+                telefono: document.querySelector('input[name="telefono"]').value,
+                email: document.querySelector('input[name="email"]').value,
+                fecha_nacimiento: document.querySelector('input[name="fecha_nacimiento"]').value,
+                actividad: 'Moto Náutica'
+            };
+            
+            // Agregar datos al formData
+            for (const [key, value] of Object.entries(clienteData)) {
+                formData.append(key, value);
+            }
+            
+            // Detalles de la actividad
+            formData.append('moto_num', document.querySelector('input[name="moto_num"]').value);
+            formData.append('numero_personas', document.querySelector('input[name="numero_personas"]').value);
+            formData.append('tiempo_excursion', document.querySelector('input[name="tiempo_excursion"]').value);
+            formData.append('precio_total', document.getElementById('precio_total')?.textContent || '0');
+            
+            // Si es menor de edad, incluir datos del tutor
+            if (clienteData.fecha_nacimiento) {
+                const fechaNac = new Date(clienteData.fecha_nacimiento);
+                let edad = new Date().getFullYear() - fechaNac.getFullYear();
+                if (edad < 18) {
+                    formData.append('es_menor', 'true');
+                    formData.append('nombre_tutor', document.getElementById('nombre_tutor').value);
+                }
+            }
+            
+            // Método de pago
+            if (document.querySelector('input[name="pago_tarjeta"]').checked) {
+                formData.append('metodo_pago', 'tarjeta');
+            } else if (document.querySelector('input[name="pago_efectivo"]').checked) {
+                formData.append('metodo_pago', 'efectivo');
+            }
+            
+            // Agregar PDF
+            formData.append('pdf_file', pdfDataUrl);
+            formData.append('archivo_pdf', pdfDataUrl); // Nombre alternativo por si acaso
+            
+            // Obtener CSRF token
+            const metaTag = document.querySelector('meta[name="csrf-token"]');
+            if (!metaTag) {
+                console.error("CSRF token no encontrado");
+                throw new Error("CSRF token no encontrado");
+            }
+            
+            const csrfToken = metaTag.getAttribute('content');
+            console.log("CSRF token obtenido");
+            
+            // Hacer la petición al servidor
+            console.log("Enviando datos al servidor...");
+            const response = await fetch('/consent/submitMoto', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                },
+                body: formData
+            });
+            
+            if (!response.ok) {
+                console.error("Respuesta del servidor no OK:", response.status);
+                const errorText = await response.text();
+                console.error("Error del servidor:", errorText);
+                throw new Error(`Error HTTP: ${response.status}`);
+            }
+            
+            const responseData = await response.json();
+            console.log('Respuesta del servidor:', responseData);
+            document.getElementById('loading-spinner')?.remove();
+            return responseData;
+            
+        } catch (error) {
+            console.error('Error al enviar el PDF al backend:', error);
+            document.getElementById('loading-spinner')?.remove();
+            showToast('Error al enviar el formulario al servidor: ' + error.message, 'error');
+            return false;
+        }
+    }
+
+    // Función para rellenar el formulario con datos de ejemplo
+    function rellenarDatosEjemplo() {
+        // Datos personales del contrato
+        document.querySelector('input[name="nombre_contrato"]').value = "Juan García Martínez";
+        document.querySelector('input[name="direccion"]').value = "Calle Marina 23";
+        document.querySelector('input[name="poblacion"]').value = "Torrevieja";
+        document.querySelector('input[name="pais"]').value = "España";
+        document.querySelector('input[name="documento_identidad"]').value = "12345678A";
+        document.querySelector('input[name="telefono"]').value = "666123456";
+        document.querySelector('input[name="provincia"]').value = "Alicante";
+        document.querySelector('input[name="email"]').value = "juan.garcia@example.com";
+        
+        // Datos del club y ticket
+        document.querySelector('input[name="socio_club"]').value = "A-1234";
+        document.querySelector('input[name="ticket"]').value = "T-" + Math.floor(1000 + Math.random() * 9000);
+        
+        // Datos personales adicionales
+        document.querySelector('input[name="nombre_apellidos"]').value = "Juan García Martínez";
+        document.querySelectorAll('input[name="direccion"]')[1].value = "Calle Marina 23";
+        document.querySelectorAll('input[name="poblacion"]')[1].value = "Torrevieja";
+        document.querySelectorAll('input[name="email"]')[1].value = "juan.garcia@example.com";
+        document.querySelectorAll('input[name="pais"]')[1].value = "España";
+        
+        // Fecha de nacimiento (50% probabilidad de menor de edad)
+        const esMenor = Math.random() > 0.5;
+        const fechaNac = new Date();
+        if (esMenor) {
+            // Generar fecha para un menor (entre 12 y 17 años)
+            fechaNac.setFullYear(fechaNac.getFullYear() - (12 + Math.floor(Math.random() * 6)));
+        } else {
+            // Generar fecha para un mayor de edad (entre 18 y 65 años)
+            fechaNac.setFullYear(fechaNac.getFullYear() - (18 + Math.floor(Math.random() * 48)));
+        }
+        const fechaFormateada = fechaNac.toISOString().split('T')[0];
+        document.getElementById('fecha_nacimiento').value = fechaFormateada;
+        verificarEdad(); // Llamar para actualizar la visibilidad de los campos de tutor
+        
+        // Si es menor, rellenar datos del tutor
+        if (esMenor) {
+            document.getElementById('nombre_tutor').value = "María Martínez López";
+        }
+        
+        // Datos de la actividad
+        document.querySelector('input[name="moto_num"]').value = Math.floor(1 + Math.random() * 10);
+        document.querySelector('input[name="numero_personas"]').value = Math.floor(1 + Math.random() * 3);
+        document.querySelector('input[name="tiempo_excursion"]').value = "30 minutos";
+        
+        // Precios
+        document.getElementById('oferta_combinada').value = 50;
+        document.getElementById('fotos_gopro').value = 20;
+        calcularTotal(); // Recalcular el total
+        
+        // Marcar un método de pago aleatorio
+        document.querySelector('input[name="pago_tarjeta"]').checked = Math.random() > 0.5;
+        document.querySelector('input[name="pago_efectivo"]').checked = !document.querySelector('input[name="pago_tarjeta"]').checked;
+        
+        // Fecha actual para el contrato
+        const fechaActual = new Date();
+        document.querySelector('input[name="dia"]').value = fechaActual.getDate();
+        const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+        document.querySelector('input[name="mes"]').value = meses[fechaActual.getMonth()];
+        document.querySelector('input[name="anio"]').value = fechaActual.getFullYear().toString().substr(2);
+        
+        // Dibujar firmas simuladas en los canvas
+        dibujarFirmaSimulada('signature-pad-participant');
+        if (esMenor) {
+            dibujarFirmaSimulada('signature-pad-tutor');
+        }
+        
+        // Mostrar mensaje de confirmación
+        showToast('Formulario rellenado con datos de ejemplo', 'info');
+    }
+    
+    // Función para dibujar una firma simulada en el canvas
+    function dibujarFirmaSimulada(canvasId) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Convertir las coordenadas del canvas a coordenadas de dispositivo
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        
+        // Establecer estilo para la firma
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.strokeStyle = 'black';
+        
+        // Generar puntos para una firma simulada
+        const startX = 20 * scaleX;
+        const startY = 50 * scaleY;
+        const width = (canvas.width / 2) * 0.8;
+        const height = 30 * scaleY;
+        
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        
+        // Generar una serie de puntos que simulan una firma
+        let x = startX;
+        const numPoints = 15;
+        const segWidth = width / numPoints;
+        
+        for (let i = 0; i < numPoints; i++) {
+            x += segWidth;
+            let y = startY + (Math.random() - 0.5) * height;
+            ctx.lineTo(x, y);
+        }
+        
+        ctx.stroke();
     }
     </script>
 
