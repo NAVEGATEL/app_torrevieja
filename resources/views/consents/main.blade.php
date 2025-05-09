@@ -14,6 +14,14 @@
         margin: 20px auto;
         cursor: crosshair; /* Cambia el cursor para indicar acción */
     }
+    
+    /* Estilos adicionales para los toasts */
+    .toast-container {
+        z-index: 9999;
+    }
+    .toast {
+        min-width: 250px;
+    }
 </style>
 
 <!-- ###################################################################################################### -->
@@ -22,12 +30,26 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 
+<!-- Bootstrap JS (necesario para los toasts) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+<!-- CSRF Token - Se coloca en meta para que esté disponible para todas las peticiones AJAX -->
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+<!-- Incluir script para que jQuery y otras bibliotecas utilicen el token automáticamente -->
+<script>
+    window.csrfToken = "{{ csrf_token() }}";
+</script>
+
 @vite('resources/js/main.js')
 
 <!-- ###################################################################################################### -->
 <!-- ###################################################################################################### -->
 <!-- ###################################################################################################### -->
 <div class="container mb-5 py-5 ">
+    <!-- Contenedor para los toasts -->
+    <div id="toast-container" class="toast-container position-fixed top-0 end-0 p-3"></div>
+
     <!-- Modal para confirmación y vista previa -->
     <div class="modal fade py-5" id="modalTodoListo" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl py-5">

@@ -58,7 +58,7 @@ console.log("Script de Funciones Clientes Dinámicos cargado");
 
             <div class="col-12 col-md-5">
                 <div class="d-flex flex-column align-items-center justify-content-center ms-0 ms-sd-5  bg-dagner">
-                    <label class="form-label mb-2 fw-bold">${textos[idioma].firma}</label>
+                    <label class="form-label mb-2 fw-bold">${textos[idioma].firma} <span class="text-danger">*</span></label>
                     <div class="position-relative w-100 d-flex justify-content-center">
                         <canvas required id="firmaCliente${index}" class="border mb-2 firmaCanvas" width="300" height="150"></canvas>
                         
@@ -66,6 +66,7 @@ console.log("Script de Funciones Clientes Dinámicos cargado");
                             <i class="bi bi-eraser"></i>
                         </button>
                     </div>
+                    <small class="text-danger firma-requerida-${index}" style="display: none;">La firma es obligatoria</small>
                 </div>
             </div>
 
@@ -81,17 +82,18 @@ console.log("Script de Funciones Clientes Dinámicos cargado");
 
                     <div class="col-12 col-md-5 mb-3">
                     <label class="form-label">${textos[idioma].padreTutor}:</label>
-                    <input type="text" class="form-control" placeholder="${textos[idioma].padreTutor}" />
+                    <input type="text" class="form-control" id="padreTutorCliente${index}" placeholder="${textos[idioma].padreTutor}" required />
                     </div>
 
                     <div class="col-12 col-md-6 d-flex flex-column align-items-center ms-0 ms-sd-5 ">
-                        <label class="form-label mb-2 fw-bold">${textos[idioma].firma}</label>
+                        <label class="form-label mb-2 fw-bold">${textos[idioma].firma} <span class="text-danger">*</span></label>
                         <div class="position-relative w-100 d-flex justify-content-center">
                             <canvas id="firmaPadreCliente${index}" class="border mb-2 firmaCanvas" width="300" height="150"></canvas>
                             <button type="button" id="limpiarFirmaPadreCliente${index}" class="btn btn-sm btn-secondary">
                             <i class="bi bi-eraser"></i>
                             </button>
                         </div>
+                        <small class="text-danger firma-padre-requerida-${index}" style="display: none;">La firma del padre/tutor es obligatoria</small>
                     </div>
                 </div>
             </div>
@@ -113,7 +115,48 @@ console.log("Script de Funciones Clientes Dinámicos cargado");
             const esMenor = esMenorDeEdad(fechaNacInput.value);
             const consentimientoDiv = document.getElementById(`consentimientoMenor${index}`);
             consentimientoDiv.style.display = esMenor ? 'block' : 'none';
+            
+            // Si es menor, hacer que los campos del consentimiento sean obligatorios
+            const padreTutorInput = document.getElementById(`padreTutorCliente${index}`);
+            if (padreTutorInput) {
+                padreTutorInput.required = esMenor;
+            }
+            
+            // Actualizar la validación del formulario
+            if (window.validarFormulario) {
+                window.validarFormulario();
+            }
         });
+
+        // Agregar event listeners para validar las firmas cuando se dibuja en el canvas
+        const firmaCanvas = document.getElementById(`firmaCliente${index}`);
+        const firmaPadreCanvas = document.getElementById(`firmaPadreCliente${index}`);
+        
+        if (firmaCanvas) {
+            firmaCanvas.addEventListener('mouseup', () => {
+                if (window.validarFormulario) {
+                    window.validarFormulario();
+                }
+            });
+            firmaCanvas.addEventListener('touchend', () => {
+                if (window.validarFormulario) {
+                    window.validarFormulario();
+                }
+            });
+        }
+        
+        if (firmaPadreCanvas) {
+            firmaPadreCanvas.addEventListener('mouseup', () => {
+                if (window.validarFormulario) {
+                    window.validarFormulario();
+                }
+            });
+            firmaPadreCanvas.addEventListener('touchend', () => {
+                if (window.validarFormulario) {
+                    window.validarFormulario();
+                }
+            });
+        }
     }
 
     function configurarFirmasYConsentimiento(index) {
