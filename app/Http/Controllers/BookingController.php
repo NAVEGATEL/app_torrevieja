@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 class BookingController extends Controller
 {
     /**
-     * Crear una reserva individual.
+     * Crear una reserva individual. 
      */
     public function store(Request $request)
     { 

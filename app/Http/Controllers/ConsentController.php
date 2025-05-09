@@ -7,7 +7,7 @@ use App\Models\Booking;
 
 class ConsentController extends Controller
 {
-    public function submit(Request $request)
+    public function submit(Request $request) 
     {
         return redirect()->back()->with('success', 'Formulario enviado correctamente.');
     }

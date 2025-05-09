@@ -15,7 +15,7 @@ class FileUploadController extends Controller
 
     public function store(Request $request)
 {
-    if ($request->hasFile('file')) {
+    if ($request->hasFile('file')) { 
         // Limpiar y formatear el nombre del archivo
         $filename = $request->query('filename', 'default.pdf');
         $filename = preg_replace('/[\/:*?"<>|\\\\]/', '_', $filename); // Reemplaza caracteres no válidos

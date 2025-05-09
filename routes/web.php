@@ -36,7 +36,7 @@ Route::get('/consentMoto', function () {
     return view('consents.consentM');
 })->name('consentM');
 
-Route::post('/consent/submit', [ConsentController::class, 'submit'])->name('consent.submit');
+Route::post('/consent/submit', [ConsentController::class, 'submit'])->name('consent.submit'); 
 
 Route::post('/consent/submitMoto', [ConsentController::class, 'submitMoto'])->name('consent.submitMoto');
 
