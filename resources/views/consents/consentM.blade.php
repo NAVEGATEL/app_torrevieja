@@ -1,5 +1,6 @@
 @extends('../layouts/public') <!-- Extiende el layout public.blade.php -->
 @section('content')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <!-- ###################################################################################################### -->
 <!-- ###################################################################################################### -->
@@ -112,13 +113,28 @@
     .no-print { text-align: center; margin-top: 20px; }
     input{margin: 10px 5px;}
     .signatures-row {
-        display: flex;
-        justify-content: space-between;
-        gap: 20px;
-    }
-    .signature-container {
-        flex: 1;
-    }
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.signature-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.signature-container canvas.sign-box {
+    width: 50%;
+    height: 100px;
+    border: 1px solid #000;
+    box-sizing: border-box;
+}
+
     
     @media print {
         .no-print {
@@ -132,7 +148,7 @@
 
     <!-- HTML contenido -->
     <div class="container p-5">
-        <form method="POST" action="{{ route('consent.submit') }}">
+        <form method="POST" action="{{ route('consent.submitMoto') }}">
             @csrf
             <!-- Encabezado -->
             <div class="header row">
@@ -207,10 +223,9 @@
                 </div>
                 
                 <p style="font-size: 0.85em; line-height: 1.3;">
-                    Por el presente documento reconozco que la empresa ACTIVIDADES NÁUTICAS TORREVIEJA, S.L. operadora de la actividad de iniciación a la moto náutica me ha explicado en qué consiste la actividad, me ha explicado las instrucciones de uso, las medidas de seguridad y todo el procedimiento a seguir durante el desarrollo de la excursión para su correcto desarrollo. Así mismo, he sido informado de las limitaciones y los supuestos en los que no se puede usar la moto acuática, tales como el estar bajo los efectos del alcohol, drogas, tener mermadas las capacidades físicas o mentales, etc... Me hago responsable de cualquier daño ocasionado al material que aquí se me presta y me comprometo a abonar la rotura del mismo, si éste se rompiera por no seguir las indicaciones de los monitores de la empresa. Igualmente reconozco que me ha sido traducido este texto, el cual firmo dándome por enterado de todo su contenido y otorgando mi plena conformidad y consentimiento. Eximo a la empresa de cualquier responsabilidad de la pérdida de objetos realizando la actividad.
-                </p>
+                Reconozco que ACTIVIDADES NÁUTICAS TORREVIEJA, S.L. me ha explicado en qué consiste la actividad de moto náutica, las instrucciones, medidas de seguridad y limitaciones de uso (como no estar bajo efectos de alcohol o drogas). Me responsabilizo de los daños al material por mal uso y acepto abonar su reparación si procede. También confirmo que el texto me ha sido traducido, lo entiendo y doy mi consentimiento. Eximo a la empresa de responsabilidad por pérdida de objetos durante la actividad.                </p>
                 <p style="font-size: 0.85em; line-height: 1.3;">
-                    I recognize that ACTIVIDADES NÁUTICAS TORREVIEJA, S.L., the operator company, has explained to me what this activity consists in, the operating instructions, the security measures and the whole procedure to be followed throughout its development for the correct use of the aforesaid.I have also been informed about the limitations and the situations in which the device is not to be used, such as being under the effects of alcohol or drugs, experiencing a decrease of physical or mental faculties, etc. I am responsible for any damage caused to the material I am provided by the operator and I accept to pay the reparations in case of not following the indications of the instructors. I have been translated this text, which I sign to indicate approval and conformity after being aware of and understanding all its content. I exempt the company from any responsibility for the loss of objects by performing the activity.
+                I acknowledge that ACTIVIDADES NÁUTICAS TORREVIEJA, S.L. has explained to me the details of the jet ski activity, including instructions, safety measures, and usage limitations (such as not being under the influence of alcohol or drugs). I take responsibility for any damage to the provided equipment due to misuse and agree to cover the repair costs if necessary. I also confirm that this text has been translated for me, that I understand it fully, and that I give my consent. I release the company from any liability for the loss of personal belongings during the activity.
                 </p>
             </div>
 
@@ -301,7 +316,7 @@
             <!-- Consentimiento -->
             <div class="section">
                 <p>
-                    Por la presente, manifiesto mi consentimiento expreso para participar en la actividad de Jetski. Confirmo haber sido informado/a de las medidas de seguridad establecidas y asumo voluntariamente el riesgo de posibles lesiones o daños personales derivados de la práctica de esta actividad.
+                Consiento participar en la actividad de Jetski, confirmo que me han informado de las medidas de seguridad y asumo voluntariamente el riesgo de posibles lesiones o daños.
                 </p>
             </div>
 
@@ -342,9 +357,7 @@
 
             <!-- Botones -->
             <div class="no-print">
-                <button type="submit" class="btn btn-primary">Enviar</button>
-                <button type="button" class="btn btn-secondary" onclick="printBody()">Imprimir</button>
-
+                <button type="submit" class="btn btn-primary" onclick="printBody()">Enviar</button> 
             </div>
         </form>
     </div>
@@ -542,7 +555,80 @@
             return true;
         }
 
-        function printBody() {
+
+        async function printBody() {
+            if (!checkFields()) return;
+
+            const content = document.querySelector('.imprimit');
+            if (!content) return;
+
+            const contentClone = content.cloneNode(true);
+
+            contentClone.querySelectorAll(`
+                .no-print, .footer, head, header, footer, nav, 
+                .header, .cabecera-extra, .info-top, .bg-grisSuave, 
+                #csrfToken, input[name="csrf-token"], meta[name="csrf-token"], 
+                input[type="hidden"]
+            `).forEach(el => el.remove());
+
+            const signatureParticipant = document.getElementById('signature-pad-participant');
+            if (signatureParticipant) {
+                const dataUrlParticipant = signatureParticipant.toDataURL('image/png');
+                const img = document.createElement('img');
+                img.src = dataUrlParticipant;
+                img.style.border = '1px solid #000';
+                const clone = contentClone.querySelector('#signature-pad-participant');
+                if (clone) clone.replaceWith(img);
+            }
+
+            const signatureTutor = document.getElementById('signature-pad-tutor');
+            if (signatureTutor) {
+                const dataUrlTutor = signatureTutor.toDataURL('image/png');
+                const img = document.createElement('img');
+                img.src = dataUrlTutor;
+                img.style.border = '1px solid #000';
+                const clone = contentClone.querySelector('#signature-pad-tutor');
+                if (clone) clone.replaceWith(img);
+            }
+
+            const inputs = contentClone.querySelectorAll('input');
+            inputs.forEach(input => {
+                const span = document.createElement('span');
+                span.textContent = input.type === 'checkbox' ? (input.checked ? 'Sí' : 'No') : input.value;
+                input.parentNode.replaceChild(span, input);
+            });
+
+            const dni = document.querySelector('input[name="documento_identidad"]').value || 'IdNotFound';
+            const fullname = document.querySelector('input[name="nombre_contrato"]').value || 'NameNotFound';
+            const now = new Date();
+            const day = ('0' + now.getDate()).slice(-2);
+            const month = ('0' + (now.getMonth() + 1)).slice(-2);
+            const year = now.getFullYear();
+            const fecha = `${day}${month}${year}`;
+            const filename = `${dni}_${fullname}_${fecha}_motoagua.pdf`;
+
+            // Guardamos la fecha en localStorage para usarla después
+            localStorage.setItem('printDate', `${day}/${month}/${year}`);
+
+            // Usa html2pdf para generar el PDF
+            const element = document.createElement('div');
+            element.innerHTML = contentClone.innerHTML;
+
+            const opt = {
+                margin: 0.5,
+                filename: filename,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            // Generar el PDF como Blob
+            html2pdf().set(opt).from(element).outputPdf('blob').then(async (pdfBlob) => {
+                await guardarPDFEnBackend(pdfBlob, filename);
+            });
+        }
+
+        function printBody2() {
             // Verificar que los campos obligatorios estén rellenados
             if (!checkFields()) {
                 return;
@@ -560,17 +646,12 @@
             //    - Footer (si usa clase .footer)
             //    - Header, si tuvieras
             // ───────────────────────────────────────────────────────────────────
-            contentClone.querySelectorAll('.no-print, .footer, head').forEach(el => el.remove());
-            contentClone.querySelectorAll('header, footer, nav, .header, .no-print, head, svg').forEach(el => el.remove());
-            contentClone.querySelectorAll(
-                'header, footer, nav, .header, .no-print, head,' +
-                '.cabecera-extra, .info-top'
-            ).forEach(el => el.remove());
-            contentClone.querySelectorAll(
-                'header, footer, nav, .header, .no-print, head, .bg-grisSuave'
-            ).forEach(el => el.remove());
-            contentClone.querySelectorAll('#csrfToken').forEach(el => el.remove());
-            contentClone.querySelectorAll('input[name="csrf-token"], meta[name="csrf-token"]').forEach(el => el.remove());
+            contentClone.querySelectorAll(`
+                .no-print, .footer, head, header, footer, nav, 
+                .header, .cabecera-extra, .info-top, .bg-grisSuave, 
+                #csrfToken, input[name="csrf-token"], meta[name="csrf-token"], 
+                input[type="hidden"]
+            `).forEach(el => el.remove());
 
 
 
@@ -654,8 +735,68 @@
                 printWindow.print();
                 printWindow.close();
             }, 500);
-            }
+        }
 
+    </script>
+
+
+
+    <script>
+    async function guardarPDFEnBackend(pdfBlob, filenameEd) {
+        // Mostrar el spinner
+        startSpinner();
+
+        const cantidadDeClientes = document.querySelector("#numClientes").value
+
+        const fechaFirma = localStorage.getItem('printDate');
+
+
+        for (let i = 1; i <= cantidadDeClientes; i++) {
+            let nombreCliente = document.getElementById(`nombreCliente${i}copy`).innerHTML;
+            let telCliente = document.getElementById(`telCliente${i}copy`).innerHTML;
+            let dniCliente = document.getElementById(`dniCliente${i}copy`).innerHTML;
+            let mailCliente = document.getElementById(`mailCliente${i}copy`).innerHTML;
+            let fechaNacCliente = document.getElementById(`fechaNacCliente${i}copy`).innerHTML;
+            console.log("Cliente "+i+ ": " +nombreCliente+telCliente+dniCliente+mailCliente+fechaNacCliente);
+            
+            try {
+                const formData = new FormData();
+                formData.append('file', pdfBlob);
+                formData.append('filename', filenameEd);
+                formData.append('nombre_cliente', nombreCliente);
+                formData.append('dni', dniCliente);
+                formData.append('email', mailCliente);
+                formData.append('telefono', telCliente);
+                formData.append('fechaFirma', fechaFirma);
+                formData.append('anyoNacimiento', fechaNacCliente);
+                formData.append('short_id', localStorage.getItem('short_id_eks'));
+                
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                const response = await fetch(`/upload-pdf?filename=${encodeURIComponent(filenameEd)}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                    },
+                    body: formData,
+                });
+
+    
+                if (response.ok) {
+                    console.log('Archivo guardado exitosamente en el backend.');
+                } else {
+                    console.error('Error al guardar el archivo en el backend:', await response.text());
+                }
+            } catch (error) {
+                console.error('Error en la solicitud al backend:', error);
+                        // Finalizar el spinner
+                endSpinner();
+            }
+        }
+
+        // Finalizar el spinner
+        endSpinner();
+    }
     </script>
 
 
