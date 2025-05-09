@@ -21,15 +21,14 @@
         
         
         <!-- CSRF Token -->
-        <meta name="csrf-token" content="{{ csrf_token() }}" /> 
+        <meta name="csrf-token" content="{{ csrf_token() }}" />  
     </head>
-    <body>
-        <div id="app" class="bg-light">
-            @include('layouts.partials.navbar')
+    <body class="d-flex flex-column min-vh-100 bg-light">
+    <div id="app" class="flex-grow-1">
+        @include('layouts.partials.navbar')
+        <main class="py-4">@yield('content')</main>
+    </div>
+    @include('layouts.partials.footbar')
+</body>
 
-            <main class="py-4 bg-light">@yield('content')</main>
-
-            @include('layouts.partials.footbar')
-        </div>
-    </body>
 </html>

@@ -19,6 +19,7 @@ Auth::routes(["register" => false]); // Registro desactivado
 
 // Ruta para redirigir al panel o al login según el estado de autenticación
 Route::get('/', function () {
+    return view('landingpage');
     return Auth::check() ? redirect()->route('panel') : redirect('/login');
 })->name('home');
 
